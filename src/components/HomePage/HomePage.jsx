@@ -8,6 +8,7 @@ import { getProducts } from '@/apis/productsService';
 import PopularProduct from '@components/PopularProduct/PopularProduct';
 import { useState } from 'react';
 import SaleHomepage from '@components/SaleHomepage/SaleHomepage';
+import MyFooter from '@components/Footer/Footer';
 
 // chứa tất cả trang web
 function HomePage() {
@@ -43,11 +44,7 @@ function HomePage() {
             <PopularProduct data={listProducts.slice(2, listProducts.length)} />
 
             <SaleHomepage />
-            <div
-                style={{
-                    height: '200px'
-                }}
-            ></div>
+            <MyFooter />
         </>
     );
 }

@@ -5,8 +5,7 @@
 .container {
     @include flex_box_custom(center, center, 0px);
     // banner tự động đẩy lên trên ăn sát
-    position: absolute;
-    top: 0;
+
     left: 0;
     right: 0;
 }
@@ -71,4 +70,24 @@
     // khi hover vào thì ở đây phải rõ 1
     opacity: 1;
     transform: scale(1);
+}
+
+// khi chưa scroll thì header sẽ nằm ở vị trí ban đầu
+.topHeader {
+    position: absolute;
+    top: 0;
+}
+
+// khi scroll xuống thì header sẽ dính vào trên cùng
+.fixedHeader {
+    position: fixed;
+    top: -83px; //đẩy header lên trên để nó không hiển thị ngay lập tức khi scroll xuống
+    background-color: #ffffffe6;
+    box-shadow: 2px 0 12px 0 rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(5px);
+    z-index: 999; //lớp layer cao hơn để chồng lên các phần tử khác
+    transform: translateY(
+        83px
+    ); //khi scroll xuống thì header sẽ trượt xuống vị trí ban đầu
+    transition: transform 0.7s ease; // hiệu ứng trượt mượt mà khi scroll xuống
 }

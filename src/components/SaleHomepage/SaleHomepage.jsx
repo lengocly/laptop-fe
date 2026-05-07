@@ -1,13 +1,12 @@
 import Button from '@components/Button/Button';
 import styles from './styles.module.scss';
-import { useEffect, useRef, useState } from 'react';
-import useTranslateX from './translateXImage';
+import useTranslateXImage from '@/hooks/useTranslateXImage';
 
 // sau phần sản phẩm PopularProduct
 function SaleHomepage() {
     const { container, title, des, boxBtn, boxImage } = styles;
 
-    const { translateXPosition } = useTranslateX();
+    const { translateXPosition } = useTranslateXImage();
 
     return (
         <div className={container}>
@@ -20,7 +19,7 @@ function SaleHomepage() {
                 }}
             >
                 <img
-                    src='https://macone.vn/wp-content/uploads/2025/03/macbook-air-m4-skyblue-gallery1-202503-1024x787.jpeg'
+                    src='https://macstores.vn/wp-content/uploads/2026/03/macbook-pro-m5-16-inch-pro-max-silver-1.jpg'
                     alt=''
                 />
             </div>
@@ -40,7 +39,7 @@ function SaleHomepage() {
                 }}
             >
                 <img
-                    src='https://macone.vn/wp-content/uploads/2025/09/MacBook-Pro-M5-Screen-.png'
+                    src='https://macstores.vn/wp-content/uploads/2023/01/macbook-pro-m2-pro-space-gray.jpg'
                     alt=''
                 />
             </div>

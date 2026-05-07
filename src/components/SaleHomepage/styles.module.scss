@@ -29,4 +29,8 @@
         @include flex_box_custom(center, center, 0px);
         width: 100%;
     }
+    .boxImage img {
+        //thêm
+        max-width: 400px;
+    }
 }

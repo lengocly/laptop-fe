@@ -1,0 +1,52 @@
+@import '@styles/mixin.module.scss';
+@import '@styles/variable.module.scss';
+
+.container {
+    position: relative; //cha
+
+    .overlay {
+        position: fixed; //con
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #0000004d;
+        z-index: 1000; //lớp layer cao hơn để chồng lên các phần tử khác
+
+        transition: all 0.3s ease; //thêm hiệu ứng chuyển đổi mượt mà khi hiển thị hoặc ẩn overlay
+    }
+
+    .sideBar {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 350px;
+        background-color: #fff;
+        z-index: 1001; //lớp layer cao hơn để chồng lên overlay
+        height: 100vh; //chiếm toàn bộ chiều cao của viewport
+        transform: translateX(370px); //đẩy sidebar ra
+        transition: all 0.3s ease;
+    }
+
+    .slideSideBar {
+        transform: translateX(0); //khi mở sidebar thì đẩy nó về vị trí ban đầu
+    }
+
+    .boxIcon {
+        @include flex_box_custom(center, center, 0px); //ra giữa
+
+        position: absolute;
+        top: 25px;
+        left: -60px;
+        width: 35px;
+        height: 35px;
+        background-color: #fff;
+        border-radius: 50%;
+
+        cursor: pointer; //bàn tay
+
+        &:hover {
+            background-color: #ccc;
+        }
+    }
+}

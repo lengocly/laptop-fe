@@ -6,6 +6,11 @@ import Logo from '@icons/images/logo.png';
 import reloadIcon from '@icons/svgs/reloadIcon.svg';
 import heartIcon from '@icons/svgs/heartIcon.svg';
 import cartIcon from '@icons/svgs/cartIcon.svg';
+import useScrollHandling from '@/hooks/useScrollHandling';
+import { useEffect, useState } from 'react';
+import classNames from 'classnames';
+import { useContext } from 'react';
+import { SideBarContext } from '@/contexts/SideBarProvider';
 
 function MyHeader() {
     // cho icon nằm ngang
@@ -14,11 +19,42 @@ function MyHeader() {
         containerMenu,
         containerHeader,
         containerBox,
-        container
+        container,
+        fixedHeader,
+        topHeader
     } = styles;
 
+    //lấy ra scrollY để xử lý scroll
+    const { scrollPosition } = useScrollHandling();
+
+    //= true khi scrollY > 0, false khi scrollY = 0
+    const [fixedPosition, setFixedPosition] = useState(false);
+
+    //sử dụng context để lấy trạng thái mở đóng của sidebar
+    const { isOpen, setIsOpen } = useContext(SideBarContext);
+
+    useEffect(() => {
+        //cách 1
+        // if (scrollPosition > 80) {
+        //     setFixedPosition(true);
+        // } else {
+        //     setFixedPosition(false);
+        // }
+
+        //cách 2 ngắn gọn hơn
+        // setFixedPosition(scrollPosition > 80 ? true : false);
+
+        //cách 3:
+        setFixedPosition(scrollPosition > 80);
+    }, [scrollPosition]);
+
     return (
-        <div className={container}>
+        // nếu fixedPosition = true thì thêm class fixedHeader, ngược lại thì thêm class topHeader; cả 2 class đều có class container
+        <div
+            className={classNames(container, topHeader, {
+                [fixedHeader]: fixedPosition
+            })}
+        >
             <div className={containerHeader}>
                 <div className={containerBox}>
                     <div className={containerBoxIcon}>
@@ -50,7 +86,11 @@ function MyHeader() {
                         {/* lấy tiếp theo đến cuối cùng */}
                         {dataMenu.slice(3, dataMenu.length).map((item) => {
                             return (
-                                <Menu content={item.content} href={item.href} />
+                                <Menu
+                                    content={item.content}
+                                    href={item.href}
+                                    setIsOpen={setIsOpen}
+                                />
                             );
                         })}
                     </div>
