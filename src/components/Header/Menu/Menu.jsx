@@ -1,10 +1,20 @@
+import { useContext } from 'react';
 import styles from '../styles.module.scss';
+import { SideBarContext } from '@/contexts/SideBarProvider';
 
-function Menu({ content, href, setIsOpen }) {
+function Menu({ content, href }) {
     const { menu } = styles;
+    const { setIsOpen, setType } = useContext(SideBarContext);
+
+    const handleClickShowLogin = () => {
+        if (content === 'Đăng nhập') {
+            setIsOpen(true);
+            setType('login');
+        }
+    };
+
     return (
-        // khi click vào menu sẽ gọi hàm setIsOpen với giá trị true để mở sidebar
-        <div className={menu} onClick={() => setIsOpen(true)}>
+        <div className={menu} onClick={handleClickShowLogin}>
             {content}
         </div>
     );

@@ -1,14 +1,15 @@
-import { createContext } from 'react';
-import { useState } from 'react';
+import { useState, createContext } from 'react';
 
 export const SideBarContext = createContext();
 
-//tham số childen là những component con của SideBarProvider
 export const SideBarProvider = ({ children }) => {
-    //isOpen là trạng thái mở hay đóng của sidebar, setIsOpen là hàm để thay đổi trạng thái đó
     const [isOpen, setIsOpen] = useState(false);
+    const [type, setType] = useState('');
+
+    const value = { isOpen, setIsOpen, type, setType };
+
     return (
-        <SideBarContext.Provider value={{ isOpen, setIsOpen }}>
+        <SideBarContext.Provider value={value}>
             {children}
         </SideBarContext.Provider>
     );
