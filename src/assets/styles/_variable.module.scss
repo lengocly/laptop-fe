@@ -4,3 +4,22 @@ $thr_color: #555;
 $white_color: #fff;
 $sub_color: #404040;
 $four_color: #222;
+
+// Màu nhấn (nút, link active) — giống ShopMini
+$accent_color: #0d9488;      // teal
+$accent_hover: #0f766e;
+
+// Nền & chữ
+$bg_page: #f8fafc;
+$text_primary: #111827;
+$text_muted: #6b7280;
+
+// Giá & khuyến mãi
+$price_color: #111827;
+$price_old: #9ca3af;
+$badge_sale: #ef4444;        // đỏ % giảm
+
+// Bo góc & đổ bóng (cảm giác hiện đại)
+$radius_card: 12px;
+$radius_btn: 8px;
+$shadow_card: 0 4px 14px rgba(0, 0, 0, 0.06);

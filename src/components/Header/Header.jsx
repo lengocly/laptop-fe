@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { useContext } from 'react';
 import { SideBarContext } from '@/contexts/SideBarProvider';
-import ProductsMenu from './ProductsMenu/ProductsMenu';
+import { AuthContext } from '@/contexts/AuthProvider';
 
 function MyHeader() {
     // cho icon nằm ngang
@@ -19,6 +19,7 @@ function MyHeader() {
         containerBoxIcon,
         containerMenu,
         containerHeader,
+        menu,
         containerBox,
         container,
         fixedHeader,
@@ -33,6 +34,9 @@ function MyHeader() {
 
     //sử dụng context để lấy trạng thái mở đóng của sidebar
     const { setIsOpen, setType } = useContext(SideBarContext);
+
+    //AuthContext lấy user, logout, loading
+    const { user, logout, loading } = useContext(AuthContext);
 
     const handleOpenSideBar = (type) => {
         setIsOpen(true);
@@ -77,7 +81,6 @@ function MyHeader() {
                             content={dataMenu[0].content}
                             href={dataMenu[0].href}
                         />
-                        <ProductsMenu />
                         {dataMenu.slice(1, 3).map((item) => (
                             <Menu key={item.content} content={item.content} href={item.href} />
                         ))}
@@ -93,11 +96,38 @@ function MyHeader() {
                 <div className={containerBox}>
                     <div className={containerMenu}>
                         {/* lấy tiếp theo đến cuối cùng */}
-                        {dataMenu.slice(3, dataMenu.length).map((item) => {
-                            return (
-                                <Menu content={item.content} href={item.href} />
-                            );
-                        })}
+                        {/* Tìm kiếm + menu khác (bỏ Đăng nhập khỏi map) */}
+                            {dataMenu
+                                .slice(3)
+                                .filter((item) => item.content !== 'Đăng nhập')
+                                .map((item) => (
+                                    <Menu
+                                        key={item.content}
+                                        content={item.content}
+                                        href={item.href}
+                                    />
+                                ))}
+
+                            {/* Chưa login → Đăng nhập */}
+                            {!loading && !user && (
+                                <Menu content="Đăng nhập" href="#" />
+                            )}
+
+                            {/* Đã login → chào + đăng xuất */}
+                            {user && (
+                                <>
+                                    <span className={menu} style={{ cursor: 'default' }}>
+                                        Xin chào, {user.name}
+                                    </span>
+                                    <div
+                                        className={menu}
+                                        onClick={logout}
+                                        style={{ cursor: 'pointer' }}
+                                    >
+                                        Đăng xuất
+                                    </div>
+                                </>
+                            )}
                     </div>
 
                     <div className={containerBoxIcon}>

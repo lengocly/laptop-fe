@@ -11,12 +11,16 @@ const routers = [
         component: lazy(() => import('@components/Blog/Blog'))
     },
     {
-        path: '/product/:id',
-        component: lazy(() => import('@components/ProductDetailPage/ProductDetailPage'))
+        path: '/dang-nhap',
+        component: lazy(() => import('@components/LoginPage/LoginPage'))
     },
     {
-        path: '/danh-muc/:slug',
-        component: lazy(() => import('@components/CategoryPage/CategoryPage'))
+        path: '/product/:id',
+        component: lazy(() => import('@components/ProductDetailPage/ProductDetailPage'))
+    }, 
+    {
+        path: '/cua-hang',
+        component: lazy(() => import('@components/StorePage/StorePage'))
     }
 ];
 

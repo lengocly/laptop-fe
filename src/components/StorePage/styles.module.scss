@@ -1,0 +1,56 @@
+@import '@styles/variable.module.scss';
+
+.page {
+    padding: 120px 0 60px;
+}
+
+.pageTitle {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: $text_primary;
+}
+
+.storeLayout {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+}
+
+.sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    background: $white_color;
+    border-radius: $radius_card;
+    box-shadow: $shadow_card;
+    padding: 20px;
+}
+
+.main {
+    flex: 1;
+    min-width: 0;
+}
+
+.resultText {
+    color: $text_muted;
+    margin-bottom: 20px;
+}
+
+.error {
+    color: $badge_sale;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+@media (max-width: 900px) {
+    .storeLayout {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+    }
+}

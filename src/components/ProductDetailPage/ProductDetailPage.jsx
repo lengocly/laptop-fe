@@ -1,196 +1,164 @@
-/**
- * =============================================================================
- * TRANG CHI TIẾT SẢN PHẨM (/product/:id)
- * =============================================================================
- * - Đọc id từ URL, gọi API getProductById, hiển thị gallery + thông tin + breadcrumb.
- * - Giao diện tham khảo shop điện tử: 2 cột, ảnh lớn + thumbnail, giá, thông số, CTA.
- * =============================================================================
- */
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import MyHeader from '@components/Header/Header';
 import MyFooter from '@components/Footer/Footer';
 import { getProductById } from '@/apis/productsService';
 import styles from './styles.module.scss';
+import ProductGallery from './ProductGallery';
+import ProductBuyBox from './ProductBuyBox';
+import ProductSpecs from './ProductSpecs';
+import ProductReviews from './ProductReviews';
+import ProductItem from '@components/ProductItem/ProductItem';
 
-const IMG_FALLBACK =
-    'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=960&h=960&q=80';
+//fetch API, state chung
 
 function ProductDetailPage() {
     const { id } = useParams();
     const [product, setProduct] = useState(null);
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(true);
     const [activeIdx, setActiveIdx] = useState(0);
+    const [quantity, setQuantity] = useState(1);
+    const [relatedProducts, setRelatedProducts] = useState([]);
 
+    // ─── Luồng 1: load SP khi vào trang hoặc đổi id ───
     useEffect(() => {
         let cancelled = false;
+        setLoading(true);
         setError('');
         setProduct(null);
+        setRelatedProducts([]);
         setActiveIdx(0);
+        setQuantity(1);
+
         getProductById(id)
             .then((data) => {
-                if (!cancelled) setProduct(data.product);
+                if (!cancelled) {
+                    setProduct(data.product); //lấy sản phẩm chính
+                    setRelatedProducts(data.related_products ?? []); //nếu không có sản phẩm liên quan, trả về danh sách trống.
+                }
             })
             .catch(() => {
-                if (!cancelled) setError('Không tải được sản phẩm. Kiểm tra API hoặc ID.');
+                if (!cancelled) setError('Không tải được sản phẩm.');
+            })
+            .finally(() => {
+                if (!cancelled) setLoading(false);
             });
-        return () => {
-            cancelled = true;
-        };
+
+        return () => { cancelled = true; }; // tránh setState sau khi unmount
     }, [id]);
 
-    if (error) {
+  // ─── Luồng 2: UI trạng thái ───
+    if (loading) {
+        return (
+            <>
+                <MyHeader />
+                <main className={styles.wrap}><p>Đang tải…</p></main>
+                <MyFooter />
+            </>
+        );
+    }
+
+    if (error || !product) {
         return (
             <>
                 <MyHeader />
                 <main className={styles.wrap}>
                     <p className={styles.err}>{error}</p>
-                    <Link to='/'>← Về trang chủ</Link>
+                    <Link to="/">← Về trang chủ</Link>
                 </main>
                 <MyFooter />
             </>
         );
     }
 
-    if (!product) {
+        // ─── Luồng 3: chuẩn bị data hiển thị ───
+        const cat = product.category;
+        const parentCat = cat?.parent;
+        const inStock = product.stock > 0;
+    
+        const decQty = () => setQuantity((q) => Math.max(1, q - 1));
+        const incQty = () => setQuantity((q) => Math.min(product.stock, q + 1));
+    
+        const scrollToReviews = () => {
+            document.getElementById('reviews')?.scrollIntoView({ behavior: 'smooth' });
+        };
+    
+        const shortDesc = product.storage
+            ? `Cấu hình ${product.storage} — hàng chính hãng BetaTech.`
+            : 'Sản phẩm chính hãng BetaTech.';
+
         return (
             <>
                 <MyHeader />
                 <main className={styles.wrap}>
-                    <p className={styles.loading}>Đang tải…</p>
+                    {/* ── Breadcrumb ── */}
+                    <nav className={styles.breadcrumb} aria-label="Breadcrumb">
+                        <Link to="/">Trang chủ</Link>
+                        <span className={styles.crumbSep}>›</span>
+                        {parentCat && (
+                            <>
+                                <span className={styles.crumbMuted}>{parentCat.name}</span>
+                                <span className={styles.crumbSep}>›</span>
+                            </>
+                        )}
+                        {cat && (
+                            <>
+                                <span className={styles.crumbMuted}>{cat.name}</span>
+                                <span className={styles.crumbSep}>›</span>
+                            </>
+                        )}
+                        <span className={styles.crumbCurrent}>{product.name}</span>
+                    </nav>
+    
+                    {/* ── Card chính: Gallery | Info ── */}
+                    <div className={styles.productCard}>
+                        <div className={styles.grid}>
+                            <ProductGallery
+                                images={product.images}
+                                activeIdx={activeIdx}
+                                onChange={setActiveIdx}
+                                alt={product.name}
+                            />
+
+                            <ProductBuyBox
+                                product={product}
+                                quantity={quantity}
+                                onDecQty={decQty}
+                                onIncQty={incQty}
+                                onScrollToReviews={scrollToReviews}
+                                shortDesc={shortDesc}
+                            />
+                        </div>
+                    </div>
+
+                <ProductSpecs product={product} />
+                <ProductReviews />
+
+                {/* ── Sản phẩm liên quan ── */}
+                {relatedProducts.length > 0 && (
+                    <section className={styles.relatedSection}>
+                        <h2 className={styles.sectionTitle}>Sản phẩm liên quan</h2>
+                        <div className={styles.relatedGrid}>
+                            {relatedProducts.map((item) => (
+                                <ProductItem
+                                    key={item.id}
+                                    id={item.id}
+                                    src={item.images?.[0]}
+                                    prevSrc={item.images?.[1]}
+                                    name={item.name}
+                                    price={item.price}
+                                    priceOriginal={item.price_original}
+                                />
+                            ))}
+                        </div>
+                    </section>
+                )}
+
                 </main>
                 <MyFooter />
             </>
         );
-    }
-
-    const images =
-        product.images && product.images.length > 0 ? product.images : [IMG_FALLBACK];
-    const mainSrc = images[Math.min(activeIdx, images.length - 1)] || IMG_FALLBACK;
-    const cat = product.category;
-    const parentCat = cat?.parent;
-
-    return (
-        <>
-            <MyHeader />
-            <main className={styles.wrap}>
-                <nav className={styles.breadcrumb} aria-label='Breadcrumb'>
-                    <Link to='/'>Trang chủ</Link>
-                    <span className={styles.crumbSep}>›</span>
-                    {parentCat ? (
-                        <>
-                            <span className={styles.crumbMuted}>{parentCat.name}</span>
-                            <span className={styles.crumbSep}>›</span>
-                        </>
-                    ) : null}
-                    {cat ? (
-                        <>
-                            <span className={styles.crumbMuted}>{cat.name}</span>
-                            <span className={styles.crumbSep}>›</span>
-                        </>
-                    ) : null}
-                    <span className={styles.crumbCurrent}>{product.name}</span>
-                </nav>
-
-                <div className={styles.grid}>
-                    <div className={styles.gallery}>
-                        <div className={styles.mainShot}>
-                            <img
-                                src={mainSrc}
-                                alt={product.name}
-                                onError={(e) => {
-                                    e.currentTarget.src = IMG_FALLBACK;
-                                }}
-                            />
-                        </div>
-                        <div className={styles.thumbs}>
-                            {images.map((src, i) => (
-                                <button
-                                    key={i}
-                                    type='button'
-                                    className={
-                                        i === activeIdx ? styles.thumbActive : styles.thumb
-                                    }
-                                    onClick={() => setActiveIdx(i)}
-                                >
-                                    <img src={src} alt='' />
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className={styles.info}>
-                        <h1 className={styles.title}>{product.name}</h1>
-                        <p className={styles.price}>{product.price}</p>
-                        <p className={styles.stock}>
-                            {product.stock > 0
-                                ? `Còn ${product.stock} sản phẩm`
-                                : 'Tạm hết hàng'}
-                        </p>
-
-                        <div className={styles.trust}>
-                            <p>✓ Hàng chính hãng BetaTech</p>
-                            <p>✓ Giá đã bao gồm VAT</p>
-                            <p>✓ Giao hàng toàn quốc</p>
-                        </div>
-
-                        <div className={styles.specs}>
-                            <h2 className={styles.specsTitle}>Thông số kỹ thuật</h2>
-                            <dl className={styles.specList}>
-                                {product.cpu ? (
-                                    <>
-                                        <dt>CPU</dt>
-                                        <dd>{product.cpu}</dd>
-                                    </>
-                                ) : null}
-                                {product.ram ? (
-                                    <>
-                                        <dt>RAM</dt>
-                                        <dd>{product.ram}</dd>
-                                    </>
-                                ) : null}
-                                {product.storage ? (
-                                    <>
-                                        <dt>Ổ cứng / Dung lượng</dt>
-                                        <dd>{product.storage}</dd>
-                                    </>
-                                ) : null}
-                                {product.screen ? (
-                                    <>
-                                        <dt>Màn hình</dt>
-                                        <dd>{product.screen}</dd>
-                                    </>
-                                ) : null}
-                                {!product.cpu &&
-                                !product.ram &&
-                                !product.storage &&
-                                !product.screen ? (
-                                    <dd className={styles.specEmpty}>
-                                        Xem mô tả trên bao bì hoặc liên hệ tư vấn.
-                                    </dd>
-                                ) : null}
-                            </dl>
-                        </div>
-
-                        <div className={styles.actions}>
-                            <button type='button' className={styles.btnPrimary}>
-                                Mua ngay
-                            </button>
-                            <div className={styles.btnRow}>
-                                <button type='button' className={styles.btnSecondary}>
-                                    Thêm vào giỏ
-                                </button>
-                                <button type='button' className={styles.btnSecondary}>
-                                    Mua trả góp
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
-            <MyFooter />
-        </>
-    );
 }
 
 export default ProductDetailPage;

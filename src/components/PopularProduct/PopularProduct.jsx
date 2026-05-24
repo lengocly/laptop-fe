@@ -30,6 +30,7 @@ function PopularProduct({ data }) {
                             prevSrc={item.images[1]}
                             name={item.name}
                             price={item.price}
+                            priceOriginal={item.price_original}
                         />
                     ))}
                 </div>

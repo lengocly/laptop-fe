@@ -16,11 +16,16 @@ import styles from './styles.module.scss';
 import reloadIcon from '@icons/svgs/reloadIcon.svg';
 import heartIcon from '@icons/svgs/heartIcon.svg';
 import cartIcon from '@icons/svgs/cartIcon.svg';
+import {
+    calcDiscountPercent,
+    calcSavings,
+    formatVnd,
+} from '@/utils/price';
 
 const IMG_FALLBACK =
     'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=640&h=640&q=80';
 
-function ProductItem({ id, src, prevSrc, name, price }) {
+function ProductItem({ id, src, prevSrc, name, price, priceOriginal }) {
     const {
         card,
         imageHit,
@@ -36,9 +41,20 @@ function ProductItem({ id, src, prevSrc, name, price }) {
     const hoverSrc = prevSrc || mainSrc;
     const detailUrl = id != null ? `/product/${id}` : '#';
 
+    //Tính % giảm giá và số tiền tiết kiệm được
+    const discount = calcDiscountPercent(price, priceOriginal);
+    const savings = calcSavings(price, priceOriginal);
+
     return (
         <div className={card}>
             <div className={boxImg}>
+
+                {/* Badge % giảm giá */}
+            {discount > 0 && (
+                <span className={styles.badgeDiscount}>-{discount}%</span>
+            )}
+
+
                 <Link
                     className={imageHit}
                     to={detailUrl}
@@ -90,7 +106,21 @@ function ProductItem({ id, src, prevSrc, name, price }) {
 
             <Link className={metaLink} to={detailUrl}>
                 <div className={title}>{name}</div>
-                <div className={priceCl}>{price}</div>
+
+                {/* Giá hiện tại + giá gốc + badge % */}
+                <div className={styles.priceBlock}>
+                    <div className={styles.priceRow}>
+                        <span className={styles.priceCurrent}>{price}</span>
+                        {priceOriginal && (
+                            <span className={styles.priceOld}>{priceOriginal}</span>
+                        )}
+                    </div>
+                    {discount > 0 && (
+                        <p className={styles.priceSave}>
+                            Tiết kiệm {formatVnd(savings)} · {discount}% OFF
+                        </p>
+                    )}
+                </div>
             </Link>
         </div>
     );

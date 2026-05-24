@@ -8,7 +8,7 @@ const dataBoxIcon = [
 
 const dataMenu = [
     { content: 'Trang chủ', href: '/' },
-    { content: 'Cửa hàng', href: '#' },
+    { content: 'Cửa hàng', href: '/cua-hang' },
     { content: 'Giới thiệu', href: '#' },
     { content: 'Liên hệ', href: '#' },
     { content: 'Tìm kiếm', href: '#' },

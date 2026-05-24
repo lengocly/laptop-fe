@@ -6,6 +6,7 @@ import { TfiClose } from 'react-icons/tfi';
 import BoxIcon from '@components/Header/BoxIcon/BoxIcon';
 import Login from '@components/ContentSideBar/Login/Login';
 import Compare from '@components/ContentSideBar/Compare/Compare';
+import Register from '@components/ContentSideBar/Register/Register';
 
 function Sidebar() {
     const { container, overlay, sideBar, slideSideBar, boxIcon } = styles;
@@ -28,6 +29,8 @@ function Sidebar() {
                 return 'wishlist';
             case 'cart':
                 return 'cart';
+            case 'register':
+                return <Register />;
             default:
                 return <Login />;
         }

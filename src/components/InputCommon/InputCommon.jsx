@@ -3,7 +3,11 @@ import { FiEye } from 'react-icons/fi';
 import { FiEyeOff } from 'react-icons/fi';
 import { useState } from 'react';
 
-function InputCommon({ label, type, isRequired = false }) {
+function InputCommon({ label, type, isRequired = false, value = '', onChange, name, }) {
+    //value: Chữ đang gõ
+    //onChange: Hàm cập nhật khi gõ
+    //name: Tên field (email, password)
+    
     const { labelInput, boxInput, container, boxIcon } = styles;
 
     //tạo state để quản lý việc hiển thị mật khẩu khi type là password
@@ -26,7 +30,12 @@ function InputCommon({ label, type, isRequired = false }) {
                 {isRequired && <span>*</span>}
             </div>
             <div className={boxInput}>
-                <input type={isShowTextPassword} />
+            <input
+                type={isShowTextPassword}
+                value={value}
+                onChange={onChange}
+                name={name}
+            />
                 {isPassword && (
                     <div className={boxIcon} onClick={handleShowPassword}>
                         {showPassword ? <FiEyeOff /> : <FiEye />}

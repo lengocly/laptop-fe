@@ -109,3 +109,47 @@
     color: $thr_color;
     font-weight: 600;
 }
+
+/* Badge % giảm giá */
+
+.badgeDiscount {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 3;
+    background: #ef4444;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.priceBlock {
+    margin-top: 4px;
+}
+
+.priceRow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.priceCurrent {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.priceOld {
+    font-size: 13px;
+    color: #9ca3af;
+    text-decoration: line-through;
+}
+
+.priceSave {
+    font-size: 12px;
+    color: #059669;
+    margin: 4px 0 0;
+}

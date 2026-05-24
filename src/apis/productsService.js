@@ -23,12 +23,13 @@ const getProducts = async (categorySlug) => {
     const params = categorySlug ? { category: categorySlug } : {};
 
     //gọi API với params
-    const res = await axiosClient.get('/product', { params });
+    const res = await axiosClient.get('/products', { params });
     return res.data;
 };
 
+//Chi tiết sản phẩm
 const getProductById = async (id) => {
-    const res = await axiosClient.get(`/product/${id}`);
+    const res = await axiosClient.get(`/products/${id}`);
     return res.data;
 };
 
