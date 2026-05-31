@@ -3,10 +3,10 @@ import { useContext } from 'react';
 import { SideBarContext } from '@/contexts/SideBarProvider';
 import classNames from 'classnames';
 import { TfiClose } from 'react-icons/tfi';
-import BoxIcon from '@components/Header/BoxIcon/BoxIcon';
 import Login from '@components/ContentSideBar/Login/Login';
 import Compare from '@components/ContentSideBar/Compare/Compare';
 import Register from '@components/ContentSideBar/Register/Register';
+import Cart from '@components/ContentSideBar/Cart/Cart';
 
 function Sidebar() {
     const { container, overlay, sideBar, slideSideBar, boxIcon } = styles;
@@ -28,7 +28,7 @@ function Sidebar() {
             case 'wishlist':
                 return 'wishlist';
             case 'cart':
-                return 'cart';
+                return <Cart />;
             case 'register':
                 return <Register />;
             default:

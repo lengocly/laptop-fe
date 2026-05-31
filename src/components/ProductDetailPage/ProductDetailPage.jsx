@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import MyHeader from '@components/Header/Header';
 import MyFooter from '@components/Footer/Footer';
@@ -9,6 +9,8 @@ import ProductBuyBox from './ProductBuyBox';
 import ProductSpecs from './ProductSpecs';
 import ProductReviews from './ProductReviews';
 import ProductItem from '@components/ProductItem/ProductItem';
+import { CartContext } from '@/contexts/CartProvider';
+
 
 //fetch API, state chung
 
@@ -20,6 +22,9 @@ function ProductDetailPage() {
     const [activeIdx, setActiveIdx] = useState(0);
     const [quantity, setQuantity] = useState(1);
     const [relatedProducts, setRelatedProducts] = useState([]);
+    const [selectedVariantId, setSelectedVariantId] = useState(null);
+
+
 
     // ─── Luồng 1: load SP khi vào trang hoặc đổi id ───
     useEffect(() => {
@@ -30,12 +35,22 @@ function ProductDetailPage() {
         setRelatedProducts([]);
         setActiveIdx(0);
         setQuantity(1);
+        setSelectedVariantId(null); //mỗi khi đổi sang sản phẩm khác, nó reset lại biến thể đang chọn
 
         getProductById(id)
             .then((data) => {
                 if (!cancelled) {
                     setProduct(data.product); //lấy sản phẩm chính
                     setRelatedProducts(data.related_products ?? []); //nếu không có sản phẩm liên quan, trả về danh sách trống.
+
+                    //Tự chọn biến thể đầu tiên.
+                    setSelectedVariantId(data.product?.variants?.[0]?.id ?? null);
+                    setActiveIdx(0);
+                    setQuantity(1);
+                    //Nếu sản phẩm có variant, tự chọn variant đầu tiên.
+                    //Nếu không có variant, selectedVariantId = null.
+                    //Reset ảnh về ảnh đầu tiên.
+                    //Reset số lượng về 1
                 }
             })
             .catch(() => {
@@ -75,15 +90,72 @@ function ProductDetailPage() {
         // ─── Luồng 3: chuẩn bị data hiển thị ───
         const cat = product.category;
         const parentCat = cat?.parent;
-        const inStock = product.stock > 0;
     
+        //Lấy danh sách biến thể
+        const variants = product.variants ?? [];
+        //Tìm biến thể đang chọn
+        const selectedVariant =
+            variants.find((v) => v.id === selectedVariantId) ?? null;
+
+            //display là dữ liệu cuối cùng dùng để hiển thị ra giao diện.
+        const display = selectedVariant
+        //2TH: th1 Nếu selectedVariant tồn tại, thì lấy dữ liệu từ biến thể
+            ? {
+                price: selectedVariant.price,
+                price_original: selectedVariant.price_original,
+                stock: selectedVariant.stock,
+                images:
+                    selectedVariant.images?.length > 0
+                        ? selectedVariant.images
+                        : product.images,
+            }
+            //th2 Nếu selectedVariant không tồn tại, thì lấy dữ liệu từ sản phẩm chính.
+            : {
+                price: product.price,
+                price_original: product.price_original,
+                stock: product.stock,
+                images: product.images,
+            };
+
+            const { addToCart } = useContext(CartContext);
+            const handleAddToCart = () => {
+                addToCart({
+                    productId: product.id,
+                    variantId: selectedVariantId,
+                    name: product.name,
+                    optionLabel: selectedVariant?.option_label ?? '',
+                    price: display.price,
+                    image: display.images?.[0] ?? '',
+                    quantity,
+                    maxStock: display.stock,
+                });
+            };
+
+        const inStock = display.stock > 0;
+
+        //Giảm số lượng: Khi bấm nút -, số lượng giảm đi 1, Nhưng không cho giảm thấp hơn 1
         const decQty = () => setQuantity((q) => Math.max(1, q - 1));
-        const incQty = () => setQuantity((q) => Math.min(product.stock, q + 1));
+
+        //Tăng số lượng: Khi bấm nút +, số lượng tăng đi 1, Nhưng không cho tăng cao hơn số lượng tồn kho.
+        const incQty = () =>
+            setQuantity((q) => Math.min(display.stock, q + 1));
+
+
+        //Chọn biến thể: Khi chọn biến thể, thì số lượng reset về 1, và ảnh reset về ảnh đầu tiên.
+        const handleSelectVariant = (variantId) => {
+            setSelectedVariantId(variantId);
+            setActiveIdx(0);
+            setQuantity(1);
+        };
+
+    //==============================================
     
+        //Cuộn xuống phần đánh giá: Khi bấm nút "Đánh giá", thì cuộn xuống phần đánh giá.
         const scrollToReviews = () => {
             document.getElementById('reviews')?.scrollIntoView({ behavior: 'smooth' });
         };
     
+        //Mô tả ngắn: Lấy mô tả ngắn từ sản phẩm.
         const shortDesc = product.storage
             ? `Cấu hình ${product.storage} — hàng chính hãng BetaTech.`
             : 'Sản phẩm chính hãng BetaTech.';
@@ -115,19 +187,30 @@ function ProductDetailPage() {
                     <div className={styles.productCard}>
                         <div className={styles.grid}>
                             <ProductGallery
-                                images={product.images}
-                                activeIdx={activeIdx}
-                                onChange={setActiveIdx}
-                                alt={product.name}
+                                images={display.images} //đổi ảnh theo biến thể đang chọn
+                                activeIdx={activeIdx} //index của ảnh hiện tại
+                                onChange={setActiveIdx} //hàm xử lý khi chọn ảnh
+                                alt={product.name}  //làm mô tả ảnh
                             />
 
+                            {/* ProductBuyBox: Thông tin sản phẩm, giá, số lượng, biến thể, chọn biến thể, giảm số lượng, tăng số lượng, cuộn xuống phần đánh giá, mô tả ngắn. */}
                             <ProductBuyBox
-                                product={product}
+                                product={{ //Tạo một object product mới, giữ nguyên toàn bộ dữ liệu cũ của product, nhưng ghi đè lại price, price_original, stock theo biến thể đang chọn
+                                    ...product,
+                                    price: display.price,
+                                    price_original: display.price_original,
+                                    stock: display.stock,
+                                }}
+                                variantGroup={product.variant_group}
+                                variants={variants}
+                                selectedVariantId={selectedVariantId}
+                                onSelectVariant={handleSelectVariant}
                                 quantity={quantity}
                                 onDecQty={decQty}
                                 onIncQty={incQty}
                                 onScrollToReviews={scrollToReviews}
                                 shortDesc={shortDesc}
+                                onAddToCart={handleAddToCart}
                             />
                         </div>
                     </div>

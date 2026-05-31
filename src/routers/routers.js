@@ -7,10 +7,6 @@ const routers = [
         component: lazy(() => import('@components/HomePage/HomePage'))
     },
     {
-        path: '/blog',
-        component: lazy(() => import('@components/Blog/Blog'))
-    },
-    {
         path: '/dang-nhap',
         component: lazy(() => import('@components/LoginPage/LoginPage'))
     },
@@ -21,7 +17,22 @@ const routers = [
     {
         path: '/cua-hang',
         component: lazy(() => import('@components/StorePage/StorePage'))
-    }
+    },
+    {
+        path: '/checkout',
+        component: lazy(() => import('@components/CheckoutPage/CheckoutPage')),
+    },
+    // thanh toán Stripe
+    {
+        path: '/thanh-toan/:orderId',
+        component: lazy(() => import('@components/PaymentPage/PaymentPage'))
+    },
+
+    // lịch sử mua hàng
+    {
+        path: '/don-hang-cua-toi',
+        component: lazy(() => import('@components/MyOrdersPage/MyOrdersPage')),
+    },
 ];
 
 export default routers;

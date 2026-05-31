@@ -38,6 +38,7 @@ export function AuthProvider({ children }) {
     const logout = async () => {
         await logoutApi();
         setUser(null);
+        //CartProvider tự xóa giỏ khi user = null
     };
 
     //Chỉ gọi API đăng ký, không setUser (chưa verify mail).

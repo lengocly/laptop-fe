@@ -12,6 +12,10 @@ import classNames from 'classnames';
 import { useContext } from 'react';
 import { SideBarContext } from '@/contexts/SideBarProvider';
 import { AuthContext } from '@/contexts/AuthProvider';
+import { CartContext } from '@/contexts/CartProvider';
+import { Link } from 'react-router-dom';
+import { PiUserCircle } from 'react-icons/pi';
+
 
 function MyHeader() {
     // cho icon nằm ngang
@@ -42,6 +46,9 @@ function MyHeader() {
         setIsOpen(true);
         setType(type);
     };
+
+    
+    const { totalCount } = useContext(CartContext);
 
     useEffect(() => {
         //cách 1
@@ -115,18 +122,37 @@ function MyHeader() {
 
                             {/* Đã login → chào + đăng xuất */}
                             {user && (
-                                <>
-                                    <span className={menu} style={{ cursor: 'default' }}>
-                                        Xin chào, {user.name}
-                                    </span>
-                                    <div
-                                        className={menu}
-                                        onClick={logout}
-                                        style={{ cursor: 'pointer' }}
-                                    >
-                                        Đăng xuất
+                                <div className={styles.userMenuWrap}>
+                                    <button type="button"       className={classNames(menu, styles.userMenuTrigger)}>
+                                        <span className={styles.userTriggerInner}>
+                                            <PiUserCircle size={22} />
+                                            <span>Xin chào, {user.name}</span>
+                                        </span>
+                                    </button>
+
+                                    <div className={styles.userDropdown}>
+                                        <div className={styles.userInfo}>
+                                            <strong>{user.name}</strong>
+                                            <span>{user.email}</span>
+                                        </div>
+
+                                        <div className={styles.userDivider} />
+
+                                        <Link to="/don-hang-cua-toi" className={styles.userMenuItem}>
+                                            Đơn hàng
+                                        </Link>
+
+                                        <div className={styles.userDivider} />
+
+                                        <button
+                                            type="button"
+                                            className={styles.userMenuItemLogout}
+                                            onClick={logout}
+                                        >
+                                            Đăng xuất
+                                        </button>
                                     </div>
-                                </>
+                                </div>
                             )}
                     </div>
 
@@ -139,10 +165,32 @@ function MyHeader() {
                             style={{ fontSize: '25px' }}
                             onClick={() => handleOpenSideBar('wishlist')}
                         />
-                        <PiShoppingCart
-                            style={{ fontSize: '25px' }}
-                            onClick={() => handleOpenSideBar('cart')}
-                        />
+                        
+                        {/* // bọc icon giỏ (thêm span badge): */}
+                        <div style={{ position: 'relative', cursor: 'pointer' }}
+                            onClick={() => handleOpenSideBar('cart')}>
+                            <PiShoppingCart style={{ fontSize: '25px' }} />
+                            {totalCount > 0 && (
+                                <span style={{
+                                    position: 'absolute',
+                                    top: -6,
+                                    right: -8,
+                                    minWidth: 18,
+                                    height: 18,
+                                    padding: '0 4px',
+                                    fontSize: 11,
+                                    fontWeight: 700,
+                                    color: '#fff',
+                                    background: '#e74c3c',
+                                    borderRadius: 999,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}>
+                                    {totalCount > 99 ? '99+' : totalCount}
+                                </span>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

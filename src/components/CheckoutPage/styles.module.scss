@@ -1,0 +1,249 @@
+@import '@styles/variable.module.scss';
+
+.wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 120px 24px 60px;
+    background: $bg_page;
+    min-height: 70vh;
+
+    h1 {
+        margin: 0 0 24px;
+        font-size: 28px;
+        font-weight: 700;
+        color: $text_primary;
+    }
+
+    > a {
+        display: inline-block;
+        margin-top: 20px;
+        color: $accent_color;
+        font-size: 15px;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.8fr);
+    gap: 28px;
+    align-items: start;
+}
+
+.form,
+.summary {
+    background: $white_color;
+    border-radius: $radius_card;
+    box-shadow: $shadow_card;
+    padding: 28px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    h2 {
+        margin: 0 0 8px;
+        font-size: 20px;
+        font-weight: 700;
+        color: $text_primary;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    input:not([type='radio']),
+    textarea {
+        width: 100%;
+        border: 1px solid #e5e7eb;
+        border-radius: $radius_btn;
+        padding: 13px 14px;
+        font-size: 15px;
+        color: $text_primary;
+        background: #fff;
+        outline: none;
+        box-sizing: border-box;
+        transition: border-color 0.2s, box-shadow 0.2s;
+
+        &::placeholder {
+            color: $text_muted;
+        }
+
+        &:focus {
+            border-color: $accent_color;
+            box-shadow: 0 0 0 3px rgba(0, 128, 128, 0.12);
+        }
+    }
+
+    textarea {
+        min-height: 96px;
+        resize: vertical;
+        line-height: 1.5;
+    }
+
+    button {
+        margin-top: 4px;
+        width: 100%;
+        border: none;
+        border-radius: $radius_btn;
+        padding: 14px 20px;
+        background: $accent_color;
+        color: $white_color;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s, opacity 0.2s;
+
+        &:hover:not(:disabled) {
+            background: $accent_hover;
+        }
+
+        &:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+    }
+}
+
+//phương thức thanh toán
+.paymentOptions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 4px;
+
+    label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 14px;
+        border: 1px solid #e5e7eb;
+        border-radius: $radius_btn;
+        background: #fff;
+        cursor: pointer;
+        color: $text_primary;
+        font-size: 15px;
+        transition: border-color 0.2s, background 0.2s;
+
+        &:hover {
+            border-color: $accent_color;
+            background: rgba(0, 128, 128, 0.04);
+        }
+    }
+
+    input[type='radio'] {
+        width: auto;
+        margin: 0;
+        accent-color: $accent_color;
+        cursor: pointer;
+    }
+
+    span {
+        line-height: 1.4;
+    }
+}
+
+.err {
+    margin: 0;
+    color: $badge_sale;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.summary {
+    position: sticky;
+    top: 100px;
+
+    h2 {
+        margin: 0 0 18px;
+        font-size: 20px;
+        font-weight: 700;
+        color: $text_primary;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #f3f4f6;
+    }
+}
+
+.line {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 15px;
+    color: $text_primary;
+
+    span:first-child {
+        color: $text_muted;
+        line-height: 1.5;
+    }
+
+    span:last-child {
+        flex-shrink: 0;
+        font-weight: 600;
+        color: $text_primary;
+    }
+}
+
+.total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid #e5e7eb;
+
+    span {
+        font-size: 16px;
+        font-weight: 600;
+        color: $text_primary;
+    }
+
+    strong {
+        font-size: 22px;
+        font-weight: 700;
+        color: $price_color;
+    }
+}
+
+@media (max-width: 900px) {
+    .wrap {
+        padding: 100px 16px 48px;
+
+        h1 {
+            font-size: 24px;
+        }
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .summary {
+        position: static;
+    }
+}
+
+@media (max-width: 500px) {
+    .form,
+    .summary {
+        padding: 20px;
+    }
+
+    .line,
+    .total {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .total strong {
+        font-size: 20px;
+    }
+}

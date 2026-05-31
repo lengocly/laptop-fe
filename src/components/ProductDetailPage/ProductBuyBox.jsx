@@ -4,36 +4,36 @@
  */
 import styles from './styles.module.scss';
 import VariantPicker from './VariantPicker';
+import { calcDiscountPercent } from '@/utils/price';
+import { useContext } from 'react';
+import { SideBarContext } from '@/contexts/SideBarProvider';
 
-
-//hàm chuyển giá dạng chữ thành số
-function parsePriceNumber(str) {
-    if (!str) return 0;
-    return Number(String(str).replace(/[^\d]/g, '')) || 0;
-}
-//"15.990.000 ₫" -> 15990000
-
-//hàm tính % giảm giá
-function calcDiscountPercent(price, priceOriginal) {
-    const current = parsePriceNumber(price); //Lấy giá hiện tại và đổi thành số
-    const original = parsePriceNumber(priceOriginal); //Lấy giá gốc và đổi thành số
-    if (!original || original <= current) return 0; //Nếu giá gốc <= giá hiện tại, trả về 0
-    return Math.round(((original - current) / original) * 100); //Giảm giá = ((Giá gốc - Giá hiện tại) / Giá gốc) × 100
-}
-//vd: 18.990.000 - 15.990.000 = 3.000.000 / 18.990.000 = 0.15809585150089535 * 100 = 15.809585150089535% => làm tròn = 16%
 
 function ProductBuyBox({
-    product,
-    quantity,
-    onDecQty,
+    product, //Thông tin sản phẩm.
+    variantGroup, //Thông tin nhóm biến thể.
+    variants, //Danh sách biến thể.
+    selectedVariantId, //ID của biến thể đang chọn.
+    onSelectVariant, //Hàm xử lý khi chọn biến thể.
+    quantity, //Số lượng hiện tại.
+    onDecQty, //Hàm xử lý khi bấm vào nút "-".
     onIncQty,
-    onScrollToReviews,
-    shortDesc,
+    onScrollToReviews,  //Hàm xử lý khi bấm vào nút "Xem đánh giá".
+    shortDesc, //Mô tả ngắn.
+    onAddToCart,   // hàm từ cha
+    onBuyNow,      // tùy chọn, phase checkout
 }) {
     const inStock = product.stock > 0;
     const priceOriginal = product.price_original;
     const discount = calcDiscountPercent(product.price, priceOriginal); //Tính % giảm giá
 
+    const { setIsOpen, setType } = useContext(SideBarContext);
+
+    const handleAddToCart = () => {
+        onAddToCart?.();
+        setIsOpen(true);
+        setType('cart');
+    };
     return (
         <div className={styles.info}>
             <h1 className={styles.title}>{product.name}</h1>
@@ -80,7 +80,13 @@ function ProductBuyBox({
 
             <p className={styles.shortDesc}>{shortDesc}</p>
 
-            <VariantPicker />
+            {/* VariantPicker: Chọn biến thể. */}
+            <VariantPicker
+                variantGroup={variantGroup}
+                variants={variants}
+                selectedVariantId={selectedVariantId}
+                onSelectVariant={onSelectVariant}
+            />
 
             {inStock && (
                 <div className={styles.qtyBlock}>
@@ -112,7 +118,7 @@ function ProductBuyBox({
                     type="button"
                     className={styles.btnPrimary}
                     disabled={!inStock}
-                    onClick={() => alert('Giỏ hàng — Phase sau')}
+                    onClick={handleAddToCart}
                 >
                     Thêm vào giỏ
                 </button>

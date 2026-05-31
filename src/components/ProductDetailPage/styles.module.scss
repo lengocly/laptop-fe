@@ -274,6 +274,48 @@
     line-height: 1.5;
 }
 
+// Biến thể
+.variantBlock {
+    margin: 0 0 20px;
+}
+
+.variantLabel {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 10px;
+    color: $primary_color;
+}
+
+.variantOptions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.variantBtn {
+    padding: 8px 14px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+
+    &:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
+}
+
+.variantBtnActive {
+    padding: 8px 14px;
+    font-size: 14px;
+    border: 1px solid $accent_color;
+    border-radius: 6px;
+    background: rgba(0, 128, 128, 0.08);
+    cursor: pointer;
+}
+
 /* Số lượng */
 .qtyBlock {
     margin-bottom: 20px;

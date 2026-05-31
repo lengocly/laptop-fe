@@ -1,0 +1,180 @@
+@import '@styles/variable.module.scss';
+
+.wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 120px 24px 60px;
+}
+
+.pageHead {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+
+    h1 {
+        margin: 0;
+        font-size: 28px;
+    }
+
+    span {
+        color: $text_muted;
+        font-size: 14px;
+    }
+}
+
+.card {
+    background: $white_color;
+    border: 1px solid #eee;
+    border-radius: $radius_card;
+    box-shadow: $shadow_card;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+}
+
+.cardTop {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.cardLeft,
+.cardRight {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.cardRight {
+    margin-left: auto;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.date {
+    font-size: 13px;
+    color: $text_muted;
+}
+
+.amount {
+    font-size: 18px;
+    color: $price_color;
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badgePending { background: #e8f4fd; color: #1976d2; }
+.badgePaid { background: #e8f8ef; color: #2e7d32; }
+.badgeCancelled { background: #fdecea; color: #c62828; }
+
+.payBadge {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+}
+
+.payPaid { background: #e8f8ef; color: #2e7d32; }
+.payUnpaid { background: #fff8e1; color: #f57c00; }
+
+.payment {
+    margin: 0 0 8px;
+    color: $text_muted;
+    font-size: 14px;
+}
+
+.items {
+    margin: 0;
+    padding-left: 18px;
+    color: $text_primary;
+}
+
+.empty {
+    color: $text_muted;
+}
+
+.backLink {
+    display: inline-block;
+    margin-top: 20px;
+    color: $accent_color;
+    text-decoration: none;
+}
+
+.err {
+    color: $badge_sale;
+}
+
+//=============== Toast thành công ===============
+
+.toast {
+    position: fixed;
+    top: 100px;
+    right: 24px;
+    z-index: 1100;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    max-width: 360px;
+    padding: 14px 16px;
+    background: #fff;
+    border: 1px solid #c8e6c9;
+    border-left: 4px solid #2e7d32;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    animation: slideIn 0.3s ease;
+}
+
+.toastIcon {
+    flex-shrink: 0;
+    font-size: 22px;
+    color: #2e7d32;
+    margin-top: 2px;
+}
+
+.toast span {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1b5e20;
+    line-height: 1.4;
+}
+
+.toastCode {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #666;
+}
+
+.toastClose {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    font-size: 18px;
+    color: #888;
+
+    &:hover {
+        color: #333;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

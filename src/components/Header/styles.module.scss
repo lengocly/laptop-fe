@@ -145,3 +145,97 @@
         color: $primary_color;
     }
 }
+
+
+//=============== User Menu ===============
+.userMenuWrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    /* BỎ padding-top: 9px — .menu đã có rồi */
+    &:hover .userDropdown,
+    &:focus-within .userDropdown {
+        display: block;
+    }
+}
+
+.userMenuTrigger {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.userDropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 220px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    padding: 12px 0;
+    z-index: 1001;
+}
+
+.userTriggerInner {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.userInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 0 16px 8px;
+
+    strong {
+        font-size: 14px;
+        color: #111;
+    }
+
+    span {
+        font-size: 13px;
+        color: #666;
+        word-break: break-all;
+    }
+}
+
+.userDivider {
+    height: 1px;
+    background: #eee;
+    margin: 8px 0;
+}
+
+.userMenuItem {
+    display: block;
+    padding: 10px 16px;
+    font-size: 14px;
+    color: #333;
+    text-decoration: none;
+
+    &:hover {
+        background: #f5f5f5;
+        color: $primary_color;
+    }
+}
+
+.userMenuItemLogout {
+    display: block;
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: left;
+    padding: 10px 16px;
+    font-size: 14px;
+    color: #e74c3c;
+    cursor: pointer;
+    font-family: inherit;
+
+    &:hover {
+        background: #fff5f5;
+    }
+}
