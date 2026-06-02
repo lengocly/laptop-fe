@@ -39,8 +39,8 @@ function MyHeader() {
     //sử dụng context để lấy trạng thái mở đóng của sidebar
     const { setIsOpen, setType } = useContext(SideBarContext);
 
-    //AuthContext lấy user, logout, loading
-    const { user, logout, loading } = useContext(AuthContext);
+    //AuthContext lấy user, logout, loading, isAdmin để kiểm tra user có phải admin không
+    const { user, logout, loading , isAdmin} = useContext(AuthContext);
 
     const handleOpenSideBar = (type) => {
         setIsOpen(true);
@@ -129,21 +129,34 @@ function MyHeader() {
                                             <span>Xin chào, {user.name}</span>
                                         </span>
                                     </button>
-
+                                    {/* hiển thị menu dropdown */}
                                     <div className={styles.userDropdown}>
+
+                                        {/* hiển thị thông tin user */}
                                         <div className={styles.userInfo}>
                                             <strong>{user.name}</strong>
                                             <span>{user.email}</span>
                                         </div>
 
+                                        {/* hiển thị đường ngắn */}
                                         <div className={styles.userDivider} />
 
+                                        {/* hiển thị menu item đơn hàng */}
                                         <Link to="/don-hang-cua-toi" className={styles.userMenuItem}>
                                             Đơn hàng
                                         </Link>
 
+                                        {/* hiển thị menu item admin */}
+                                
+                                        {isAdmin && (
+                                            <Link to="/admin/dashboard" className={styles.userMenuItem}>
+                                                Admin
+                                            </Link>
+                                        )}
+                                        {/* hiển thị đường ngắn */}
                                         <div className={styles.userDivider} />
 
+                                        {/* hiển thị menu item đăng xuất */}
                                         <button
                                             type="button"
                                             className={styles.userMenuItemLogout}

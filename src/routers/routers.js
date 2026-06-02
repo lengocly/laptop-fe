@@ -33,6 +33,17 @@ const routers = [
         path: '/don-hang-cua-toi',
         component: lazy(() => import('@components/MyOrdersPage/MyOrdersPage')),
     },
+
+
+    // ====== ADMIN ======
+    {
+        path: '/admin/dashboard',
+        component: lazy(() => import('@components/Admin/AdminDashboardPage/AdminDashboardPage')),
+    },
+    {
+        path: '/admin/don-hang',
+        component: lazy(() => import('@components/Admin/AdminOrdersPage/AdminOrdersPage')),
+    },
 ];
 
 export default routers;

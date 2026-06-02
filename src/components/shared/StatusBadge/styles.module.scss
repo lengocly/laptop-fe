@@ -1,0 +1,43 @@
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  
+  .pending,
+  .unpaid {
+    background: #fff7ed;
+    color: #c2410c;
+    border: 1px solid #fed7aa;
+  }
+  
+  .processing,
+  .shipping {
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+  }
+  
+  .delivered,
+  .paid {
+    background: #ecfdf5;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+  }
+  
+  .cancelled,
+  .failed {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+  }
+  
+  .default {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #e5e7eb;
+  }

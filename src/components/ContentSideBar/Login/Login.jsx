@@ -34,14 +34,14 @@ function Login() {
         }
     
         try {
-            await login(email, password);
+            await login(email, password); 
+
+            //Sau khi login thành công
             setIsOpen(false); // đóng sidebar
             
-            //lấy giá trị của tham số next từ URL để chuyển trang ng dùng qua trang thanh toán
+            //Chuyển về trang chủ hoặc trang next
             const next = searchParams.get('next');
-            if (next) {
-                navigate(next);
-            }
+            navigate(next || '/', { replace: true });
         } catch (err) {
             const status = err.response?.status;
             const data = err.response?.data;

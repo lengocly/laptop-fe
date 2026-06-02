@@ -50,6 +50,7 @@ export function AuthProvider({ children }) {
         user,
         loading,
         isAuthenticated: !!user,
+        isAdmin: !!user?.is_admin,   //kiểm tra user có phải admin không
         login,
         logout,
         register,

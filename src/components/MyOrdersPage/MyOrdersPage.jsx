@@ -1,4 +1,5 @@
 // lịch sử mua hàng
+//status là trạng thái giao hàng, còn payment_status là trạng thái thanh toán
 
 import { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -9,30 +10,49 @@ import { formatVnd } from '@/utils/price';
 import { getMyOrders } from '@/apis/orderService';
 import styles from './styles.module.scss';
 import classNames from 'classnames';
-import { FiCheckCircle, FiX } from 'react-icons/fi';
+import { FiCheckCircle, FiX, FiPackage } from 'react-icons/fi';
+import StatusBadge from '@components/shared/StatusBadge/StatusBadge';
+import { ORDER_STATUS_LABEL, PAYMENT_STATUS_LABEL } from '@/constants/orderStatus';
 
 const paymentLabel = {
     cod: 'Thanh toán khi nhận hàng',
     stripe: 'Thẻ (Stripe)',
 };
 
-const statusLabel = {
-    pending: 'Chờ xử lý',
-    paid: 'Đã thanh toán',
-    cancelled: 'Đã hủy',
-};
+//format ngày tháng giờ
+function formatOrderDate(iso) {
+    return new Date(iso).toLocaleString('vi-VN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+    });
+}
 
 function MyOrdersPage() {
     const { loading, isAuthenticated } = useContext(AuthContext);
     const navigate = useNavigate();
     const [orders, setOrders] = useState([]);
+
+    //id đơn hàng được mở rộng
+    const [expandedOrderId, setExpandedOrderId] = useState(null);
+
+    //lỗi
     const [error, setError] = useState('');
 
     // hiện toast thành công
     const [showSuccess, setShowSuccess] = useState(false);
     const [newOrderCode, setNewOrderCode] = useState('');
 
-    // hiện toast thành công (đọc từ sessionStorage, 1 lần khi mount)
+    //bật tắt chi tiết đơn hàng
+    const toggleOrderDetail = (orderId) => {
+        setExpandedOrderId((currentId) =>
+            currentId === orderId ? null : orderId
+        );
+    };
+
+        // hiện toast thành công (đọc từ sessionStorage, 1 lần khi mount)
     useEffect(() => {
         //Mount trang → đọc order_success từ sessionStorage
         const raw = sessionStorage.getItem('order_success');
@@ -48,6 +68,7 @@ function MyOrdersPage() {
             sessionStorage.removeItem('order_success');
         }
     }, []);
+
 
     // tự động ẩn toast sau 5 giây
     useEffect(() => {
@@ -79,6 +100,7 @@ function MyOrdersPage() {
         fetchOrders(); // gọi API lấy đơn hàng
     }, [loading, isAuthenticated, showSuccess]);
 
+    //loading hoặc chưa login → không hiển thị
     if (loading || !isAuthenticated) return null;
 
     return (
@@ -110,58 +132,179 @@ function MyOrdersPage() {
                     <span>{orders.length} đơn hàng tổng cộng</span>
                 </div>
 
+                {/* hiện lỗi */}
                 {error && <p className={styles.err}>{error}</p>}
 
                 {orders.length === 0 ? (
                     <p className={styles.empty}>Chưa có đơn hàng.</p>
                 ) : (
-                    orders.map((order) => (
-                        <article key={order.id} className={styles.card}>
-                            <div className={styles.cardTop}>
-                                <div className={styles.cardLeft}>
-                                    <strong>{order.order_code}</strong>
-                                    <span
-                                        className={classNames(styles.badge, {
-                                            [styles.badgePending]: order.status === 'pending',
-                                            [styles.badgePaid]: order.status === 'paid',
-                                            [styles.badgeCancelled]: order.status === 'cancelled',
-                                        })}
-                                    >
-                                        {statusLabel[order.status] || order.status}
-                                    </span>
-                                </div>
-                                <div className={styles.cardRight}>
-                                    <span className={styles.date}>
-                                        {new Date(order.created_at).toLocaleString('vi-VN')}
-                                    </span>
-                                    <strong className={styles.amount}>
-                                        {formatVnd(order.subtotal)}
-                                    </strong>
-                                    <span
-                                        className={classNames(styles.payBadge, {
-                                            [styles.payUnpaid]: order.payment_status === 'unpaid',
-                                            [styles.payPaid]: order.payment_status === 'paid',
-                                        })}
-                                    >
-                                        {order.payment_status === 'paid' ? 'Đã thanh toán' : 'Chưa thanh toán'}
-                                    </span>
-                                </div>
-                            </div>
 
-                            <div className={styles.cardBody}>
-                                <p className={styles.payment}>
-                                    {paymentLabel[order.payment_method] || order.payment_method}
+                    //hiển thị danh sách đơn hàng
+                    orders.map((order) => {
+                        //kiểm tra đơn hàng được mở rộng hay không
+                        const isExpanded = expandedOrderId === order.id;
+
+                        //lấy sản phẩm đầu tiên và số lượng sản phẩm
+                        const firstItem = order.items?.[0];
+
+                        //lấy số lượng sản phẩm
+                        const itemCount = order.items?.length || 0;
+
+                        return (
+                        //mỗi đơn hàng là 1 article
+                        <article key={order.id} className={styles.card}>
+                             {/* Hàng 1: mã + badge giao hàng | giá + badge thanh toán + link chi tiết */}
+                             <div className={styles.cardHeader}>
+                                    <div className={styles.cardHeaderLeft}>
+                                        <strong className={styles.orderCode}>
+                                            {order.order_code}
+                                        </strong>
+                                        <StatusBadge
+                                            value={order.status}
+                                            label={
+                                                ORDER_STATUS_LABEL[order.status] ||
+                                                order.status
+                                            }
+                                        />
+                                    </div>
+                                    
+                                    <div className={styles.cardHeaderRight}>
+                                        <div className={styles.priceRow}>
+                                            <strong className={styles.amount}>
+                                                {formatVnd(order.subtotal)}
+                                            </strong>
+                                            <StatusBadge
+                                                value={order.payment_status}
+                                                label={
+                                                    PAYMENT_STATUS_LABEL[
+                                                        order.payment_status
+                                                    ] || order.payment_status
+                                                }
+                                            />
+                                        </div>
+                                        <button
+                                            type="button"
+                                            className={styles.detailLink}
+                                            onClick={() =>
+                                                toggleOrderDetail(order.id)
+                                            }
+                                        >
+                                            {isExpanded
+                                                ? 'Ẩn chi tiết'
+                                                : 'Xem chi tiết'}
+                                        </button>
+                                    </div>
+                                </div>
+                                {/* Hàng 2: ngày đặt */}
+                                <p className={styles.orderDate}>
+                                    Đặt hàng vào {formatOrderDate(order.created_at)}
                                 </p>
-                                <ul className={styles.items}>
-                                    {order.items?.map((item) => (
-                                        <li key={item.id}>
-                                            {item.product_name} × {item.quantity} — {formatVnd(item.line_total)}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
+                                {/* Hàng 3: preview sản phẩm (khi chưa expand) */}
+                                {!isExpanded && firstItem && (
+                                    <div className={styles.preview}>
+                                        <div className={styles.previewThumb}>
+                                            <FiPackage size={22} />
+                                        </div>
+                                        <div className={styles.previewInfo}>
+                                            <span className={styles.previewQty}>
+                                                {itemCount} sản phẩm
+                                            </span>
+                                            <span className={styles.previewName}>
+                                                {firstItem.product_name}
+                                                {itemCount > 1 &&
+                                                    ` +${itemCount - 1} sản phẩm khác`}
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+                                {/* Chi tiết expand — 3 cột ShopMini */}
+                                {isExpanded && (
+                                    <div className={styles.detailGrid}>
+                                        <section className={styles.detailBlock}>
+                                            <h3>Sản phẩm đặt hàng</h3>
+                                            <ul className={styles.itemList}>
+                                                {order.items?.map((item) => (
+                                                    <li
+                                                        key={item.id}
+                                                        className={styles.itemRow}
+                                                    >
+                                                        <div className={styles.itemLeft}>
+                                                            <div
+                                                                className={
+                                                                    styles.itemThumb
+                                                                }
+                                                            >
+                                                                <FiPackage size={18} />
+                                                            </div>
+                                                            <div>
+                                                                <p
+                                                                    className={
+                                                                        styles.itemName
+                                                                    }
+                                                                >
+                                                                    {item.product_name}
+                                                                </p>
+                                                                <span
+                                                                    className={
+                                                                        styles.itemQty
+                                                                    }
+                                                                >
+                                                                    Qty: {item.quantity}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <strong>
+                                                            {formatVnd(item.line_total)}
+                                                        </strong>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                            <p className={styles.paymentMethod}>
+                                                {paymentLabel[order.payment_method] ||
+                                                    order.payment_method}
+                                            </p>
+                                        </section>
+                                        <section className={styles.detailBlock}>
+                                            <h3>Địa chỉ giao hàng</h3>
+                                            <p className={styles.addressName}>
+                                                {order.full_name}
+                                            </p>
+                                            <p>{order.address}</p>
+                                            <p>{order.phone}</p>
+                                            {order.note && (
+                                                <p className={styles.note}>
+                                                    Ghi chú: {order.note}
+                                                </p>
+                                            )}
+                                        </section>
+                                        <section className={styles.detailBlock}>
+                                            <h3>Tóm tắt đơn hàng</h3>
+                                            <div className={styles.summaryRow}>
+                                                <span>Tạm tính</span>
+                                                <span>{formatVnd(order.subtotal)}</span>
+                                            </div>
+                                            <div className={styles.summaryRow}>
+                                                <span>Phí vận chuyển</span>
+                                                <span>0 đ</span>
+                                            </div>
+                                            <div className={styles.summaryRow}>
+                                                <span>Thuế</span>
+                                                <span>0 đ</span>
+                                            </div>
+                                            <div
+                                                className={`${styles.summaryRow} ${styles.summaryTotal}`}
+                                            >
+                                                <span>Tổng cộng</span>
+                                                <strong>
+                                                    {formatVnd(order.subtotal)}
+                                                </strong>
+                                            </div>
+                                        </section>
+                                    </div>
+                                )}
                         </article>
-                    ))
+                    );
+                })
                 )}
 
                 <Link to="/" className={styles.backLink}>← Về trang chủ</Link>

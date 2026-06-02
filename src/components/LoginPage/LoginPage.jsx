@@ -2,9 +2,7 @@ import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useContext } from 'react';
 import { SideBarContext } from '@/contexts/SideBarProvider';
-import MyHeader from '@components/Header/Header';
-import Button from '@components/Button/Button';
-
+import HomePage from '@components/HomePage/HomePage';
 function LoginPage() {
     //useSearchParams() Đọc ?verified=1, ?error=... từ URL
     const [searchParams] = useSearchParams();
@@ -26,28 +24,34 @@ function LoginPage() {
 
      //useEffect khi verified=1 : Tự mở form login (tiện sau khi bấm link mail) — có thể bỏ nếu chỉ muốn nút
 
-    // Tùy chọn: tự mở sidebar khi verify thành công
+    // Tùy chọn: tự mở sidebar 
     useEffect(() => {
-        if (verified === '1') {
-            setType('login');
-            setIsOpen(true);
-        }
-    }, [verified, setType, setIsOpen]);
-
-    const openLoginSidebar = () => {
         setType('login');
         setIsOpen(true);
-    };
+    }, [setType, setIsOpen]);
 
-    //MyHeader : Giống trang khác, vẫn có menu
+    
     return (
         <>
-            <MyHeader />
-            <div style={{ padding: '40px 20px', textAlign: 'center' }}>
-                {message && <p style={{ marginBottom: 20 }}>{message}</p>}
-                {!message && <p>Vui lòng đăng nhập.</p>}
-                <Button content="Đăng nhập" onClick={openLoginSidebar} />
-            </div>
+            <HomePage />
+
+            {message && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        top: 120,
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        zIndex: 1002,
+                        background: '#fff',
+                        padding: '12px 20px',
+                        borderRadius: 8,
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    }}
+                >
+                    <p>{message}</p>
+                </div>
+            )}
         </>
     );
 }
