@@ -20,6 +20,7 @@ import {
     calcDiscountPercent,
     calcSavings,
     formatVnd,
+    parsePriceNumber,
 } from '@/utils/price';
 
 const IMG_FALLBACK =
@@ -40,6 +41,14 @@ function ProductItem({ id, src, prevSrc, name, price, priceOriginal }) {
     const mainSrc = src || IMG_FALLBACK;
     const hoverSrc = prevSrc || mainSrc;
     const detailUrl = id != null ? `/product/${id}` : '#';
+
+
+    //Hiển thị giá
+    const priceText = formatVnd(parsePriceNumber(price));
+    const priceOriginalText = priceOriginal
+    ? formatVnd(parsePriceNumber(priceOriginal))
+    : '';
+
 
     //Tính % giảm giá và số tiền tiết kiệm được
     const discount = calcDiscountPercent(price, priceOriginal);
@@ -110,9 +119,9 @@ function ProductItem({ id, src, prevSrc, name, price, priceOriginal }) {
                 {/* Giá hiện tại + giá gốc + badge % */}
                 <div className={styles.priceBlock}>
                     <div className={styles.priceRow}>
-                        <span className={styles.priceCurrent}>{price}</span>
+                        <span className={styles.priceCurrent}>{priceText}</span>
                         {priceOriginal && (
-                            <span className={styles.priceOld}>{priceOriginal}</span>
+                            <span className={styles.priceOld}>{priceOriginalText}</span>
                         )}
                     </div>
                     {discount > 0 && (

@@ -15,3 +15,6 @@ export const PAYMENT_STATUS_LABEL = {
 //biến object thành array để hiển thị trong select
 export const ORDER_STATUS_OPTIONS = Object.entries(ORDER_STATUS_LABEL)
     .map(([value, label]) => ({ value, label }));
+
+// Khách được hủy khi admin chưa xác nhận
+export const canCustomerCancelOrder = (status) => status === 'pending';

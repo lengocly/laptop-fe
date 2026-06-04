@@ -5,6 +5,7 @@ import styles from './styles.module.scss';
 const menuItems = [
     { to: '/admin/dashboard', label: 'Dashboard' },
     { to: '/admin/don-hang', label: 'Đơn hàng' },
+    { to: '/admin/san-pham', label: 'Sản phẩm' },
 ];
 
 function AdminLayout({ title, children }) {

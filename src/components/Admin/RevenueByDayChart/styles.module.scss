@@ -1,0 +1,23 @@
+.chartCard {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+    h3 {
+        margin: 0 0 4px;
+        font-size: 18px;
+    }
+}
+
+.sub {
+    margin: 0 0 16px;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.empty {
+    color: #888;
+    font-size: 14px;
+}

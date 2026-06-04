@@ -14,6 +14,9 @@ import { FiCheckCircle, FiX, FiPackage } from 'react-icons/fi';
 import StatusBadge from '@components/shared/StatusBadge/StatusBadge';
 import { ORDER_STATUS_LABEL, PAYMENT_STATUS_LABEL } from '@/constants/orderStatus';
 
+import { cancelOrder } from '@/apis/orderService';
+import { canCustomerCancelOrder } from '@/constants/orderStatus';
+
 const paymentLabel = {
     cod: 'Thanh toán khi nhận hàng',
     stripe: 'Thẻ (Stripe)',
@@ -31,6 +34,10 @@ function formatOrderDate(iso) {
 }
 
 function MyOrdersPage() {
+
+    // id đơn hàng đang hủy
+    const [cancellingId, setCancellingId] = useState(null);
+
     const { loading, isAuthenticated } = useContext(AuthContext);
     const navigate = useNavigate();
     const [orders, setOrders] = useState([]);
@@ -100,6 +107,32 @@ function MyOrdersPage() {
         fetchOrders(); // gọi API lấy đơn hàng
     }, [loading, isAuthenticated, showSuccess]);
 
+    // hủy đơn hàng
+    const handleCancelOrder = async (order) => {
+        if (!canCustomerCancelOrder(order.status)) return;
+    
+        const ok = window.confirm(
+            `Bạn có chắc muốn hủy đơn ${order.order_code}?`
+        );
+        if (!ok) return;
+    
+        try {
+            setCancellingId(order.id);
+            setError('');
+            await cancelOrder(order.id);
+            const { data } = await getMyOrders();
+            setOrders(data);
+            if (expandedOrderId === order.id) {
+                setExpandedOrderId(null);
+            }
+        } catch (err) {
+            const msg = err.response?.data?.message || 'Không thể hủy đơn hàng.';
+            setError(msg);
+        } finally {
+            setCancellingId(null);
+        }
+    };
+
     //loading hoặc chưa login → không hiển thị
     if (loading || !isAuthenticated) return null;
 
@@ -141,6 +174,10 @@ function MyOrdersPage() {
 
                     //hiển thị danh sách đơn hàng
                     orders.map((order) => {
+
+                        //kiểm tra đơn hàng có thể hủy được không
+                        const canCancel = canCustomerCancelOrder(order.status);
+
                         //kiểm tra đơn hàng được mở rộng hay không
                         const isExpanded = expandedOrderId === order.id;
 
@@ -182,17 +219,16 @@ function MyOrdersPage() {
                                                 }
                                             />
                                         </div>
+
+                                        {/* chi tiết + hủy đơn */}
                                         <button
                                             type="button"
-                                            className={styles.detailLink}
-                                            onClick={() =>
-                                                toggleOrderDetail(order.id)
-                                            }
+                                            className={styles.detailToggle}
+                                            onClick={() => toggleOrderDetail(order.id)}
                                         >
-                                            {isExpanded
-                                                ? 'Ẩn chi tiết'
-                                                : 'Xem chi tiết'}
+                                            {isExpanded ? 'Ẩn chi tiết' : 'Xem chi tiết'}
                                         </button>
+
                                     </div>
                                 </div>
                                 {/* Hàng 2: ngày đặt */}
@@ -219,88 +255,103 @@ function MyOrdersPage() {
                                 )}
                                 {/* Chi tiết expand — 3 cột ShopMini */}
                                 {isExpanded && (
-                                    <div className={styles.detailGrid}>
-                                        <section className={styles.detailBlock}>
-                                            <h3>Sản phẩm đặt hàng</h3>
-                                            <ul className={styles.itemList}>
-                                                {order.items?.map((item) => (
-                                                    <li
-                                                        key={item.id}
-                                                        className={styles.itemRow}
-                                                    >
-                                                        <div className={styles.itemLeft}>
-                                                            <div
-                                                                className={
-                                                                    styles.itemThumb
-                                                                }
-                                                            >
-                                                                <FiPackage size={18} />
-                                                            </div>
-                                                            <div>
-                                                                <p
+                                    <>
+                                    <div className={styles.detailWrap}>
+                                        <div className={styles.detailGrid}>
+                                            <section className={styles.detailBlock}>
+                                                <h3>Sản phẩm đặt hàng</h3>
+                                                <ul className={styles.itemList}>
+                                                    {order.items?.map((item) => (
+                                                        <li
+                                                            key={item.id}
+                                                            className={styles.itemRow}
+                                                        >
+                                                            <div className={styles.itemLeft}>
+                                                                <div
                                                                     className={
-                                                                        styles.itemName
+                                                                        styles.itemThumb
                                                                     }
                                                                 >
-                                                                    {item.product_name}
-                                                                </p>
-                                                                <span
-                                                                    className={
-                                                                        styles.itemQty
-                                                                    }
-                                                                >
-                                                                    Qty: {item.quantity}
-                                                                </span>
+                                                                    <FiPackage size={18} />
+                                                                </div>
+                                                                <div>
+                                                                    <p
+                                                                        className={
+                                                                            styles.itemName
+                                                                        }
+                                                                    >
+                                                                        {item.product_name}
+                                                                    </p>
+                                                                    <span
+                                                                        className={
+                                                                            styles.itemQty
+                                                                        }
+                                                                    >
+                                                                        Qty: {item.quantity}
+                                                                    </span>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <strong>
-                                                            {formatVnd(item.line_total)}
-                                                        </strong>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                            <p className={styles.paymentMethod}>
-                                                {paymentLabel[order.payment_method] ||
-                                                    order.payment_method}
-                                            </p>
-                                        </section>
-                                        <section className={styles.detailBlock}>
-                                            <h3>Địa chỉ giao hàng</h3>
-                                            <p className={styles.addressName}>
-                                                {order.full_name}
-                                            </p>
-                                            <p>{order.address}</p>
-                                            <p>{order.phone}</p>
-                                            {order.note && (
-                                                <p className={styles.note}>
-                                                    Ghi chú: {order.note}
+                                                            <strong>
+                                                                {formatVnd(item.line_total)}
+                                                            </strong>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                                <p className={styles.paymentMethod}>
+                                                    {paymentLabel[order.payment_method] ||
+                                                        order.payment_method}
                                                 </p>
-                                            )}
-                                        </section>
-                                        <section className={styles.detailBlock}>
-                                            <h3>Tóm tắt đơn hàng</h3>
-                                            <div className={styles.summaryRow}>
-                                                <span>Tạm tính</span>
-                                                <span>{formatVnd(order.subtotal)}</span>
-                                            </div>
-                                            <div className={styles.summaryRow}>
-                                                <span>Phí vận chuyển</span>
-                                                <span>0 đ</span>
-                                            </div>
-                                            <div className={styles.summaryRow}>
-                                                <span>Thuế</span>
-                                                <span>0 đ</span>
-                                            </div>
-                                            <div
-                                                className={`${styles.summaryRow} ${styles.summaryTotal}`}
+                                            </section>
+                                            <section className={styles.detailBlock}>
+                                                <h3>Địa chỉ giao hàng</h3>
+                                                <p className={styles.addressName}>
+                                                    {order.full_name}
+                                                </p>
+                                                <p>{order.address}</p>
+                                                <p>{order.phone}</p>
+                                                {order.note && (
+                                                    <p className={styles.note}>
+                                                        Ghi chú: {order.note}
+                                                    </p>
+                                                )}
+                                            </section>
+                                            <section className={styles.detailBlock}>
+                                                <h3>Tóm tắt đơn hàng</h3>
+                                                <div className={styles.summaryRow}>
+                                                    <span>Tạm tính</span>
+                                                    <span>{formatVnd(order.subtotal)}</span>
+                                                </div>
+                                                <div className={styles.summaryRow}>
+                                                    <span>Phí vận chuyển</span>
+                                                    <span>0 đ</span>
+                                                </div>
+                                                <div className={styles.summaryRow}>
+                                                    <span>Thuế</span>
+                                                    <span>0 đ</span>
+                                                </div>
+                                                <div
+                                                    className={`${styles.summaryRow} ${styles.summaryTotal}`}
+                                                >
+                                                    <span>Tổng cộng</span>
+                                                    <strong>
+                                                        {formatVnd(order.subtotal)}
+                                                    </strong>
+                                                </div>
+                                            </section>
+                                        </div>
+
+                                        {canCancel && (
+                                            <button
+                                                type="button"
+                                                className={styles.cancelBtnLarge}
+                                                disabled={cancellingId === order.id}
+                                                onClick={() => handleCancelOrder(order)}
                                             >
-                                                <span>Tổng cộng</span>
-                                                <strong>
-                                                    {formatVnd(order.subtotal)}
-                                                </strong>
-                                            </div>
-                                        </section>
-                                    </div>
+                                                Hủy đơn hàng
+                                            </button>
+                                        )}
+                                        </div>
+                                    </>
                                 )}
                         </article>
                     );

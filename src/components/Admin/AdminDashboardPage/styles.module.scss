@@ -66,3 +66,36 @@
         background: #fafafa;
     }
 }
+
+//không có đơn hàng
+.empty {
+    text-align: center;
+    color: #888;
+    padding: 20px;
+}
+
+//nút xem chi tiết đơn hàng
+.detailBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: #2563eb;
+    color: #fff !important;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none !important;
+    white-space: nowrap;
+    transition: background 0.15s ease;
+
+    &:hover {
+        background: #1d4ed8;
+        color: #fff;
+    }
+}
+
+//biểu đồ doanh thu theo ngày
+.charts {
+    margin-bottom: 24px;
+}

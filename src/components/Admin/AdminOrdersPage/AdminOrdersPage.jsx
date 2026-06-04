@@ -4,20 +4,40 @@ import AdminLayout from '../AdminLayout/AdminLayout';
 import { getAdminOrders, updateOrderStatus } from '@/apis/adminOrderService';
 import { formatVnd } from '@/utils/price';
 import styles from './styles.module.scss';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import StatusBadge from '@components/shared/StatusBadge/StatusBadge';
+import {
+    ORDER_STATUS_LABEL,
+    PAYMENT_STATUS_LABEL,
+    ORDER_STATUS_OPTIONS
+} from '@/constants/orderStatus';
+import OrderStatusModal from '../OrderStatusModal/OrderStatusModal';
 
-const statusOptions = [
-    { value: 'pending', label: 'Chờ xử lý' },
-    { value: 'processing', label: 'Đang xử lý' },
-    { value: 'shipping', label: 'Đang giao' },
-    { value: 'delivered', label: 'Đã giao' },
-    { value: 'cancelled', label: 'Đã hủy' },
-];
 
 function AdminOrdersPage() {
     const [orders, setOrders] = useState([]);
     const [error, setError] = useState('');
     const [updatingId, setUpdatingId] = useState(null);
 
+    //tìm kiếm, lọc trạng thái, modal cập nhật trạng thái, toast thành công
+    const [keyword, setKeyword] = useState('');
+    const [statusFilter, setStatusFilter] = useState('');
+    const [modalOrder, setModalOrder] = useState(null);
+    const [toast, setToast] = useState('');
+
+    //lọc danh sách đơn hàng theo từ khóa và trạng thái
+    const filteredOrders = orders.filter((order) => {
+        const matchStatus = !statusFilter || order.status === statusFilter;
+        const kw = keyword.trim().toLowerCase();
+        const matchKw =
+            !kw ||
+            [order.order_code, order.user?.name, order.user?.email].some((x) =>
+                String(x || '').toLowerCase().includes(kw)
+            );
+        return matchStatus && matchKw;
+    });
+
+    //tải danh sách đơn hàng
     const loadOrders = async () => {
         try {
             const { data } = await getAdminOrders();
@@ -44,10 +64,52 @@ function AdminOrdersPage() {
         }
     };
 
+    //lọc danh sách đơn hàng theo trạng thái
+    const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const s = searchParams.get('status');
+        if (s) setStatusFilter(s);
+    }, [searchParams]);
+    
+    //cập nhật trạng thái đơn hàng
+    const handleModalSubmit = async (orderId, status, note) => {
+        try {
+            setUpdatingId(orderId);
+            await updateOrderStatus(orderId, status, note);
+            setModalOrder(null);
+            setToast('Cập nhật trạng thái thành công.');
+            await loadOrders();
+        } catch {
+            setError('Không thể cập nhật trạng thái.');
+        } finally {
+            setUpdatingId(null);
+        }
+    };
+
     return (
         <AdminRoute>
             <AdminLayout title="Quản lý đơn hàng">
                 {error && <p className={styles.err}>{error}</p>}
+
+                {/* toolbar tìm kiếm, lọc trạng thái */}
+                <div className={styles.toolbar}>
+                    <input
+                        placeholder="Tìm mã đơn, tên, email..."
+                        value={keyword}
+                        onChange={(e) => setKeyword(e.target.value)}
+                    />
+                    <select
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                    >
+                        <option value="">Tất cả trạng thái</option>
+                        {ORDER_STATUS_OPTIONS.map((o) => (
+                            <option key={o.value} value={o.value}>{o.label}</option>
+                        ))}
+                    </select>
+                </div>
 
                 <div className={styles.tableWrap}>
                     <table className={styles.table}>
@@ -57,17 +119,24 @@ function AdminOrdersPage() {
                                 <th>Khách hàng</th>
                                 <th>Ngày đặt</th>
                                 <th>Tổng</th>
+                                <th>Trạng thái</th>
                                 <th>Thanh toán</th>
-                                <th>Trạng thái giao hàng</th>
+                                <th>Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
                             {orders.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className={styles.empty}>Chưa có đơn hàng.</td>
+                                    <td colSpan={7} className={styles.empty}>Chưa có đơn hàng.</td>
+                                </tr>
+                            ) : filteredOrders.length === 0 ? (
+                                <tr>
+                                    <td colSpan={7} className={styles.empty}>
+                                        Không tìm thấy đơn phù hợp.
+                                    </td>
                                 </tr>
                             ) : (
-                                orders.map((order) => (
+                                filteredOrders.map((order)  => (
                                     <tr key={order.id}>
                                         <td><strong>{order.order_code}</strong></td>
                                         <td>
@@ -78,30 +147,44 @@ function AdminOrdersPage() {
                                             {new Date(order.created_at).toLocaleString('vi-VN')}
                                         </td>
                                         <td>{formatVnd(order.subtotal)}</td>
+                                        
+
+                                        {/* trạng thái giao hàng */}
                                         <td>
-                                            <span className={
-                                                order.payment_status === 'paid'
-                                                    ? styles.payPaid
-                                                    : styles.payUnpaid
-                                            }>
-                                                {order.payment_status === 'paid' ? 'Đã TT' : 'Chưa TT'}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <select
-                                                className={styles.select}
+                                            <StatusBadge
+                                                type="order"
                                                 value={order.status}
-                                                disabled={updatingId === order.id}
-                                                onChange={(e) =>
-                                                    handleChangeStatus(order.id, e.target.value)
-                                                }
+                                                label={ORDER_STATUS_LABEL[order.status]}
+                                            />
+                                        </td>
+                                        
+                                        {/* thanh toán */}
+                                        <td>
+                                            <StatusBadge
+                                                type="payment"
+                                                value={order.payment_status}
+                                                label={PAYMENT_STATUS_LABEL[order.payment_status]}
+                                            />
+                                        </td>
+
+                                        {/* hành động: xem chi tiết, sửa trạng thái */}   
+                                        <td className={styles.actions}>
+                                            <button
+                                                type="button"
+                                                className={styles.iconBtn}
+                                                title="Xem chi tiết"
+                                                onClick={() => navigate(`/admin/don-hang/${order.id}`)}
                                             >
-                                                {statusOptions.map((opt) => (
-                                                    <option key={opt.value} value={opt.value}>
-                                                        {opt.label}
-                                                    </option>
-                                                ))}
-                                            </select>
+                                                👁
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className={styles.iconBtn}
+                                                title="Sửa trạng thái"
+                                                onClick={() => setModalOrder(order)}
+                                            >
+                                                ✏️
+                                            </button>
                                         </td>
                                     </tr>
                                 ))
@@ -109,6 +192,18 @@ function AdminOrdersPage() {
                         </tbody>
                     </table>
                 </div>
+
+                {/* modal cập nhật trạng thái */}
+                <OrderStatusModal
+                    open={!!modalOrder}
+                    order={modalOrder}
+                    onClose={() => setModalOrder(null)}
+                    onSubmit={handleModalSubmit}
+                    loading={updatingId === modalOrder?.id}
+                />
+
+                {/* toast thành công */}
+                {toast && <p className={styles.toast}>{toast}</p>}
             </AdminLayout>
         </AdminRoute>
     );

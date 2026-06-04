@@ -4,7 +4,7 @@
  */
 import styles from './styles.module.scss';
 import VariantPicker from './VariantPicker';
-import { calcDiscountPercent } from '@/utils/price';
+import { calcDiscountPercent, formatVnd, parsePriceNumber } from '@/utils/price';
 import { useContext } from 'react';
 import { SideBarContext } from '@/contexts/SideBarProvider';
 
@@ -27,6 +27,12 @@ function ProductBuyBox({
     const priceOriginal = product.price_original;
     const discount = calcDiscountPercent(product.price, priceOriginal); //Tính % giảm giá
 
+    //Hiển thị giá
+    const priceText = formatVnd(parsePriceNumber(product.price));
+    const priceOriginalText = priceOriginal
+        ? formatVnd(parsePriceNumber(priceOriginal))
+        : '';
+
     const { setIsOpen, setType } = useContext(SideBarContext);
 
     const handleAddToCart = () => {
@@ -40,13 +46,11 @@ function ProductBuyBox({
 
             {/* Giá hiện tại + giá gốc + badge % */}
             <div className={styles.priceRow}>
-                <p className={styles.price}>{product.price}</p>
-                {priceOriginal && (
+                <p className={styles.price}>{priceText}</p>
+                {priceOriginalText && discount > 0 && (
                     <>
-                        <p className={styles.priceOld}>{priceOriginal}</p>
-                        {discount > 0 && (
-                            <span className={styles.badgeSale}>-{discount}%</span>
-                        )}
+                        <p className={styles.priceOld}>{priceOriginalText}</p>
+                        <span className={styles.badgeSale}>-{discount}%</span>
                     </>
                 )}
             </div>

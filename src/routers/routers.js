@@ -44,6 +44,26 @@ const routers = [
         path: '/admin/don-hang',
         component: lazy(() => import('@components/Admin/AdminOrdersPage/AdminOrdersPage')),
     },
+    {
+        path: '/admin/don-hang/:orderId',
+        component: lazy(() => import('@components/Admin/AdminOrderDetailPage/AdminOrderDetailPage')),
+    },
+
+    //Admin xem danh sách sản phẩm
+    {
+        path: '/admin/san-pham',
+        component: lazy(() => import('@components/Admin/AdminProductsPage/AdminProductsPage')),
+    },
+    //Admin thêm sản phẩm
+    {
+        path: '/admin/san-pham/tao',
+        component: lazy(() => import('@components/Admin/AdminProductFormPage/AdminProductFormPage')),
+    },
+    //Admin sửa sản phẩm
+    {
+        path: '/admin/san-pham/:id',
+        component: lazy(() => import('@components/Admin/AdminProductFormPage/AdminProductFormPage')),
+    },
 ];
 
 export default routers;

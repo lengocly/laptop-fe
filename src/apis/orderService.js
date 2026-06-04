@@ -9,3 +9,8 @@ export function createOrder(payload) {
 export function getMyOrders() {
     return axiosClient.get('/orders');
 }
+
+//Khách hủy đơn (chỉ khi admin chưa xác nhận)
+export function cancelOrder(orderId) {
+    return axiosClient.patch(`/orders/${orderId}/cancel`);
+}
