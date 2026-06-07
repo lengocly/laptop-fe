@@ -9,9 +9,10 @@ const dataBoxIcon = [
 const dataMenu = [
     { content: 'Trang chủ', href: '/' },
     { content: 'Cửa hàng', href: '/cua-hang' },
-    { content: 'Giới thiệu', href: '#' },
-    { content: 'Liên hệ', href: '#' },
-    { content: 'Tìm kiếm', href: '#' },
+    { content: 'Giới thiệu', href: '/gioi-thieu' },
+    { content: 'Liên hệ', href: '/lien-he' },
+    // href '#' — mở SearchOverlay trong Header, không điều hướng trang
+    { content: 'Tìm kiếm', href: '#', action: 'search' },
     { content: 'Đăng nhập', href: '#' }
 ];
 

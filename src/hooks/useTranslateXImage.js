@@ -1,30 +1,34 @@
-import useScrollHandling from '@/hooks/useScrollHandling';
 import { useEffect, useState } from 'react';
 
-// hook để xử lý hiệu ứng trượt sang 2 bên cho ảnh khi cuộn xuống dưới
-const useTranslateXImage = () => {
-    const { scrollPosition, scrollDriction } = useScrollHandling();
+/**
+ * Hiệu ứng 2 ảnh laptop trượt ra 2 bên khi user scroll tới khối Sale.
+ * Dùng Intersection Observer — không phụ thuộc pixel cố định (3500px cũ bị lệch sau đổi layout).
+ *
+ * @param {React.RefObject} sectionRef — ref gắn vào .container của SaleHomepage
+ */
+const useTranslateXImage = (sectionRef) => {
+    const [translateXPosition, setTranslateXPosition] = useState(80);
 
-    const [translateXPosition, setTranslateXPoisition] = useState(80);
-
-    //tạo hàm để xử lý khi cuộn xuống dưới trượt sang 2 bên
-    const handleTranslateX = () => {
-        if (scrollDriction === 'down' && scrollPosition >= 3500) {
-            setTranslateXPoisition(
-                translateXPosition <= 0 ? 0 : translateXPosition - 1
-            );
-        } else if (scrollDriction === 'up') {
-            //khi cuộn lên trên cố định
-            setTranslateXPoisition(
-                translateXPosition >= 80 ? 80 : translateXPosition + 1
-            );
-        }
-    };
-
-    //gọi hàm xử lý khi cuộn xuống dưới trượt sang 2 bên
     useEffect(() => {
-        handleTranslateX();
-    }, [scrollPosition]);
+        const el = sectionRef?.current;
+        if (!el) return undefined;
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    // Vào viewport → ảnh trượt vào (translate 0)
+                    setTranslateXPosition(0);
+                } else if (entry.boundingClientRect.top > 0) {
+                    // Chưa scroll tới → ảnh ở vị trí ban đầu
+                    setTranslateXPosition(60);
+                }
+            },
+            { threshold: 0.25, rootMargin: '0px 0px -30% 0px' }
+        );
+
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, [sectionRef]);
 
     return { translateXPosition };
 };

@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminRoute from '@components/AdminRoute/AdminRoute';
 import AdminLayout from '../AdminLayout/AdminLayout';
-import axiosClient from '@/apis/axiosClient';
+import { getFlatChildCategories } from '@/apis/categoriesService';
 import {
     getAdminProducts,
     deleteProduct,
@@ -32,6 +32,20 @@ function productImageUrl(path) {
     if (!path) return '';
     if (path.startsWith('http')) return path;
     return `${API_ORIGIN}/storage/${path}`;
+}
+
+// Sinh danh sách số trang hiển thị (tối đa 5 nút quanh trang hiện tại)
+function getPageNumbers(current, last) {
+    if (last <= 1) return last === 1 ? [1] : [];
+    const pages = [];
+    let start = Math.max(1, current - 2);
+    let end = Math.min(last, current + 2);
+    if (end - start < 4) {
+        if (start === 1) end = Math.min(last, start + 4);
+        else if (end === last) start = Math.max(1, end - 4);
+    }
+    for (let i = start; i <= end; i += 1) pages.push(i);
+    return pages;
 }
 
 // Tổng kho: ưu tiên cộng stock các biến thể, không có thì dùng stock SP cha
@@ -54,32 +68,22 @@ function AdminProductsPage() {
     const [activeFilter, setActiveFilter] = useState(''); // '' | '1' | '0'
     const [error, setError] = useState('');             // lỗi đỏ
     const [toast, setToast] = useState('');             // thông báo xanh
+    const [page, setPage] = useState(1);
+    const [perPage] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [total, setTotal] = useState(0);
 
     // --- TẢI DANH MỤC (API công khai /categories) ---
     useEffect(() => {
-        axiosClient
-            .get('/categories')
-            .then(({ data }) => {
-                const flat = [];
-                // data.categories = cha + children (giống StorePage)
-                (data.categories || []).forEach((parent) => {
-                    (parent.children || []).forEach((child) => {
-                        flat.push({
-                            id: child.id,
-                            name: child.name,
-                            slug: child.slug,
-                        });
-                    });
-                });
-                setCategories(flat);
-            })
+        getFlatChildCategories()
+            .then(setCategories)
             .catch(() => {});
     }, []);
 
-    // --- TẢI DANH SÁCH SP (gọi Phase 1: AdminProductController@index) ---
+    // --- TẢI DANH SÁCH SP (có phân trang) ---
     const loadProducts = async () => {
         try {
-            const params = {};
+            const params = { page, per_page: perPage };
             if (keyword.trim()) params.keyword = keyword.trim();
             if (categoryId) params.category_id = categoryId;
             // BE: is_active boolean — gửi true/false khi chọn lọc
@@ -87,17 +91,27 @@ function AdminProductsPage() {
             if (activeFilter === '0') params.is_active = false;
 
             const { data } = await getAdminProducts(params);
-            setProducts(data);
+            const items = data.data || [];
+            const last = data.last_page || 1;
+
+            // Trang hiện tại vượt quá tổng trang (vd. sau khi xóa) → lùi về trang cuối
+            if (items.length === 0 && page > 1 && page > last) {
+                setPage(last);
+                return;
+            }
+
+            setProducts(items);
+            setTotalPages(last);
+            setTotal(data.total || 0);
             setError('');
         } catch {
             setError('Không tải được danh sách sản phẩm. Kiểm tra đăng nhập admin.');
         }
     };
 
-    // Mỗi khi đổi bộ lọc → gọi lại API
     useEffect(() => {
         loadProducts();
-    }, [keyword, categoryId, activeFilter]);
+    }, [page, keyword, categoryId, activeFilter]);
 
     // --- XÓA SP (Phase 1: destroy) ---
     const handleDelete = async (product) => {
@@ -129,12 +143,18 @@ function AdminProductsPage() {
                     <input
                         placeholder="Tìm tên, slug..."
                         value={keyword}
-                        onChange={(e) => setKeyword(e.target.value)}
+                        onChange={(e) => {
+                            setKeyword(e.target.value);
+                            setPage(1);
+                        }}
                     />
 
                     <select
                         value={categoryId}
-                        onChange={(e) => setCategoryId(e.target.value)}
+                        onChange={(e) => {
+                            setCategoryId(e.target.value);
+                            setPage(1);
+                        }}
                     >
                         <option value="">Tất cả danh mục</option>
                         {categories.map((c) => (
@@ -146,7 +166,10 @@ function AdminProductsPage() {
 
                     <select
                         value={activeFilter}
-                        onChange={(e) => setActiveFilter(e.target.value)}
+                        onChange={(e) => {
+                            setActiveFilter(e.target.value);
+                            setPage(1);
+                        }}
                     >
                         <option value="">Tất cả trạng thái</option>
                         <option value="1">Hoạt động</option>
@@ -251,6 +274,49 @@ function AdminProductsPage() {
                         </tbody>
                     </table>
                 </div>
+
+                {/* Phân trang */}
+                {totalPages > 1 && (
+                    <div className={styles.pagination}>
+                        <span className={styles.paginationInfo}>
+                            {total} sản phẩm · Trang {page}/{totalPages}
+                        </span>
+                        <div className={styles.paginationControls}>
+                            <button
+                                type="button"
+                                className={styles.pageBtn}
+                                disabled={page <= 1}
+                                onClick={() => setPage((p) => p - 1)}
+                                aria-label="Trang trước"
+                            >
+                                ‹
+                            </button>
+                            {getPageNumbers(page, totalPages).map((n) => (
+                                <button
+                                    key={n}
+                                    type="button"
+                                    className={
+                                        n === page
+                                            ? `${styles.pageBtn} ${styles.pageBtnActive}`
+                                            : styles.pageBtn
+                                    }
+                                    onClick={() => setPage(n)}
+                                >
+                                    {n}
+                                </button>
+                            ))}
+                            <button
+                                type="button"
+                                className={styles.pageBtn}
+                                disabled={page >= totalPages}
+                                onClick={() => setPage((p) => p + 1)}
+                                aria-label="Trang sau"
+                            >
+                                ›
+                            </button>
+                        </div>
+                    </div>
+                )}
 
                 {/* Toast góc phải (sau khi xóa) */}
                 {toast && <p className={styles.toast}>{toast}</p>}

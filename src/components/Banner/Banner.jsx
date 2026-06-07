@@ -1,14 +1,73 @@
+/**
+ * =============================================================================
+ * Banner — Hero carousel trang chủ (3 ảnh)
+ * =============================================================================
+ * - 3 file ảnh: banner.png, banner1.avif, banner2.webp (assets/icons/images)
+ * - Tự đổi slide 5 giây; click chấm tròn để chọn slide
+ * - overlay + glass: chữ trắng nổi trên ảnh; header không bị che (padding-top + z-index Header)
+ * - Info bar đè lên đáy banner (margin-top âm trong Info/styles)
+ * =============================================================================
+ */
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './styles.module.scss';
-import Button from '@components/Button/Button';
+
+import bannerImg from '@icons/images/banner.png';
+import banner1Img from '@icons/images/banner1.avif';
+import banner2Img from '@icons/images/banner2.webp';
+
+const BANNERS = [bannerImg, banner1Img, banner2Img];
+const AUTO_MS = 5000;
 
 function Banner() {
-    const { container, content, title, des } = styles;
+    const navigate = useNavigate();
+    const [index, setIndex] = useState(0);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setIndex((i) => (i + 1) % BANNERS.length);
+        }, AUTO_MS);
+        return () => clearInterval(timer);
+    }, []);
+
     return (
-        <div className={container}>
-            <div className={content}>
-                <h1 className={title}>BetaTech</h1>
-                <div className={des}>Khám phá laptop phù hợp với bạn.</div>
-                <Button content={'Khám phá ngay'} />
+        <div className={styles.container}>
+            {BANNERS.map((src, i) => (
+                <div
+                    key={src}
+                    className={styles.bg}
+                    style={{
+                        backgroundImage: `url(${src})`,
+                        opacity: i === index ? 1 : 0,
+                    }}
+                    aria-hidden={i !== index}
+                />
+            ))}
+
+            <div className={styles.overlay} aria-hidden />
+
+            <div className={styles.content}>
+                <h1 className={styles.title}>BetaTech</h1>
+                <div className={styles.des}>Khám phá laptop phù hợp với bạn.</div>
+                <button
+                    type="button"
+                    className={styles.ctaBtn}
+                    onClick={() => navigate('/cua-hang')}
+                >
+                    Khám phá ngay
+                </button>
+            </div>
+
+            <div className={styles.dots}>
+                {BANNERS.map((_, i) => (
+                    <button
+                        key={i}
+                        type="button"
+                        className={i === index ? styles.dotActive : styles.dot}
+                        aria-label={`Banner ${i + 1}`}
+                        onClick={() => setIndex(i)}
+                    />
+                ))}
             </div>
         </div>
     );

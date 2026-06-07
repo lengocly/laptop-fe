@@ -6,6 +6,7 @@ const menuItems = [
     { to: '/admin/dashboard', label: 'Dashboard' },
     { to: '/admin/don-hang', label: 'Đơn hàng' },
     { to: '/admin/san-pham', label: 'Sản phẩm' },
+    { to: '/admin/voucher', label: 'Voucher' },
 ];
 
 function AdminLayout({ title, children }) {

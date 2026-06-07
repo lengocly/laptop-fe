@@ -5,4 +5,23 @@ const getCategories = async () => {
     return res.data;
 };
 
-export { getCategories };
+const flattenChildCategories = (data) => {
+    const flat = [];
+    (data?.categories || []).forEach((parent) => {
+        (parent.children || []).forEach((child) => {
+            flat.push({
+                id: child.id,
+                name: child.name,
+                slug: child.slug,
+            });
+        });
+    });
+    return flat;
+};
+
+const getFlatChildCategories = async () => {
+    const data = await getCategories();
+    return flattenChildCategories(data);
+};
+
+export { getCategories, flattenChildCategories, getFlatChildCategories };

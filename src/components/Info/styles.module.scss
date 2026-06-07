@@ -2,9 +2,12 @@
 @import '@styles/mixin.module.scss';
 
 .container {
+    position: relative;
+    z-index: 5; // nằm TRÊN banner, không bị ảnh che
     background-color: $primary_color;
-    margin-top: -75px; //đẩy lên trên banner cùng 1 thuộc tính trong styles homepage
+    margin-top: -72px; // đè lên đáy banner (khớp padding-bottom Banner)
     padding: 20px 50px;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.12);
 
     @include flex_box_custom(
         space-between,

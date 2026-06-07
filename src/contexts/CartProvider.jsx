@@ -91,6 +91,7 @@ export function CartProvider({ children }) {
             name,
             optionLabel = '',
             price,
+            priceOriginal = null,
             image,
             quantity = 1,
             maxStock = 99,
@@ -131,6 +132,10 @@ export function CartProvider({ children }) {
                     optionLabel,
                     price,
                     priceNumber: parsePriceNumber(price),
+                    priceOriginal: priceOriginal || null,
+                    priceOriginalNumber: priceOriginal
+                        ? parsePriceNumber(priceOriginal)
+                        : 0,
                     image,
                     quantity: Math.min(addQty, maxStock),
                     maxStock,

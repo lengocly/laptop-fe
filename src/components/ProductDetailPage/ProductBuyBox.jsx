@@ -19,6 +19,7 @@ function ProductBuyBox({
     onDecQty, //Hàm xử lý khi bấm vào nút "-".
     onIncQty,
     onScrollToReviews,  //Hàm xử lý khi bấm vào nút "Xem đánh giá".
+    reviewStats = { average: 0, total: 0 },
     shortDesc, //Mô tả ngắn.
     onAddToCart,   // hàm từ cha
     onBuyNow,      // tùy chọn, phase checkout
@@ -40,6 +41,11 @@ function ProductBuyBox({
         setIsOpen(true);
         setType('cart');
     };
+
+    // Mua ngay: không mở sidebar giỏ — chuyển thẳng sang checkout (logic ở ProductDetailPage)
+    const handleBuyNow = () => {
+        onBuyNow?.();
+    };
     return (
         <div className={styles.info}>
             <h1 className={styles.title}>{product.name}</h1>
@@ -57,9 +63,21 @@ function ProductBuyBox({
 
             <div className={styles.ratingRow}>
                 <span className={styles.stars} aria-hidden="true">
-                    ★★★★★
+                    {[1, 2, 3, 4, 5].map((i) => (
+                        <span
+                            key={i}
+                            style={{
+                                color:
+                                    i <= Math.round(reviewStats.average)
+                                        ? '#fbbf24'
+                                        : '#d1d5db',
+                            }}
+                        >
+                            ★
+                        </span>
+                    ))}
                 </span>
-                <span>(0)</span>
+                <span>({reviewStats.total})</span>
                 <button
                     type="button"
                     className={styles.reviewLink}
@@ -129,8 +147,8 @@ function ProductBuyBox({
                 <button
                     type="button"
                     className={styles.btnDanger}
-                    disabled={!inStock}
-                    onClick={() => alert('Mua ngay — Phase sau')}
+                    disabled={!inStock || !onBuyNow}
+                    onClick={handleBuyNow}
                 >
                     Mua ngay
                 </button>

@@ -1,15 +1,16 @@
+import { useRef } from 'react';
 import Button from '@components/Button/Button';
 import styles from './styles.module.scss';
 import useTranslateXImage from '@/hooks/useTranslateXImage';
 
-// sau phần sản phẩm PopularProduct
+// Khối sale cuối trang chủ — ảnh 2 bên trượt khi scroll tới section
 function SaleHomepage() {
     const { container, title, des, boxBtn, boxImage } = styles;
-
-    const { translateXPosition } = useTranslateXImage();
+    const sectionRef = useRef(null);
+    const { translateXPosition } = useTranslateXImage(sectionRef);
 
     return (
-        <div className={container}>
+        <div className={container} ref={sectionRef}>
             <div
                 className={boxImage}
                 style={{

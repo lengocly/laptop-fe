@@ -1,41 +1,21 @@
 /**
  * =============================================================================
- * NHIỆM VỤ FILE NÀY (PopularProduct)
+ * PopularProduct — Khối "Sản phẩm nổi bật" trên trang chủ
  * =============================================================================
- * - Hiển thị LƯỚI các sản phẩm “phổ biến / còn lại” trên trang chủ.
+ * - Chỉ bọc layout 1250px (MainLayout) và truyền data xuống ProductSlider.
+ * - Tiêu đề "Sản phẩm nổi bật" nằm ở AdvanceHeadling (phía trên).
  *
- * Props `data`:
- * - Mảng sản phẩm do HomePage truyền vào (thường là từ phần tử thứ 3 trở đi sau slice).
- *
- * data.map:
- * - Duyệt từng item; mỗi item render một ProductItem với images[0], images[1], name, price.
- * - key={item.id}: giúp React phân biệt phần tử khi list thay đổi (tránh lỗi hiển thị).
+ * Props data: toàn bộ listProducts từ HomePage (API getProducts).
  * =============================================================================
  */
 import MainLayout from '@components/Layout/Layout';
-import styles from './styles.module.scss';
-import ProductItem from '@components/ProductItem/ProductItem';
+import ProductSlider from '@components/ProductSlider/ProductSlider';
 
 function PopularProduct({ data }) {
-    const { container } = styles;
     return (
-        <>
-            <MainLayout>
-                <div className={container}>
-                    {data.map((item) => (
-                        <ProductItem
-                            key={item.id}
-                            id={item.id}
-                            src={item.images[0]}
-                            prevSrc={item.images[1]}
-                            name={item.name}
-                            price={item.price}
-                            priceOriginal={item.price_original}
-                        />
-                    ))}
-                </div>
-            </MainLayout>
-        </>
+        <MainLayout>
+            <ProductSlider data={data} />
+        </MainLayout>
     );
 }
 

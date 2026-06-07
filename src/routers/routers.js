@@ -19,6 +19,18 @@ const routers = [
         component: lazy(() => import('@components/StorePage/StorePage'))
     },
     {
+        path: '/gioi-thieu/bai-viet/:slug',
+        component: lazy(() => import('@components/AboutPage/BlogDetailPage'))
+    },
+    {
+        path: '/gioi-thieu',
+        component: lazy(() => import('@components/AboutPage/AboutPage'))
+    },
+    {
+        path: '/lien-he',
+        component: lazy(() => import('@components/ContactPage/ContactPage'))
+    },
+    {
         path: '/checkout',
         component: lazy(() => import('@components/CheckoutPage/CheckoutPage')),
     },
@@ -32,6 +44,12 @@ const routers = [
     {
         path: '/don-hang-cua-toi',
         component: lazy(() => import('@components/MyOrdersPage/MyOrdersPage')),
+    },
+
+    // quản lý tài khoản
+    {
+        path: '/tai-khoan',
+        component: lazy(() => import('@components/AccountPage/AccountPage')),
     },
 
 
@@ -63,6 +81,20 @@ const routers = [
     {
         path: '/admin/san-pham/:id',
         component: lazy(() => import('@components/Admin/AdminProductFormPage/AdminProductFormPage')),
+    },
+
+    // Admin voucher
+    {
+        path: '/admin/voucher',
+        component: lazy(() => import('@components/Admin/AdminVouchersPage/AdminVouchersPage')),
+    },
+    {
+        path: '/admin/voucher/tao',
+        component: lazy(() => import('@components/Admin/AdminVoucherFormPage/AdminVoucherFormPage')),
+    },
+    {
+        path: '/admin/voucher/:id',
+        component: lazy(() => import('@components/Admin/AdminVoucherFormPage/AdminVoucherFormPage')),
     },
 ];
 

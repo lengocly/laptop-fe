@@ -3,18 +3,24 @@ import { Link } from 'react-router-dom';
 import styles from '../styles.module.scss';
 import { SideBarContext } from '@/contexts/SideBarProvider';
 
-function Menu({ content, href }) {
+function Menu({ content, href, onClick }) {
     const { menu } = styles;
     const { setIsOpen, setType } = useContext(SideBarContext);
 
-    const handleClickShowLogin = () => {
+    const handleClick = () => {
+        // Hành động tùy chỉnh (vd: mở overlay tìm kiếm)
+        if (onClick) {
+            onClick();
+            return;
+        }
+
         if (content === 'Đăng nhập') {
             setIsOpen(true);
             setType('login');
         }
     };
 
-    if (href && href !== '#') {
+    if (href && href !== '#' && !onClick) {
         return (
             <Link to={href} className={menu}>
                 {content}
@@ -23,9 +29,9 @@ function Menu({ content, href }) {
     }
 
     return (
-        <div className={menu} onClick={handleClickShowLogin}>
+        <button type="button" className={menu} onClick={handleClick}>
             {content}
-        </div>
+        </button>
     );
 }
 

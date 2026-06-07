@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import AdminRoute from '@components/AdminRoute/AdminRoute';
 import AdminLayout from '../AdminLayout/AdminLayout';
-import axiosClient from '@/apis/axiosClient';
+import { getFlatChildCategories } from '@/apis/categoriesService';
 import {
     getAdminProduct,
     createProduct,
@@ -121,15 +121,7 @@ const handlePickHoverImage = async (e) => {
 
     // --- Tải danh mục cho dropdown ---
     useEffect(() => {
-        axiosClient.get('/categories').then(({ data }) => {
-            const flat = [];
-            (data.categories || []).forEach((parent) => {
-                (parent.children || []).forEach((child) => {
-                    flat.push({ id: child.id, name: child.name });
-                });
-            });
-            setCategories(flat);
-        });
+        getFlatChildCategories().then(setCategories).catch(() => {});
     }, []);
 
     // --- Sửa: tải SP từ API ---

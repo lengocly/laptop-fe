@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import MyHeader from '@components/Header/Header';
 import MyFooter from '@components/Footer/Footer';
 import { getProductById } from '@/apis/productsService';
@@ -10,12 +10,16 @@ import ProductSpecs from './ProductSpecs';
 import ProductReviews from './ProductReviews';
 import ProductItem from '@components/ProductItem/ProductItem';
 import { CartContext } from '@/contexts/CartProvider';
+import { AuthContext } from '@/contexts/AuthProvider';
 
 
 //fetch API, state chung
 
 function ProductDetailPage() {
     const { id } = useParams();
+    const navigate = useNavigate();
+    const { addToCart } = useContext(CartContext);
+    const { isAuthenticated, loading: authLoading } = useContext(AuthContext);
     const [product, setProduct] = useState(null);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
@@ -23,6 +27,7 @@ function ProductDetailPage() {
     const [quantity, setQuantity] = useState(1);
     const [relatedProducts, setRelatedProducts] = useState([]);
     const [selectedVariantId, setSelectedVariantId] = useState(null);
+    const [reviewStats, setReviewStats] = useState({ average: 0, total: 0 });
 
 
 
@@ -117,7 +122,6 @@ function ProductDetailPage() {
                 images: product.images,
             };
 
-            const { addToCart } = useContext(CartContext);
             const handleAddToCart = () => {
                 addToCart({
                     productId: product.id,
@@ -125,10 +129,43 @@ function ProductDetailPage() {
                     name: product.name,
                     optionLabel: selectedVariant?.option_label ?? '',
                     price: display.price,
+                    priceOriginal: display.price_original,
                     image: display.images?.[0] ?? '',
                     quantity,
                     maxStock: display.stock,
                 });
+            };
+
+            // ─── Mua ngay ───
+            const handleBuyNow = () => {
+                // Validate số lượng & tồn kho
+                if (display.stock <= 0 || quantity < 1 || quantity > display.stock) {
+                    return;
+                }
+                // Validate biến thể khi sản phẩm có variant
+                if (variants.length > 0 && !selectedVariantId) {
+                    return;
+                }
+
+                // Gọi addToCart — merge qty nếu cùng SP + biến thể (giống Thêm vào giỏ)
+                addToCart({
+                    productId: product.id,
+                    variantId: selectedVariantId,
+                    name: product.name,
+                    optionLabel: selectedVariant?.option_label ?? '',
+                    price: display.price,
+                    priceOriginal: display.price_original,
+                    image: display.images?.[0] ?? '',
+                    quantity,
+                    maxStock: display.stock,
+                });
+
+                // Điều hướng checkout; xử lý chưa đăng nhập → login kèm next=/checkout
+                if (!authLoading && !isAuthenticated) {
+                    navigate('/dang-nhap?next=/checkout');
+                    return;
+                }
+                navigate('/checkout');
             };
 
         const inStock = display.stock > 0;
@@ -209,14 +246,19 @@ function ProductDetailPage() {
                                 onDecQty={decQty}
                                 onIncQty={incQty}
                                 onScrollToReviews={scrollToReviews}
+                                reviewStats={reviewStats}
                                 shortDesc={shortDesc}
                                 onAddToCart={handleAddToCart}
+                                onBuyNow={handleBuyNow}
                             />
                         </div>
                     </div>
 
                 <ProductSpecs product={product} />
-                <ProductReviews />
+                <ProductReviews
+                    productId={product.id}
+                    onStatsChange={setReviewStats}
+                />
 
                 {/* ── Sản phẩm liên quan ── */}
                 {relatedProducts.length > 0 && (

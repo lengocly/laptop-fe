@@ -1,0 +1,191 @@
+@import '@styles/variable.module.scss';
+
+.section {
+    padding: 90px 0 24px;
+    margin-left: 10px;
+}
+
+.header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 18px;
+
+    h2 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 700;
+        color: $text_primary;
+    }
+}
+
+.sub {
+    font-size: 14px;
+    color: $text_muted;
+}
+
+.scroll {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scrollbar-width: thin;
+
+    &::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #ddd;
+        border-radius: 999px;
+    }
+}
+
+// Thẻ voucher kiểu Shopee — dải màu trái + chi tiết phải
+.card {
+    flex: 0 0 280px;
+    display: flex;
+    min-height: 130px;
+    background: $white_color;
+    border-radius: $radius_card;
+    box-shadow: $shadow_card;
+    overflow: hidden;
+    border: 1px solid #f0f0f0;
+}
+
+.strip {
+    flex: 0 0 72px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(160deg, $accent_color, $accent_hover);
+    color: $white_color;
+    padding: 10px 6px;
+    text-align: center;
+    position: relative;
+
+    // Vết cắt giấy bên phải
+    &::after {
+        content: '';
+        position: absolute;
+        right: -6px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 12px;
+        height: 12px;
+        background: $bg_page;
+        border-radius: 50%;
+    }
+}
+
+.stripValue {
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.stripLabel {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+    opacity: 0.9;
+}
+
+.body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 12px 14px 10px;
+    min-width: 0;
+}
+
+.title {
+    margin: 0 0 4px;
+    font-size: 14px;
+    font-weight: 700;
+    color: $text_primary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.desc {
+    margin: 0 0 4px;
+    font-size: 12px;
+    color: $text_muted;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.minOrder {
+    margin: 0;
+    font-size: 12px;
+    color: $thr_color;
+}
+
+.footer {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #eee;
+}
+
+.hsd {
+    font-size: 11px;
+    color: $badge_sale;
+    font-weight: 600;
+}
+
+.saveBtn {
+    flex-shrink: 0;
+    padding: 5px 14px;
+    border: 1px solid $accent_color;
+    border-radius: $radius_btn;
+    background: $white_color;
+    color: $accent_color;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+
+    &:hover:not(:disabled) {
+        background: $accent_color;
+        color: $white_color;
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: wait;
+    }
+}
+
+.savedBadge {
+    flex-shrink: 0;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: #e6fffa;
+    color: $accent_hover;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: $text_primary;
+    color: $white_color;
+    padding: 12px 20px;
+    border-radius: $radius_btn;
+    font-size: 14px;
+    z-index: 1000;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}

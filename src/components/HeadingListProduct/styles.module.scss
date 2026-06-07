@@ -2,8 +2,8 @@
 @import '@styles/mixin.module.scss';
 
 .container {
-    //cách đều 2 bên
-    @include flex_box_custom(space-between, center, 10px);
+    // Căn giữa countdown (không còn SP bên phải)
+    @include flex_box_custom(center, center, 10px);
     margin-top: 40px;
 }
 

@@ -1,14 +1,10 @@
 /**
  * =============================================================================
- * NHIỆM VỤ FILE NÀY (HeadingListProduct)
+ * HeadingListProduct — Khối countdown khuyến mãi
  * =============================================================================
- * - Khối trên trang chủ: banner đếm ngược (CountdownBanner) + vài thẻ sản phẩm nổi bật.
- *
- * Props `data`:
- * - HomePage truyền vào khoảng 2 sản phẩm đầu (slice(0, 2)).
- *
- * data.map:
- * - Render ProductItem giống PopularProduct; khác biệt là nằm cạnh countdown.
+ * - Hiển thị CountdownBanner (đếm ngược + nút Mua ngay).
+ * - Props data (tuỳ chọn): nếu có SP thì hiện thêm 1–2 thẻ cạnh countdown.
+ *   Trang chủ hiện không truyền data → chỉ còn banner countdown.
  * =============================================================================
  */
 import MainLayout from '@components/Layout/Layout';
@@ -16,27 +12,31 @@ import styles from './styles.module.scss';
 import CountdownBanner from '@components/CountdownBanner/CountdownBanner';
 import ProductItem from '@components/ProductItem/ProductItem';
 
-function HeadingListProduct({ data }) {
+function HeadingListProduct({ data = [] }) {
     const { container, containerItem } = styles;
 
     return (
         <MainLayout>
             <div className={container}>
+                {/* Banner đếm ngược deal laptop */}
                 <CountdownBanner />
 
-                <div className={containerItem}>
-                    {data.map((item) => (
-                        <ProductItem
-                            key={item.id}
-                            id={item.id}
-                            src={item.images[0]}
-                            prevSrc={item.images[1]}
-                            name={item.name}
-                            price={item.price}
-                            priceOriginal={item.price_original}
-                        />
-                    ))}
-                </div>
+                {/* Tuỳ chọn: SP nổi bật cạnh countdown (HomePage có thể truyền data sau) */}
+                {data.length > 0 && (
+                    <div className={containerItem}>
+                        {data.map((item) => (
+                            <ProductItem
+                                key={item.id}
+                                id={item.id}
+                                src={item.images[0]}
+                                prevSrc={item.images[1]}
+                                name={item.name}
+                                price={item.price}
+                                priceOriginal={item.price_original}
+                            />
+                        ))}
+                    </div>
+                )}
             </div>
         </MainLayout>
     );

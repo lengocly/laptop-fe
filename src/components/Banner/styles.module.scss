@@ -1,33 +1,136 @@
 @import '@styles/mixin.module.scss';
 @import '@styles/variable.module.scss';
 
+// Hero carousel — header nằm trên (z-index Header), chừa đáy cho Info
 .container {
-    @include flex_box_custom(center, center, 0px); //phần nd ra giữa
-
-    background-image: url(../../assets/icons/images/banner.png);
-    min-height: 750px;
-    // ko lặp lại ảnh
-    background-repeat: no-repeat;
-    // ảnh fix vơi khung
-    background-size: cover;
-    background-position: center;
+    position: relative;
+    z-index: 1;
+    @include flex_box_custom(center, center, 0px);
+    min-height: 680px;
+    padding-top: 83px; // không đè vùng header (chiều cao menu)
+    padding-bottom: 72px;
+    overflow: hidden;
 }
 
-// phần nd của banner
+// Ảnh nền full — hiện rõ, chỉ phủ nhẹ
+.bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 0.7s ease;
+}
+
+// Overlay mỏng — ảnh "trong" hơn, vẫn đủ tương phản cho chữ giữa
+.overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.05) 0%,
+        rgba(0, 0, 0, 0.12) 45%,
+        rgba(0, 0, 0, 0.35) 85%,
+        rgba(0, 0, 0, 0.5) 100%
+    );
+}
+
+// Khối chữ — glass mỏng, nhìn xuyên thấy ảnh
 .content {
-    @include flex_box_custom(center, center, 10px); //phần nd ra giữa
-    flex-direction: column; //căn theo cột
+    position: relative;
+    z-index: 2;
+    @include flex_box_custom(center, center, 10px);
+    flex-direction: column;
+    padding: 32px 48px;
+    border-radius: $radius_card;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
 }
 
 .title {
     font-size: 42px;
-    color: $thr_color;
-    font-weight: 400;
+    color: #fff;
+    font-weight: 600;
     margin: 15px 0;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.45);
 }
 
 .des {
-    color: $thr_color;
+    color: rgba(255, 255, 255, 0.95);
     font-weight: 400;
     margin-bottom: 25px;
+    text-align: center;
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.4);
+}
+
+.ctaBtn {
+    min-width: 176px;
+    height: 42px;
+    padding: 0 24px;
+    border: none;
+    border-radius: $radius_btn;
+    background: $accent_color;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+
+    &:hover {
+        background: $accent_hover;
+    }
+}
+
+.dots {
+    position: absolute;
+    bottom: 88px;
+    left: 50%;
+    z-index: 2;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+}
+
+.dot,
+.dotActive {
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.5);
+    transition: background 0.2s, transform 0.2s;
+}
+
+.dotActive {
+    background: #fff;
+    transform: scale(1.15);
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding-top: 72px;
+        min-height: 560px;
+    }
+
+    .content {
+        padding: 24px 20px;
+        margin: 0 16px;
+    }
+
+    .title {
+        font-size: 32px;
+    }
+
+    .dots {
+        bottom: 80px;
+    }
 }

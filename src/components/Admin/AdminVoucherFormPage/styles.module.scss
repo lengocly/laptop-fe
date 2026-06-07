@@ -1,0 +1,84 @@
+@import '@styles/variable.module.scss';
+
+.err {
+    color: #c62828;
+    margin-bottom: 16px;
+}
+
+.form {
+    max-width: 720px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    label {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #444;
+    }
+
+    input:not([type='checkbox']),
+    select,
+    textarea {
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 400;
+    }
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+
+    @media (max-width: 640px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.checkbox {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 10px !important;
+    padding-top: 28px;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 8px;
+
+    button {
+        padding: 10px 18px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        background: #fff;
+        cursor: pointer;
+        font-weight: 600;
+    }
+}
+
+.primaryBtn {
+    background: $accent_color !important;
+    border-color: $accent_color !important;
+    color: #fff !important;
+
+    &:hover:not(:disabled) {
+        background: $accent_hover !important;
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: wait;
+    }
+}

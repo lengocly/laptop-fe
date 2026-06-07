@@ -15,6 +15,7 @@ import { AuthContext } from '@/contexts/AuthProvider';
 import { CartContext } from '@/contexts/CartProvider';
 import { Link } from 'react-router-dom';
 import { PiUserCircle } from 'react-icons/pi';
+import SearchOverlay from './SearchOverlay/SearchOverlay';
 
 
 function MyHeader() {
@@ -49,6 +50,9 @@ function MyHeader() {
 
     
     const { totalCount } = useContext(CartContext);
+
+    // Trạng thái mở/đóng overlay tìm kiếm
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
 
     useEffect(() => {
         //cách 1
@@ -103,10 +107,14 @@ function MyHeader() {
                 <div className={containerBox}>
                     <div className={containerMenu}>
                         {/* lấy tiếp theo đến cuối cùng */}
-                        {/* Tìm kiếm + menu khác (bỏ Đăng nhập khỏi map) */}
+                        {/* Menu phải — Tìm kiếm mở overlay, không dùng link # */}
                             {dataMenu
                                 .slice(3)
-                                .filter((item) => item.content !== 'Đăng nhập')
+                                .filter(
+                                    (item) =>
+                                        item.content !== 'Đăng nhập' &&
+                                        item.content !== 'Tìm kiếm'
+                                )
                                 .map((item) => (
                                     <Menu
                                         key={item.content}
@@ -114,6 +122,12 @@ function MyHeader() {
                                         href={item.href}
                                     />
                                 ))}
+
+                            <Menu
+                                content="Tìm kiếm"
+                                href="#"
+                                onClick={() => setIsSearchOpen(true)}
+                            />
 
                             {/* Chưa login → Đăng nhập */}
                             {!loading && !user && (
@@ -144,6 +158,10 @@ function MyHeader() {
                                         {/* hiển thị menu item đơn hàng */}
                                         <Link to="/don-hang-cua-toi" className={styles.userMenuItem}>
                                             Đơn hàng
+                                        </Link>
+
+                                        <Link to="/tai-khoan" className={styles.userMenuItem}>
+                                            Tài khoản
                                         </Link>
 
                                         {/* hiển thị menu item admin */}
@@ -207,6 +225,11 @@ function MyHeader() {
                     </div>
                 </div>
             </div>
+
+            <SearchOverlay
+                isOpen={isSearchOpen}
+                onClose={() => setIsSearchOpen(false)}
+            />
         </div>
     );
 }

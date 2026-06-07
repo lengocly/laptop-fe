@@ -28,4 +28,20 @@ const getUser = async () => {
     return res.data; // object user
 };
 
-export { register, login, logout, getUser };
+//updateProfile — Cập nhật thông tin tài khoản
+const updateProfile = async ({ name, email }) => {
+    const res = await axiosClient.put('/user/profile', { name, email });
+    return res.data; // { message, user }
+};
+
+//updatePassword — Đổi mật khẩu
+const updatePassword = async ({ current_password, password, password_confirmation }) => {
+    const res = await axiosClient.put('/user/password', {
+        current_password,
+        password,
+        password_confirmation,
+    });
+    return res.data; // { message }
+};
+
+export { register, login, logout, getUser, updateProfile, updatePassword };

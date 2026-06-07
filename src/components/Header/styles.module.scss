@@ -52,6 +52,9 @@
     font-size: 15px;
     color: $primary_color;
     text-decoration: none;
+    border: none;
+    background: transparent;
+    font-family: inherit;
 }
 
 // có thể hover được thanh công cụ, sử dụng lớp giả gạch chân
@@ -78,10 +81,17 @@
     transform: scale(1);
 }
 
-// khi chưa scroll thì header sẽ nằm ở vị trí ban đầu
+// khi chưa scroll — nằm trên banner, không bị ảnh che
 .topHeader {
     position: absolute;
     top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 // khi scroll xuống thì header sẽ dính vào trên cùng

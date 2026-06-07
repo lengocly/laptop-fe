@@ -1,6 +1,12 @@
 import { createContext, useState, useEffect } from 'react';
 import { AUTH_TOKEN_KEY } from '@/apis/axiosClient';
-import { login as loginApi, logout as logoutApi, register as registerApi, getUser } from '@/apis/authService';
+import {
+    login as loginApi,
+    logout as logoutApi,
+    register as registerApi,
+    getUser,
+    updateProfile as updateProfileApi,
+} from '@/apis/authService';
 
 //AuthContext — Tạo “ống” để component khác bơm vào / hút ra user, login, logout
 export const AuthContext = createContext();
@@ -46,6 +52,18 @@ export function AuthProvider({ children }) {
         return registerApi(formData);
     };
 
+    const updateProfile = async (formData) => {
+        const data = await updateProfileApi(formData);
+        setUser(data.user);
+        return data;
+    };
+
+    const refreshUser = async () => {
+        const data = await getUser();
+        setUser(data);
+        return data;
+    };
+
     const value = {
         user,
         loading,
@@ -54,6 +72,8 @@ export function AuthProvider({ children }) {
         login,
         logout,
         register,
+        updateProfile,
+        refreshUser,
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
