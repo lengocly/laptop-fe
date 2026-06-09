@@ -1,10 +1,12 @@
 import { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Button from '@components/Button/Button';
 import styles from './styles.module.scss';
 import useTranslateXImage from '@/hooks/useTranslateXImage';
 
 // Khối sale cuối trang chủ — ảnh 2 bên trượt khi scroll tới section
 function SaleHomepage() {
+    const navigate = useNavigate();
     const { container, title, des, boxBtn, boxImage } = styles;
     const sectionRef = useRef(null);
     const { translateXPosition } = useTranslateXImage(sectionRef);
@@ -28,7 +30,11 @@ function SaleHomepage() {
                 <h2 className={title}>Sale từng bừng</h2>
                 <p className={des}>Số lượng có hạn nhanh tay rinh quà.</p>
                 <div className={boxBtn}>
-                    <Button content={'Tìm hiểu'} isPrimary={false} />
+                    <Button
+                        content="Tìm hiểu"
+                        isPrimary={false}
+                        onClick={() => navigate('/gioi-thieu')}
+                    />
                 </div>
             </div>
             <div

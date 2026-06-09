@@ -1,0 +1,16 @@
+@use '@styles/variable.module.scss' as *;
+
+.container {
+    padding: 30px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+}
+
+.empty {
+    color: $text_muted;
+    text-align: center;
+    margin-top: 40px;
+}

@@ -1,9 +1,14 @@
+import { useNavigate } from 'react-router-dom';
 import CountdownTimer from '@components/CountdownTimer/CountdownTimer';
 import styles from './styles.module.scss';
 import Button from '@components/Button/Button';
 import demImg from '@icons/images/dem.jpg';
 
+// SP khuyến mãi gắn với banner countdown — MacBook Pro 14
+const PROMO_PRODUCT_ID = 3;
+
 function CountdownBanner() {
+    const navigate = useNavigate();
     const { container, containerTimmer, title, boxBtn } = styles;
     const targetDate = '2026-06-28T00:00:00';
     return (
@@ -17,7 +22,10 @@ function CountdownBanner() {
 
 
             <div className={boxBtn}>
-                <Button content={'Mua ngay'} />
+                <Button
+                    content="Mua ngay"
+                    onClick={() => navigate(`/product/${PROMO_PRODUCT_ID}`)}
+                />
             </div>
         </div>
     );

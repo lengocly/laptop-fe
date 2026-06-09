@@ -60,17 +60,22 @@ function ProductReviews({ productId, onStatsChange }) {
     const [filterStar, setFilterStar] = useState('all');
     const [form, setForm] = useState({ rating: 0, title: '', content: '' });
 
-    const loadReviews = async () => {
+    const loadReviews = async (cancelledRef) => {
         setLoading(true);
         try {
             const { data } = await getProductReviews(productId);
+            if (cancelledRef?.current) return;
             setStats(data.stats ?? EMPTY_STATS);
             setReviews(data.reviews ?? []);
             onStatsChange?.(data.stats ?? EMPTY_STATS);
         } catch {
-            setError('Không tải được đánh giá.');
+            if (!cancelledRef?.current) {
+                setError('Không tải được đánh giá.');
+            }
         } finally {
-            setLoading(false);
+            if (!cancelledRef?.current) {
+                setLoading(false);
+            }
         }
     };
 
@@ -88,11 +93,17 @@ function ProductReviews({ productId, onStatsChange }) {
     };
 
     useEffect(() => {
+        const cancelledRef = { current: false };
+
         setTab('overview');
         setShowForm(false);
         setForm({ rating: 0, title: '', content: '' });
         setError('');
-        loadReviews();
+        loadReviews(cancelledRef);
+
+        return () => {
+            cancelledRef.current = true;
+        };
     }, [productId]);
 
     useEffect(() => {
@@ -355,11 +366,11 @@ function ProductReviews({ productId, onStatsChange }) {
                                 <li key={review.id} className={styles.reviewItem}>
                                     <div className={styles.reviewItemHead}>
                                         <div className={styles.reviewAvatar}>
-                                            {review.user.name.charAt(0).toLowerCase()}
+                                            {review.user?.name?.charAt(0)?.toLowerCase() ?? '?'}
                                         </div>
                                         <div>
                                             <p className={styles.reviewUserName}>
-                                                {review.user.name}
+                                                {review.user?.name ?? 'Khách'}
                                             </p>
                                             <div className={styles.reviewItemMeta}>
                                                 {renderStars(review.rating)}

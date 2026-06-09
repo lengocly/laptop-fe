@@ -26,14 +26,27 @@ function lineKey(productId, variantId) {
     return `${productId}-${variantId ?? 'base'}`;
 }
 
-//Hàm này dùng để lấy giỏ hàng đã lưu trong trình duyệt.
-function loadCart() {
-    try {
-        const raw = localStorage.getItem(CART_STORAGE_KEY);
-        return raw ? JSON.parse(raw) : [];
-    } catch {
-        return [];
+// Gộp giỏ khách + giỏ user khi login — cùng SP+biến thể thì cộng số lượng
+function mergeCarts(guestCart, userCart) {
+    const map = new Map();
+    for (const item of userCart) {
+        map.set(item.key, { ...item });
     }
+    for (const item of guestCart) {
+        if (map.has(item.key)) {
+            const existing = map.get(item.key);
+            map.set(item.key, {
+                ...existing,
+                quantity: Math.min(
+                    existing.quantity + item.quantity,
+                    existing.maxStock
+                ),
+            });
+        } else {
+            map.set(item.key, { ...item });
+        }
+    }
+    return Array.from(map.values());
 }
 
 //CartProvider là component bọc toàn app, component bên trong <App /> đều có thể dùng giỏ hàng
@@ -43,6 +56,8 @@ export function CartProvider({ children }) {
     const { user, loading: authLoading } = useContext(AuthContext);
     // lưu user id trước đó
     const prevUserIdRef = useRef(undefined);
+    // Bỏ qua lần persist đầu — tránh ghi đè giỏ khi đang hydrate từ localStorage
+    const isHydratingRef = useRef(true);
     // lấy key giỏ hàng từ user id
     const storageKey = user?.id ? cartKeyForUser(user.id) : CART_GUEST_KEY;
 
@@ -61,6 +76,7 @@ export function CartProvider({ children }) {
         if (prevUserId === undefined) {
             setItems(loadCartFromKey(storageKey));
             prevUserIdRef.current = currentUserId;
+            isHydratingRef.current = true;
             return;
         }
         // Vừa logout
@@ -68,17 +84,32 @@ export function CartProvider({ children }) {
             setItems([]);
             localStorage.setItem(CART_GUEST_KEY, JSON.stringify([]));
             prevUserIdRef.current = null;
+            isHydratingRef.current = true;
             return;
         }
-        // Vừa login (hoặc đổi user)
+        // Vừa login (hoặc đổi user) — gộp giỏ khách với giỏ user
         if (currentUserId !== prevUserId) {
-            setItems(loadCartFromKey(cartKeyForUser(currentUserId)));
+            const guestCart = loadCartFromKey(CART_GUEST_KEY);
+            const userCart = loadCartFromKey(cartKeyForUser(currentUserId));
+            const merged = mergeCarts(guestCart, userCart);
+            setItems(merged);
+            // Lưu ngay giỏ đã gộp — không chờ lần persist tiếp theo
+            localStorage.setItem(
+                cartKeyForUser(currentUserId),
+                JSON.stringify(merged)
+            );
+            localStorage.setItem(CART_GUEST_KEY, JSON.stringify([]));
             prevUserIdRef.current = currentUserId;
+            isHydratingRef.current = true;
         }
     }, [user?.id, authLoading, storageKey]);
     // Lưu giỏ theo key hiện tại
     useEffect(() => {
         if (authLoading) return;
+        if (isHydratingRef.current) {
+            isHydratingRef.current = false;
+            return;
+        }
         localStorage.setItem(storageKey, JSON.stringify(items));
     }, [items, storageKey, authLoading]);
 

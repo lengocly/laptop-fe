@@ -18,6 +18,7 @@
     height: 83px;
 }
 
+
 // css cho icon nằm ngang
 .containerBoxIcon {
     @include flex_box_custom(center, center, 20px);
@@ -55,6 +56,8 @@
     border: none;
     background: transparent;
     font-family: inherit;
+    white-space: nowrap;   /* ← chữ luôn 1 dòng */
+    flex-shrink: 0;/* ← không bị flex bóp nhỏ */
 }
 
 // có thể hover được thanh công cụ, sử dụng lớp giả gạch chân

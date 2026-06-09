@@ -1,25 +1,51 @@
+import { Link } from 'react-router-dom';
 import styles from './styles.module.scss';
 import { IoCloseOutline } from 'react-icons/io5';
 
-//thông tin sản phẩm trong compare
-function ItemProduct() {
-    const { container, boxContent, title, price, boxClose } = styles;
+const IMG_FALLBACK =
+    'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=640&h=640&q=80';
+
+function ItemProduct({ item, onRemove, showSpecs = false }) {
+    const { container, boxContent, title, price, boxClose, specs } = styles;
+
+    if (!item) return null;
+
+    const detailUrl = `/product/${item.productId}`;
+    const imageSrc = item.image || IMG_FALLBACK;
+
+    const specParts = [item.cpu, item.ram, item.storage].filter(Boolean);
+
     return (
         <div className={container}>
-            <img
-                src='https://macone.vn/wp-content/uploads/2026/03/macbook-neo-specs-select-202603-silver-1024x656.jpeg'
-                alt=''
-            />
+            <Link to={detailUrl}>
+                <img
+                    src={imageSrc}
+                    alt={item.name || ''}
+                    onError={(e) => {
+                        e.currentTarget.src = IMG_FALLBACK;
+                    }}
+                />
+            </Link>
 
-            <div className={boxClose}>
+            <button
+                type="button"
+                className={boxClose}
+                onClick={onRemove}
+                aria-label="Xóa sản phẩm"
+            >
                 <IoCloseOutline
                     style={{ fontSize: '25px', color: '#c1c1c1' }}
                 />
-            </div>
+            </button>
 
             <div className={boxContent}>
-                <div className={title}>Macbook Neo</div>
-                <div className={price}>Giá: 30.000.000đ</div>
+                <Link to={detailUrl} className={title}>
+                    {item.name}
+                </Link>
+                <div className={price}>Giá: {item.price}</div>
+                {showSpecs && specParts.length > 0 && (
+                    <p className={specs}>{specParts.join(' · ')}</p>
+                )}
             </div>
         </div>
     );

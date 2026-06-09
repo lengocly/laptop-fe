@@ -26,16 +26,29 @@ function StorePage() {
 
     // ─── Effect 2: sản phẩm (chạy lại mỗi khi selectedSlug đổi) ───
     useEffect(() => {
+        let cancelled = false;
+
         setLoading(true);
         setError('');
 
         getProducts(selectedSlug)
-            .then((res) => setListProducts(res.contents ?? []))
-            .catch(() => {
-                setListProducts([]);
-                setError('Không tải được sản phẩm. Kiểm tra API.');
+            .then((res) => {
+                if (!cancelled) setListProducts(res.contents ?? []);
             })
-            .finally(() => setLoading(false));
+            .catch(() => {
+                if (!cancelled) {
+                    setListProducts([]);
+                    setError('Không tải được sản phẩm. Kiểm tra API.');
+                }
+            })
+            .finally(() => {
+                if (!cancelled) setLoading(false);
+            });
+
+        // Hủy setState nếu đổi danh mục trước khi API trả về
+        return () => {
+            cancelled = true;
+        };
     }, [selectedSlug]); // selectedSlug đổi → gọi lại
 
     return (
@@ -74,6 +87,7 @@ function StorePage() {
                                         name={item.name}
                                         price={item.price}
                                         priceOriginal={item.price_original}
+                                        stock={item.stock}
                                     />
                                 ))}
                             </div>

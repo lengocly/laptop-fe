@@ -1,35 +1,96 @@
+import { Link } from 'react-router-dom';
 import styles from './styles.module.scss';
-import Footer from '@icons/images/footer.png';
-import { dataMenu } from './constant';
+import BetaTechLogo from '@components/BetaTechLogo/BetaTechLogo';
+import { footerColumns, footerContact, paymentMethods } from './constant';
 
 function MyFooter() {
-    const { container, boxNav } = styles;
     return (
-        <div className={container}>
-            <div>
-                <img src={Footer} alt='' width={300} height={150} />
+        <footer className={styles.footer}>
+            <div className={styles.inner}>
+                <div className={styles.grid}>
+                    <div className={styles.brandCol}>
+                        <BetaTechLogo variant="dark" className={styles.footerLogo} />
+                        <p className={styles.tagline}>
+                            Laptop &amp; phụ kiện chính hãng — tư vấn cấu hình, giao hàng nhanh,
+                            bảo hành đầy đủ.
+                        </p>
+                        <ul className={styles.contactList}>
+                            <li>
+                                <span className={styles.contactLabel}>Hotline</span>
+                                <a href={`tel:${footerContact.hotline.replace(/\s/g, '')}`}>
+                                    {footerContact.hotline}
+                                </a>
+                            </li>
+                            <li>
+                                <span className={styles.contactLabel}>Email</span>
+                                <a href={`mailto:${footerContact.email}`}>{footerContact.email}</a>
+                            </li>
+                            <li>
+                                <span className={styles.contactLabel}>Địa chỉ</span>
+                                <span>{footerContact.address}</span>
+                            </li>
+                            <li>
+                                <span className={styles.contactLabel}>Giờ mở cửa</span>
+                                <span>{footerContact.hours}</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {footerColumns.map((col) => (
+                        <div key={col.title} className={styles.linkCol}>
+                            <h3 className={styles.colTitle}>{col.title}</h3>
+                            <ul className={styles.linkList}>
+                                {col.links.map((link) => (
+                                    <li key={link.to}>
+                                        <Link to={link.to} className={styles.link}>
+                                            {link.label}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))}
+                </div>
+
+                <div className={styles.trustRow}>
+                    <div className={styles.trustItem}>
+                        <strong>Giao hàng nhanh</strong>
+                        <span>Toàn quốc 2–5 ngày</span>
+                    </div>
+                    <div className={styles.trustItem}>
+                        <strong>Thanh toán an toàn</strong>
+                        <span>COD &amp; Stripe</span>
+                    </div>
+                    <div className={styles.trustItem}>
+                        <strong>Đổi trả 14 ngày</strong>
+                        <span>Lỗi nhà sản xuất</span>
+                    </div>
+                    <div className={styles.trustItem}>
+                        <strong>Hỗ trợ 24/7</strong>
+                        <span>Hotline &amp; email</span>
+                    </div>
+                </div>
             </div>
 
-            <div className={boxNav}>
-                {dataMenu.map((item) => (
-                    <div>{item.content}</div>
-                ))}
+            <div className={styles.bottomBar}>
+                <div className={styles.bottomInner}>
+                    <div className={styles.paymentBlock}>
+                        <span className={styles.paymentLabel}>Phương thức thanh toán</span>
+                        <div className={styles.paymentTags}>
+                            {paymentMethods.map((method) => (
+                                <span key={method} className={styles.paymentTag}>
+                                    {method}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                    <p className={styles.copyright}>
+                        © {new Date().getFullYear()} BetaTech E-Commerce. Đồ án website bán
+                        laptop.
+                    </p>
+                </div>
             </div>
-
-            <div>
-                <p style={{ textAlign: 'center', marginTop: '50px' }}>
-                    Phương thức thanh toán an toàn
-                </p>
-                <img
-                    src='https://xstore.b-cdn.net/elementor2/marseille04/wp-content/uploads/sites/2/elementor/thumbs/Icons-123-pzks3go5g30b2zz95xno9hgdw0h3o8xu97fbaqhtb6.png'
-                    alt=''
-                />
-            </div>
-            <div style={{ textAlign: 'center', marginTop: '50px' }}>
-                Copyright © 2026 BetaTech theme. Created by 8theme – WordPress
-                WooCommerce themes.
-            </div>
-        </div>
+        </footer>
     );
 }
 

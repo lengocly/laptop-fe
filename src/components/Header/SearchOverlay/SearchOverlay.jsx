@@ -19,16 +19,30 @@ const POPULAR_LIMIT = 8;
 const SEARCH_RESULT_LIMIT = 12;
 
 // Cache danh sách SP — tránh gọi API lại mỗi lần mở overlay
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 phút — đủ mới mà không spam API
 let productsCache = null;
 let productsCachePromise = null;
+let productsCacheTime = 0;
 
-async function loadProductsCached() {
-    if (productsCache) return productsCache;
+function invalidateProductsCache() {
+    productsCache = null;
+    productsCachePromise = null;
+    productsCacheTime = 0;
+}
+
+async function loadProductsCached(forceRefresh = false) {
+    const cacheExpired = Date.now() - productsCacheTime > CACHE_TTL_MS;
+    if (!forceRefresh && productsCache && !cacheExpired) return productsCache;
+
+    if (forceRefresh || cacheExpired) {
+        invalidateProductsCache();
+    }
 
     if (!productsCachePromise) {
         productsCachePromise = getProducts()
             .then((res) => {
                 productsCache = res.contents ?? [];
+                productsCacheTime = Date.now();
                 return productsCache;
             })
             .catch(() => {
@@ -110,7 +124,8 @@ function SearchOverlay({ isOpen, onClose }) {
         setLoading(true);
         setError('');
 
-        loadProductsCached()
+        // Làm mới cache khi mở — SP mới/thay đổi giá vẫn hiện đúng
+        loadProductsCached(true)
             .then((list) => setProducts(list))
             .catch(() => {
                 setProducts([]);

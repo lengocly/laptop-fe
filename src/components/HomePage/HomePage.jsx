@@ -37,9 +37,13 @@ function HomePage() {
 
     // Tải danh sách SP từ backend khi mở trang chủ
     useEffect(() => {
-        getProducts().then((res) => {
-            setListProducts(res.contents);
-        });
+        getProducts()
+            .then((res) => {
+                setListProducts(res.contents ?? []);
+            })
+            .catch(() => {
+                setListProducts([]); // API lỗi — không để carousel crash
+            });
     }, []);
 
     return (

@@ -1,24 +1,205 @@
 @import '@styles/variable.module.scss';
 @import '@styles/mixin.module.scss';
 
-.container {
-    @include flex_box_custom(center, center, 0px);
+.footer {
+    margin-top: 40px;
+    background: #1f2937;
+    color: rgba(255, 255, 255, 0.88);
+}
 
-    flex-direction: column;
-    background-color: $thr_color;
-    margin-top: 20px;
-    color: $white_color;
-    padding: 50px 0;
+.inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 24px 32px;
+}
 
-    //phần menu
-    .boxNav {
-        @include flex_box_custom(center, center, 50px);
-        font-size: 15px;
+.grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 40px;
+}
 
-        //hình bàn tay
-        :hover {
-            opacity: 0.7;
-            cursor: pointer;
+.brandCol {
+    padding-right: 16px;
+}
+
+.footerLogo {
+    margin-bottom: 16px;
+    height: 52px;
+}
+
+.tagline {
+    margin: 0 0 20px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.contactList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 13px;
+    line-height: 1.5;
+
+    li {
+        margin-bottom: 10px;
+    }
+
+    a {
+        color: rgba(255, 255, 255, 0.9);
+        text-decoration: none;
+
+        &:hover {
+            color: #fff;
+            text-decoration: underline;
         }
+    }
+}
+
+.contactLabel {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: rgba(255, 255, 255, 0.45);
+    margin-bottom: 2px;
+}
+
+.linkCol {
+    min-width: 0;
+}
+
+.colTitle {
+    margin: 0 0 16px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.linkList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.link {
+    display: inline-block;
+    padding: 5px 0;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.72);
+    text-decoration: none;
+    transition: color 0.2s;
+
+    &:hover {
+        color: #fff;
+    }
+}
+
+.trustRow {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 36px;
+    padding-top: 28px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.trustItem {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13px;
+
+    strong {
+        color: #fff;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    span {
+        color: rgba(255, 255, 255, 0.55);
+    }
+}
+
+.bottomBar {
+    background: #111827;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.bottomInner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.paymentBlock {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.paymentLabel {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.paymentTags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.paymentTag {
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 4px;
+}
+
+.copyright {
+    margin: 0;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+@media (max-width: 900px) {
+    .grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+    }
+
+    .brandCol {
+        grid-column: 1 / -1;
+        padding-right: 0;
+    }
+
+    .trustRow {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 520px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .trustRow {
+        grid-template-columns: 1fr;
+    }
+
+    .bottomInner {
+        flex-direction: column;
+        align-items: flex-start;
     }
 }

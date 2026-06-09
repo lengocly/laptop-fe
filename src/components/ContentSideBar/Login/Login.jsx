@@ -34,14 +34,18 @@ function Login() {
         }
     
         try {
-            await login(email, password); 
+            await login(normalizedEmail, password);
 
             //Sau khi login thành công
             setIsOpen(false); // đóng sidebar
             
-            //Chuyển về trang chủ hoặc trang next
+            //Chuyển về trang chủ hoặc trang next (chỉ path nội bộ — chặn open redirect)
             const next = searchParams.get('next');
-            navigate(next || '/', { replace: true });
+            const safeNext =
+                next && next.startsWith('/') && !next.startsWith('//')
+                    ? next
+                    : '/';
+            navigate(safeNext, { replace: true });
         } catch (err) {
             const status = err.response?.status;
             const data = err.response?.data;

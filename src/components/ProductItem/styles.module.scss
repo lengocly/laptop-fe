@@ -49,7 +49,7 @@
         bottom: 0;
     }
 
-    &:hover .showFncWhenHover {
+    &:hover .quickActions {
         opacity: 1;
         right: 20px;
         transition:
@@ -57,28 +57,45 @@
             right 300ms;
     }
 
-    .showFncWhenHover {
+    .quickActions {
         position: absolute;
         z-index: 2;
         opacity: 0;
         bottom: 20px;
-        right: 0px;
-        background-color: white;
+        right: 0;
+        background-color: #fff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     }
 
-    .boxIcon {
+    .quickActionBtn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         width: 40px;
         height: 40px;
-        @include flex_box_custom(center, center, 0px);
+        padding: 0;
+        border: none;
+        background: transparent;
+        cursor: pointer;
 
         img {
             width: 17px;
             height: 17px;
+            pointer-events: none;
         }
 
         &:hover {
             background-color: #dbdbdb;
-            transition: background-color 500ms;
+            transition: background-color 300ms;
+        }
+    }
+
+    .quickActionActive {
+        background-color: #ffe4e6;
+
+        img {
+            filter: brightness(0) saturate(100%) invert(27%) sepia(85%)
+                saturate(2500%) hue-rotate(330deg);
         }
     }
 }
@@ -152,4 +169,19 @@
     font-size: 12px;
     color: #059669;
     margin: 4px 0 0;
+}
+
+.flashToast {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    background: rgba(17, 24, 39, 0.92);
+    color: #fff;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    white-space: nowrap;
+    pointer-events: none;
 }

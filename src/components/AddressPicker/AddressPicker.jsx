@@ -87,6 +87,7 @@ function AddressPicker({ open, onClose, value, onChange, keyword = '' }) {
         setTab('district');
         setLoading(true);
         const list = await fetchDistricts(item.code);
+        if (!open) return; // Popup đã đóng — không setState trên component unmount
         setDistricts(list);
         setWards([]);
         setLoading(false);
@@ -102,6 +103,7 @@ function AddressPicker({ open, onClose, value, onChange, keyword = '' }) {
         setTab('ward');
         setLoading(true);
         const list = await fetchWards(item.code);
+        if (!open) return;
         setWards(list);
         setLoading(false);
     };

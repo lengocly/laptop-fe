@@ -92,6 +92,7 @@ function ProductSlider({ data = [], title }) {
                                 name={item.name}
                                 price={item.price}
                                 priceOriginal={item.price_original}
+                                stock={item.stock}
                             />
                         </div>
                     ))}

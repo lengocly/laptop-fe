@@ -2,7 +2,7 @@ import BoxIcon from './BoxIcon/BoxIcon';
 import Menu from './Menu/Menu';
 import { dataBoxIcon, dataMenu } from './constants';
 import styles from './styles.module.scss';
-import Logo from '@icons/images/logo.png';
+import BetaTechLogo from '@components/BetaTechLogo/BetaTechLogo';
 import { TfiReload } from 'react-icons/tfi';
 import { CiHeart } from 'react-icons/ci';
 import { PiShoppingCart } from 'react-icons/pi';
@@ -13,6 +13,8 @@ import { useContext } from 'react';
 import { SideBarContext } from '@/contexts/SideBarProvider';
 import { AuthContext } from '@/contexts/AuthProvider';
 import { CartContext } from '@/contexts/CartProvider';
+import { WishlistContext } from '@/contexts/WishlistProvider';
+import { CompareContext } from '@/contexts/CompareProvider';
 import { Link } from 'react-router-dom';
 import { PiUserCircle } from 'react-icons/pi';
 import SearchOverlay from './SearchOverlay/SearchOverlay';
@@ -50,6 +52,8 @@ function MyHeader() {
 
     
     const { totalCount } = useContext(CartContext);
+    const { count: wishlistCount } = useContext(WishlistContext);
+    const { count: compareCount } = useContext(CompareContext);
 
     // Trạng thái mở/đóng overlay tìm kiếm
     const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -97,13 +101,7 @@ function MyHeader() {
                         ))}
                     </div>
                 </div>
-                <div>
-                    <img
-                        src={Logo}
-                        alt="Logo"
-                        style={{ width: '153px', height: '53px' }}
-                    />
-                </div>
+                <BetaTechLogo variant="light" />
                 <div className={containerBox}>
                     <div className={containerMenu}>
                         {/* lấy tiếp theo đến cuối cùng */}
@@ -140,7 +138,7 @@ function MyHeader() {
                                     <button type="button"       className={classNames(menu, styles.userMenuTrigger)}>
                                         <span className={styles.userTriggerInner}>
                                             <PiUserCircle size={22} />
-                                            <span>Xin chào, {user.name}</span>
+                                            <span>{user.name}</span>
                                         </span>
                                     </button>
                                     {/* hiển thị menu dropdown */}
@@ -188,14 +186,58 @@ function MyHeader() {
                     </div>
 
                     <div className={containerBoxIcon}>
-                        <TfiReload
-                            style={{ fontSize: '20px' }}
+                        <div
+                            style={{ position: 'relative', cursor: 'pointer' }}
                             onClick={() => handleOpenSideBar('compare')}
-                        />
-                        <CiHeart
-                            style={{ fontSize: '25px' }}
+                        >
+                            <TfiReload style={{ fontSize: '20px' }} />
+                            {compareCount > 0 && (
+                                <span style={{
+                                    position: 'absolute',
+                                    top: -6,
+                                    right: -8,
+                                    minWidth: 18,
+                                    height: 18,
+                                    padding: '0 4px',
+                                    fontSize: 11,
+                                    fontWeight: 700,
+                                    color: '#fff',
+                                    background: '#e74c3c',
+                                    borderRadius: 999,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}>
+                                    {compareCount > 99 ? '99+' : compareCount}
+                                </span>
+                            )}
+                        </div>
+                        <div
+                            style={{ position: 'relative', cursor: 'pointer' }}
                             onClick={() => handleOpenSideBar('wishlist')}
-                        />
+                        >
+                            <CiHeart style={{ fontSize: '25px' }} />
+                            {wishlistCount > 0 && (
+                                <span style={{
+                                    position: 'absolute',
+                                    top: -6,
+                                    right: -8,
+                                    minWidth: 18,
+                                    height: 18,
+                                    padding: '0 4px',
+                                    fontSize: 11,
+                                    fontWeight: 700,
+                                    color: '#fff',
+                                    background: '#e74c3c',
+                                    borderRadius: 999,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}>
+                                    {wishlistCount > 99 ? '99+' : wishlistCount}
+                                </span>
+                            )}
+                        </div>
                         
                         {/* // bọc icon giỏ (thêm span badge): */}
                         <div style={{ position: 'relative', cursor: 'pointer' }}

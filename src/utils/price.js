@@ -14,7 +14,8 @@ export function calcDiscountPercent(price, priceOriginal) {
 
 //Hàm này dùng để định dạng số thành tiền Việt Nam
 export function formatVnd(amount) {
-    if (!amount) return '';
+    // Chỉ bỏ qua null/NaN — 0 vẫn hiển thị "0 đ"
+    if (amount == null || Number.isNaN(amount)) return '';
     return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' đ';
 }
 

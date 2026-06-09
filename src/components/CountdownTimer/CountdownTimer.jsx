@@ -25,14 +25,16 @@ const CountdownTimer = ({ targetDate }) => {
         return timeLeft;
     }
 
-    // mỗi khi chạy thì thực hiện hàm setTimeout 1s set lại giá trị của setTimeLeft bằng hàm trên
+    // Đếm mỗi giây; dừng khi hết giờ — tránh timer chạy vô hạn
     useEffect(() => {
+        if (Object.keys(timeLeft).length === 0) return undefined;
+
         const timer = setTimeout(() => {
             setTimeLeft(calculateTimeLeft());
         }, 1000);
 
         return () => clearTimeout(timer);
-    });
+    }, [timeLeft, targetDate]);
 
     // khi số có 1 chữ số thì thêm 0 ở đầu
     const formatNumber = (number) => {
