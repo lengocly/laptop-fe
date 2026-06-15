@@ -1,45 +1,30 @@
+@import '@styles/admin-shared.module.scss';
 
 .back {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+    @include admin-btn-ghost;
     margin-bottom: 16px;
-    padding: 8px 14px;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    background: #fff;
-    color: #374151;
-    font-size: 14px;
-    cursor: pointer;
-
-    &:hover {
-        background: #f9fafb;
-    }
 }
 
 .err {
-    color: #b91c1c;
-    background: #fef2f2;
+    color: $danger;
+    background: $danger_bg;
     padding: 10px 14px;
-    border-radius: 8px;
+    border-radius: $radius_btn;
     margin-bottom: 12px;
 }
 
 .toast {
-    color: #166534;
-    background: #ecfdf5;
+    color: $success;
+    background: $success_bg;
     padding: 10px 14px;
-    border-radius: 8px;
+    border-radius: $radius_btn;
     margin-bottom: 12px;
-    border: 1px solid #bbf7d0;
+    border: 1px solid $success_border;
 }
 
 .invoice {
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 12px;
+    @include admin-card;
     padding: 28px 32px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
 .invoiceHead {
@@ -50,18 +35,18 @@
     gap: 12px;
     padding-bottom: 20px;
     margin-bottom: 24px;
-    border-bottom: 2px solid #f0f0f0;
+    border-bottom: 2px solid $border_light;
 
     h2 {
         margin: 0;
         font-size: 22px;
-        color: #111;
+        color: $text_primary;
     }
 
     p {
         margin: 4px 0 0;
         font-size: 14px;
-        color: #6b7280;
+        color: $text_muted;
     }
 }
 
@@ -76,8 +61,8 @@
     }
 
     > div {
-        background: #f9fafb;
-        border: 1px solid #f0f0f0;
+        background: $surface_muted;
+        border: 1px solid $border_light;
         border-radius: 10px;
         padding: 16px;
     }
@@ -87,35 +72,20 @@
         font-size: 13px;
         text-transform: uppercase;
         letter-spacing: 0.04em;
-        color: #6b7280;
+        color: $text_muted;
     }
 
     p {
         margin: 0 0 6px;
         font-size: 14px;
         line-height: 1.5;
-        color: #374151;
+        color: $text_secondary;
     }
 }
 
 .itemsTable {
-    width: 100%;
-    border-collapse: collapse;
+    @include admin-table;
     margin-bottom: 24px;
-    font-size: 14px;
-
-    th,
-    td {
-        padding: 12px 14px;
-        text-align: left;
-        border-bottom: 1px solid #f0f0f0;
-    }
-
-    th {
-        background: #fafafa;
-        font-weight: 600;
-        color: #555;
-    }
 
     td:nth-child(2),
     td:nth-child(3),
@@ -130,20 +100,20 @@
 .paymentBlock {
     margin-bottom: 20px;
     padding: 16px;
-    background: #f8fafc;
+    background: $surface_muted;
     border-radius: 10px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid $border_default;
 
     h4 {
         margin: 0 0 8px;
         font-size: 14px;
-        color: #475569;
+        color: $text_secondary;
     }
 
     p {
         margin: 0;
         font-weight: 600;
-        color: #0f172a;
+        color: $text_primary;
     }
 }
 
@@ -157,20 +127,20 @@
         justify-content: space-between;
         padding: 8px 0;
         font-size: 14px;
-        color: #4b5563;
+        color: $text_secondary;
     }
 
     .total {
         margin-top: 8px;
         padding: 14px 16px;
-        background: #111827;
-        color: #fff;
+        background: $brand_dark;
+        color: $white_color;
         border-radius: 10px;
         font-size: 16px;
         font-weight: 700;
 
         span:last-child {
-            color: #fff;
+            color: $white_color;
         }
     }
 }
@@ -180,21 +150,13 @@
     flex-wrap: wrap;
     gap: 10px;
     padding-top: 20px;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid $border_light;
 
     button {
+        @include admin-btn-ghost;
         padding: 10px 18px;
-        border-radius: 8px;
         font-size: 14px;
         font-weight: 600;
-        cursor: pointer;
-        border: 1px solid #d1d5db;
-        background: #fff;
-        color: #374151;
-
-        &:hover:not(:disabled) {
-            background: #f9fafb;
-        }
 
         &:disabled {
             opacity: 0.6;
@@ -203,40 +165,33 @@
     }
 
     .primary {
-        background: #2563eb;
-        border-color: #2563eb;
-        color: #fff;
-
-        &:hover:not(:disabled) {
-            background: #1d4ed8;
-        }
+        @include admin-btn-brand;
     }
 
     .send {
-        background: #059669;
-        border-color: #059669;
-        color: #fff;
+        background: $success;
+        border-color: $success;
+        color: $white_color;
 
         &:hover:not(:disabled) {
-            background: #047857;
+            background: darken($success, 6%);
         }
     }
 
     .danger {
-        background: #dc2626;
-        border-color: #dc2626;
-        color: #fff;
+        background: $danger;
+        border-color: $danger;
+        color: $white_color;
 
         &:hover:not(:disabled) {
-            background: #b91c1c;
+            background: darken($danger, 6%);
         }
     }
 }
 
-//in hóa đơn
 @media print {
     :global(body) {
-        background: #fff;
+        background: $white_color;
     }
 
     .noPrint {

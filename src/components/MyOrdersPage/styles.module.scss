@@ -195,19 +195,19 @@
     justify-content: center;
     min-width: 120px;
     padding: 8px 16px;
-    border: 1px solid #0d9488;
-    border-radius: 8px;
-    background: #fff;
-    color: #0f766e;
+    border: 1px solid $brand;
+    border-radius: $radius_btn;
+    background: $white_color;
+    color: $brand;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    transition: background $transition_fast, color $transition_fast, border-color $transition_fast;
 
     &:hover {
-        background: #f0fdfa;
-        border-color: #0f766e;
-        color: #115e59;
+        background: $brand_light;
+        border-color: $brand_hover;
+        color: $brand_hover;
     }
 }
 

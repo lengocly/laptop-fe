@@ -1,6 +1,7 @@
 @import '@styles/variable.module.scss';
 
-/* ─── Khung carousel sản phẩm ─── */
+$slide-width: 284px;
+$track-gap: 20px;
 
 .wrap {
     margin-top: 16px;
@@ -15,16 +16,15 @@
     text-align: center;
 }
 
-/* Hàng ngang: [nút ‹] [track SP] [nút ›] */
 .slider {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     gap: 12px;
 }
 
-/* Nút tròn hai bên — disable khi hết lướt (opacity thấp) */
 .navBtn {
     flex-shrink: 0;
+    align-self: center;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -32,16 +32,16 @@
     height: 44px;
     border: 1px solid #e5e7eb;
     border-radius: 50%;
-    background: #fff;
+    background: $white_color;
     color: $text_primary;
     cursor: pointer;
     box-shadow: $shadow_card;
-    transition: background 0.2s, border-color 0.2s, opacity 0.2s;
+    transition: background $transition_fast, border-color $transition_fast, opacity $transition_fast;
 
     &:hover:not(:disabled) {
-        border-color: $accent_color;
-        color: $accent_color;
-        background: rgba(13, 148, 136, 0.06);
+        border-color: $brand;
+        color: $brand;
+        background: $brand_light;
     }
 
     &:disabled {
@@ -51,17 +51,18 @@
     }
 }
 
-/* Vùng lướt ngang — ẩn scrollbar, snap từng thẻ */
+/* Gap rõ giữa các card — không dùng calc % */
 .track {
     flex: 1;
     min-width: 0;
     display: flex;
-    gap: 20px;
+    align-items: stretch;
+    gap: $track-gap;
     overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
-    padding: 8px 4px 16px;
+    padding: 12px 4px 20px;
     scrollbar-width: none;
 
     &::-webkit-scrollbar {
@@ -69,19 +70,13 @@
     }
 }
 
-/* Mỗi ô SP: ~4 cột desktop, co lại theo breakpoint */
 .slide {
-    flex: 0 0 calc(25% - 15px);
-    min-width: 240px;
-    max-width: 300px;
+    flex: 0 0 $slide-width;
+    width: $slide-width;
+    min-width: $slide-width;
     scroll-snap-align: start;
-}
-
-@media (max-width: 1024px) {
-    .slide {
-        flex: 0 0 calc(33.333% - 14px);
-        min-width: 220px;
-    }
+    display: flex;
+    box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
@@ -91,15 +86,21 @@
     }
 
     .slide {
-        flex: 0 0 calc(50% - 10px);
-        min-width: 200px;
+        flex: 0 0 252px;
+        width: 252px;
+        min-width: 252px;
     }
 }
 
 @media (max-width: 480px) {
+    .track {
+        gap: 16px;
+        padding-inline: 2px;
+    }
+
     .slide {
-        flex: 0 0 calc(100% - 8px);
-        min-width: 0;
-        max-width: none;
+        flex: 0 0 min(272px, calc(100vw - 100px));
+        width: min(272px, calc(100vw - 100px));
+        min-width: min(272px, calc(100vw - 100px));
     }
 }

@@ -1,29 +1,70 @@
+// =============================================================================
+// BẢNG MÀU BETATECH — 1 file dùng chung Store + Admin
+// Giải thích đồ án: brand = màu thương hiệu | surface = nền/thẻ | semantic = trạng thái
+// =============================================================================
+
+// --- Layout header ---
 $header_marquee_height: 36px;
 $header_nav_height: 83px;
 $header_total_height: 119px;
 
-$primary_color: #333;
-$seconddary_color: #888;
-$thr_color: #555;
-$white_color: #fff;
-$sub_color: #404040;
-$four_color: #222;
+// --- Brand (màu chính BetaTech — xanh dương, khớp logo & marquee) ---
+$brand: #2563eb;
+$brand_hover: #1d4ed8;
+$brand_light: #eff6ff;
+$brand_dark: #1e3a8a;
+$brand_gradient: linear-gradient(
+    90deg,
+    #1e3a8a 0%,
+    #2563eb 45%,
+    #0891b2 100%
+);
 
-// Màu nhấn (nút, link active) — giống ShopMini
-$accent_color: #0d9488;      // teal
-$accent_hover: #0f766e;
+// Alias cũ — store vẫn dùng $accent_color, không cần sửa hết file
+$accent_color: $brand;
+$accent_hover: $brand_hover;
 
-// Nền & chữ
-$bg_page: #f8fafc;
-$text_primary: #111827;
-$text_muted: #6b7280;
+// --- Chữ ---
+$text_primary: #0f172a;
+$text_secondary: #475569;
+$text_muted: #64748b;
+$white_color: #ffffff;
 
-// Giá & khuyến mãi
-$price_color: #111827;
-$price_old: #9ca3af;
-$badge_sale: #ef4444;        // đỏ % giảm
+// Alias cũ (menu, tiêu đề)
+$primary_color: $text_secondary;
+$seconddary_color: $text_muted;
+$thr_color: $text_secondary;
+$sub_color: $text_secondary;
+$four_color: $text_primary;
 
-// Bo góc & đổ bóng (cảm giác hiện đại)
+// --- Nền & viền ---
+$bg_page: #f1f5f9;
+$surface_card: #ffffff;
+$surface_muted: #f8fafc;
+$border_default: #e2e8f0;
+$border_light: #f1f5f9;
+
+// --- Trạng thái (badge, thông báo) ---
+$success: #059669;
+$success_bg: #ecfdf5;
+$success_border: #bbf7d0;
+$warning: #d97706;
+$warning_bg: #fffbeb;
+$warning_border: #fde68a;
+$danger: #dc2626;
+$danger_bg: #fef2f2;
+$danger_border: #fecaca;
+
+// --- Giá & khuyến mãi ---
+$price_color: $text_primary;
+$price_old: #94a3b8;
+$badge_sale: #ef4444;
+
+// --- Bo góc & đổ bóng ---
 $radius_card: 12px;
 $radius_btn: 8px;
-$shadow_card: 0 4px 14px rgba(0, 0, 0, 0.06);
+$shadow_card: 0 1px 2px rgba(15, 23, 42, 0.05), 0 4px 14px rgba(15, 23, 42, 0.06);
+
+// --- Chuyển động (mượt, nhẹ) ---
+$transition_fast: 0.2s ease;
+$transition_normal: 0.3s cubic-bezier(0.22, 1, 0.36, 1);

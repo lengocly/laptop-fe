@@ -2,10 +2,12 @@ import styles from '../styles.module.scss';
 
 // tạo 1 component chung trong thẻ đen
 function InfoCard({ content, description, src }) {
-    const { containerCard, containerContent, title, des } = styles;
+    const { containerCard, iconWrap, containerContent, title, des } = styles;
     return (
         <div className={containerCard}>
-            <img width={40} height={41} src={src} alt='truckIcon' />
+            <span className={iconWrap}>
+                <img src={src} alt="" width={28} height={28} />
+            </span>
 
             <div className={containerContent}>
                 <div className={title}>{content}</div>

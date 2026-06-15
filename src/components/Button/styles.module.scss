@@ -1,36 +1,47 @@
 @import '@styles/mixin.module.scss';
 @import '@styles/variable.module.scss';
-// mixin này có 4 tham số muốn chạy đc 3 cho color cuối cùng
-// (w,h,radius)
+
 .btn {
-    @include btn(176px, 42px, 3px, $primary_color);
+    @include btn(176px, 42px, $radius_btn, $brand);
 
     font-size: 14px;
-    font-weight: 300;
-    cursor: pointer; //khi hover vào có hình bàn tay
-    &:hover {
-        transition: background-color 300ms;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background-color $transition_normal,
+        color $transition_normal,
+        border-color $transition_normal,
+        transform $transition_fast;
+
+    &:hover:not(:disabled) {
+        transform: translateY(-1px);
+    }
+
+    &:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
     }
 }
 
-//btn trắng chữ đen ở sale homepage
 .primaryBtn {
-    background-color: $primary_color;
+    background-color: $brand;
     color: $white_color;
-    &:hover {
-        background-color: transparent; // ko màu
-        color: $primary_color;
-        border: 1px solid $primary_color;
+    border-color: $brand;
+
+    &:hover:not(:disabled) {
+        background-color: $brand_hover;
+        border-color: $brand_hover;
+        color: $white_color;
     }
 }
 
 .secondaryBtn {
     background-color: $white_color;
-    color: $primary_color;
-    border: 1px solid $primary_color;
+    color: $brand;
+    border: 1px solid $brand;
 
-    &:hover {
-        background-color: $primary_color;
+    &:hover:not(:disabled) {
+        background-color: $brand;
         color: $white_color;
     }
 }

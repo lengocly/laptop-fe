@@ -1,10 +1,6 @@
 /**
- * ProductItem — một thẻ sản phẩm trên trang chủ / cửa hàng.
- *
- * Thao tác nhanh (hover bên phải ảnh):
- * 1. Thêm vào giỏ  → addToCart + mở sidebar giỏ
- * 2. Yêu thích     → toggleWishlist + mở sidebar wishlist
- * 3. So sánh       → addToCompare + mở sidebar so sánh
+ * ProductItem — thẻ sản phẩm (UI kiểu e-commerce hiện đại, cảm hứng CellphoneS).
+ * Logic: giỏ / yêu thích / so sánh / rating / giá — giữ nguyên.
  */
 import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -46,19 +42,6 @@ function ProductItem({
     const { setIsOpen, setType } = useContext(SideBarContext);
     const [flashMessage, setFlashMessage] = useState('');
 
-    const {
-        card,
-        imageHit,
-        boxImg,
-        showImgWhenHover,
-        quickActions,
-        quickActionBtn,
-        quickActionActive,
-        title,
-        metaLink,
-        flashToast,
-    } = styles;
-
     const mainSrc = src || IMG_FALLBACK;
     const hoverSrc = prevSrc || mainSrc;
     const detailUrl = id != null ? `/product/${id}` : '#';
@@ -69,6 +52,7 @@ function ProductItem({
         : '';
     const discount = calcDiscountPercent(price, priceOriginal);
     const savings = calcSavings(price, priceOriginal);
+    const specText = [cpu, ram, storage].filter(Boolean).join(' · ');
 
     const productPayload = {
         productId: id,
@@ -105,23 +89,19 @@ function ProductItem({
                     priceOriginal,
                     image: mainSrc,
                     quantity: 1,
-                    maxStock: stock ?? 0, // Dùng tồn kho thật từ API, không hardcode 99
+                    maxStock: stock ?? 0,
                 });
                 moSidebar('cart');
                 break;
             case 'wishlist': {
                 const added = toggleWishlist(productPayload);
                 moSidebar('wishlist');
-                if (added) {
-                    hienThongBaoNgan('Đã thêm vào yêu thích');
-                }
+                if (added) hienThongBaoNgan('Đã thêm vào yêu thích');
                 break;
             }
             case 'compare': {
                 const result = addToCompare(productPayload);
-                if (result.ok) {
-                    moSidebar('compare');
-                }
+                if (result.ok) moSidebar('compare');
                 hienThongBaoNgan(result.message);
                 break;
             }
@@ -131,24 +111,26 @@ function ProductItem({
     };
 
     return (
-        <div className={card}>
+        <article className={styles.card}>
             {flashMessage && (
-                <p className={flashToast} role="status">
+                <p className={styles.flashToast} role="status">
                     {flashMessage}
                 </p>
             )}
 
-            <div className={boxImg}>
+            {/* Vùng ảnh + thao tác nhanh */}
+            <div className={styles.media}>
                 {discount > 0 && (
-                    <span className={styles.badgeDiscount}>-{discount}%</span>
+                    <span className={styles.badgeDiscount}>Giảm {discount}%</span>
                 )}
 
                 <Link
-                    className={imageHit}
+                    className={styles.imageHit}
                     to={detailUrl}
                     aria-label={`Xem ${name}`}
                 />
                 <img
+                    className={styles.imageMain}
                     src={mainSrc}
                     alt={name || ''}
                     loading="lazy"
@@ -160,7 +142,7 @@ function ProductItem({
                 <img
                     src={hoverSrc}
                     alt=""
-                    className={showImgWhenHover}
+                    className={styles.imageHover}
                     loading="lazy"
                     decoding="async"
                     onError={(e) => {
@@ -169,7 +151,7 @@ function ProductItem({
                 />
 
                 <div
-                    className={quickActions}
+                    className={styles.quickActions}
                     onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -186,8 +168,8 @@ function ProductItem({
                             <button
                                 key={action.id}
                                 type="button"
-                                className={classNames(quickActionBtn, {
-                                    [quickActionActive]: isActive,
+                                className={classNames(styles.quickActionBtn, {
+                                    [styles.quickActionActive]: isActive,
                                 })}
                                 title={action.label}
                                 aria-label={action.label}
@@ -201,32 +183,52 @@ function ProductItem({
                 </div>
             </div>
 
-            <Link className={metaLink} to={detailUrl}>
-                <div className={title}>{name}</div>
-                <div className={styles.priceBlock}>
+            {/* Nội dung: tên, giá, rating */}
+            <Link className={styles.body} to={detailUrl}>
+                <h3 className={styles.title}>{name}</h3>
+
+                <div className={styles.priceArea}>
                     <div className={styles.priceRow}>
                         <span className={styles.priceCurrent}>{priceText}</span>
                         {priceOriginal && (
                             <span className={styles.priceOld}>{priceOriginalText}</span>
                         )}
                     </div>
-                    {discount > 0 && (
-                        <p className={styles.priceSave}>
-                            Tiết kiệm {formatVnd(savings)} · {discount}% OFF
-                        </p>
+                    {discount > 0 ? (
+                        <span className={styles.saveChip}>
+                            Tiết kiệm {formatVnd(savings)}
+                        </span>
+                    ) : (
+                        <span className={styles.savePlaceholder} aria-hidden />
                     )}
                 </div>
-                {reviewCount > 0 && ratingAverage != null && (
-                    <div
-                        className={styles.ratingRow}
-                        aria-label={`Đánh giá ${ratingAverage} trên 5, ${reviewCount} lượt`}
-                    >
-                        <FiStar className={styles.ratingStar} aria-hidden />
-                        <span>{ratingAverage}</span>
-                    </div>
+
+                {specText ? (
+                    <p className={styles.specLine}>{specText}</p>
+                ) : (
+                    <span className={styles.specPlaceholder} aria-hidden />
                 )}
+
+                <div
+                    className={styles.footer}
+                    aria-label={
+                        reviewCount > 0 && ratingAverage != null
+                            ? `Đánh giá ${ratingAverage} trên 5, ${reviewCount} lượt`
+                            : undefined
+                    }
+                >
+                    {reviewCount > 0 && ratingAverage != null ? (
+                        <>
+                            <FiStar className={styles.ratingStar} aria-hidden />
+                            <span className={styles.ratingValue}>{ratingAverage}</span>
+                            <span className={styles.ratingCount}>({reviewCount})</span>
+                        </>
+                    ) : (
+                        <span className={styles.footerPlaceholder} aria-hidden />
+                    )}
+                </div>
             </Link>
-        </div>
+        </article>
     );
 }
 

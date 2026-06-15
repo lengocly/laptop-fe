@@ -1,3 +1,5 @@
+@import '@styles/admin-shared.module.scss';
+
 .stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -6,35 +8,33 @@
 }
 
 .statCard {
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 12px;
+    @include admin-card;
     padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 8px;
 
     span {
-        color: #666;
+        color: $text_muted;
         font-size: 14px;
     }
 
     strong {
         font-size: 24px;
-        color: #111;
+        color: $text_primary;
     }
 }
 
 .alert {
-    background: #fff8e1;
-    border: 1px solid #ffe082;
-    border-radius: 8px;
+    background: $warning_bg;
+    border: 1px solid $warning_border;
+    border-radius: $radius_btn;
     padding: 12px 16px;
     margin-bottom: 24px;
     font-size: 14px;
 
     a {
-        color: #008080;
+        color: $brand;
         font-weight: 600;
     }
 }
@@ -42,60 +42,33 @@
 .section h2 {
     margin: 0 0 12px;
     font-size: 18px;
+    color: $text_primary;
 }
 
 .tableWrap {
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 12px;
-    overflow: hidden;
+    @include admin-table-wrap;
 }
 
 .table {
-    width: 100%;
-    border-collapse: collapse;
-
-    th, td {
-        padding: 12px 16px;
-        border-bottom: 1px solid #f0f0f0;
-        text-align: left;
-        font-size: 14px;
-    }
-
-    th {
-        background: #fafafa;
-    }
+    @include admin-table;
 }
 
-//không có đơn hàng
 .empty {
     text-align: center;
-    color: #888;
+    color: $text_muted;
     padding: 20px;
 }
 
-//nút xem chi tiết đơn hàng
 .detailBtn {
+    @include admin-btn-brand;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 8px 14px;
-    border-radius: 8px;
-    background: #2563eb;
-    color: #fff !important;
     font-size: 13px;
-    font-weight: 600;
     text-decoration: none !important;
-    white-space: nowrap;
-    transition: background 0.15s ease;
-
-    &:hover {
-        background: #1d4ed8;
-        color: #fff;
-    }
 }
 
-//biểu đồ doanh thu theo ngày
 .charts {
     margin-bottom: 24px;
 }

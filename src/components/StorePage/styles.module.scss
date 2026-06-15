@@ -20,20 +20,24 @@
     color: $badge_sale;
 }
 
+/* Grid đều nhau — gap 20px, card stretch full ô */
 .grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+    grid-template-columns: repeat(auto-fill, minmax(284px, 1fr));
+    gap: 20px;
+    align-items: stretch;
 }
 
 @media (max-width: 900px) {
     .grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(auto-fill, minmax(252px, 1fr));
+        gap: 18px;
     }
 }
 
 @media (max-width: 560px) {
     .grid {
         grid-template-columns: 1fr;
+        gap: 16px;
     }
 }

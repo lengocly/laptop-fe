@@ -2,6 +2,7 @@
  * AboutNewsCard — 1 thẻ bài viết, click mở trang chi tiết
  */
 import { Link } from 'react-router-dom';
+import BlogImage from './BlogImage';
 import styles from './styles.module.scss';
 
 function AboutNewsCard({ card }) {
@@ -19,7 +20,7 @@ function AboutNewsCard({ card }) {
                 </div>
 
                 <div className={styles.newsImage}>
-                    <img src={image} alt={title} loading="lazy" />
+                    <BlogImage src={image} alt={title} />
                 </div>
 
                 <h3 className={styles.newsTitle}>{title}</h3>

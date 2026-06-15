@@ -1,14 +1,16 @@
+@import '@styles/variable.module.scss';
+
 .page {
     display: flex;
     min-height: 100vh;
-    background: #f4f6f8;
+    background: $bg_page;
 }
 
 .sidebar {
     width: 240px;
     flex-shrink: 0;
-    background: #fff;
-    border-right: 1px solid #e8e8e8;
+    background: $surface_card;
+    border-right: 1px solid $border_default;
     padding: 24px 16px;
 }
 
@@ -18,19 +20,23 @@
     gap: 8px;
     margin-bottom: 24px;
     padding-bottom: 16px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid $border_light;
 
     strong {
         font-size: 18px;
+        color: $text_primary;
     }
 }
 
 .backStore {
     font-size: 13px;
-    color: #008080;
+    color: $brand;
     text-decoration: none;
+    font-weight: 500;
+    transition: color $transition_fast;
 
     &:hover {
+        color: $brand_hover;
         text-decoration: underline;
     }
 }
@@ -44,19 +50,21 @@
 .navItem {
     display: block;
     padding: 10px 14px;
-    border-radius: 8px;
-    color: #333;
+    border-radius: $radius_btn;
+    color: $text_secondary;
     text-decoration: none;
     font-size: 14px;
+    transition: background $transition_fast, color $transition_fast;
 
     &:hover {
-        background: #f0fafa;
+        background: $brand_light;
+        color: $brand;
     }
 }
 
 .navItemActive {
-    background: #e0f2f1;
-    color: #00695c;
+    background: $brand_light;
+    color: $brand;
     font-weight: 600;
 }
 
@@ -72,10 +80,10 @@
     h1 {
         margin: 0;
         font-size: 26px;
+        color: $text_primary;
     }
 }
 
-//in hóa đơn
 @media print {
     .sidebar {
         display: none !important;
@@ -87,7 +95,7 @@
 
     .page {
         display: block;
-        background: #fff;
+        background: $white_color;
     }
 
     .main {

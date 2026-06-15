@@ -20,16 +20,16 @@ const footerColumns = [
         title: 'Tin tức',
         links: [
             {
-                label: 'Chọn laptop sinh viên 2026',
+                label: 'TOP laptop sinh viên 2026',
                 to: '/gioi-thieu/bai-viet/chon-laptop-sinh-vien-2026',
             },
             {
-                label: 'Đánh giá MacBook Air M3',
-                to: '/gioi-thieu/bai-viet/danh-gia-macbook-air-m3',
+                label: 'Đánh giá MacBook Pro 14 M3',
+                to: '/gioi-thieu/bai-viet/danh-gia-macbook-pro-14-m3',
             },
             {
-                label: 'Trả góp 0% tại BetaTech',
-                to: '/gioi-thieu/bai-viet/betatech-tra-gop-0-phan-tram',
+                label: 'TOP phụ kiện laptop 2026',
+                to: '/gioi-thieu/bai-viet/top-phu-kien-laptop-2026',
             },
         ],
     },

@@ -1,3 +1,5 @@
+//file này dùng để hiển thị thanh chữ chạy trên header
+
 import {
     FiMessageCircle,
     FiPackage,

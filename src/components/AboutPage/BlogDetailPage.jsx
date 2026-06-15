@@ -1,15 +1,14 @@
 /**
- * =============================================================================
- * BlogDetailPage — Trang chi tiết bài viết (/gioi-thieu/bai-viet/:slug)
- * =============================================================================
- *  Hiển thị nội dung đầy đủ của 1 bài viết từ thẻ tin tức trên trang Giới thiệu.
- * =============================================================================
+ * BlogDetailPage — Chi tiết bài viết (/gioi-thieu/bai-viet/:slug)
+ * Hỗ trợ blocks: h2, h3, p, img, product (kiểu Sforum).
  */
 import { Link, useParams } from 'react-router-dom';
 import MyHeader from '@components/Header/Header';
 import MyFooter from '@components/Footer/Footer';
 import MainLayout from '@components/Layout/Layout';
 import { getBlogArticleBySlug } from './constants';
+import BlogArticleBody from './BlogArticleBody';
+import BlogImage from './BlogImage';
 import styles from './blogDetail.module.scss';
 
 function BlogDetailPage() {
@@ -53,19 +52,21 @@ function BlogDetailPage() {
                                     </div>
 
                                     <h1 className={styles.articleTitle}>{article.title}</h1>
+
+                                    {article.excerpt && (
+                                        <p className={styles.lead}>{article.excerpt}</p>
+                                    )}
+
+                                    {article.author && (
+                                        <p className={styles.author}>Tác giả: {article.author}</p>
+                                    )}
                                 </header>
 
                                 <div className={styles.heroImage}>
-                                    <img src={article.image} alt={article.title} />
+                                    <BlogImage src={article.image} alt={article.title} />
                                 </div>
 
-                                <div className={styles.articleBody}>
-                                    {article.content.map((paragraph) => (
-                                        <p key={paragraph} className={styles.paragraph}>
-                                            {paragraph}
-                                        </p>
-                                    ))}
-                                </div>
+                                <BlogArticleBody blocks={article.blocks} />
                             </article>
 
                             <footer className={styles.articleFooter}>

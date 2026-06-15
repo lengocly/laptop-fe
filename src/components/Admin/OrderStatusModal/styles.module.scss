@@ -1,7 +1,9 @@
+@import '@styles/admin-shared.module.scss';
+
 .overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.45);
+    background: rgba(15, 23, 42, 0.45);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -10,17 +12,14 @@
 
 .modal {
     width: min(480px, 92vw);
-    background: #fff;
-    border-radius: 12px;
+    @include admin-card;
     padding: 24px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 
-    select, textarea {
+    select,
+    textarea {
+        @include admin-input;
         width: 100%;
         margin-top: 6px;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
     }
 
     label {
@@ -28,6 +27,7 @@
         margin-top: 14px;
         font-size: 14px;
         font-weight: 600;
+        color: $text_secondary;
     }
 }
 
@@ -38,10 +38,7 @@
     margin-top: 20px;
 
     button[type='submit'] {
-        background: #2563eb;
-        color: #fff;
-        border: none;
+        @include admin-btn-brand;
         padding: 10px 18px;
-        border-radius: 8px;
     }
 }

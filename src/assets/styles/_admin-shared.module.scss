@@ -1,0 +1,175 @@
+// Style dùng chung trang Admin — import cùng variable
+@import './variable.module.scss';
+
+@mixin admin-card {
+    background: $surface_card;
+    border: 1px solid $border_default;
+    border-radius: $radius_card;
+    box-shadow: $shadow_card;
+}
+
+@mixin admin-table-wrap {
+    @include admin-card;
+    overflow: hidden;
+}
+
+@mixin admin-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+        padding: 14px 16px;
+        text-align: left;
+        border-bottom: 1px solid $border_light;
+        font-size: 14px;
+        vertical-align: middle;
+    }
+
+    th {
+        background: $surface_muted;
+        font-weight: 600;
+        color: $text_secondary;
+    }
+
+    small {
+        color: $text_muted;
+    }
+}
+
+@mixin admin-input {
+    padding: 9px 12px;
+    border: 1px solid $border_default;
+    border-radius: $radius_btn;
+    background: $surface_card;
+    font-size: 14px;
+    outline: none;
+    transition: border-color $transition_fast, box-shadow $transition_fast;
+
+    &:focus {
+        border-color: $brand;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+}
+
+@mixin admin-btn-brand {
+    padding: 9px 16px;
+    border: none;
+    border-radius: $radius_btn;
+    background: $brand;
+    color: $white_color;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background $transition_fast;
+
+    &:hover:not(:disabled) {
+        background: $brand_hover;
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+}
+
+@mixin admin-btn-ghost {
+    padding: 8px 14px;
+    border: 1px solid $border_default;
+    border-radius: $radius_btn;
+    background: $surface_card;
+    color: $text_secondary;
+    cursor: pointer;
+    transition: background $transition_fast, border-color $transition_fast;
+
+    &:hover {
+        background: $surface_muted;
+        border-color: $brand;
+        color: $brand;
+    }
+}
+
+@mixin admin-badge-success {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: $success_bg;
+    color: $success;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+@mixin admin-badge-warning {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: $warning_bg;
+    color: $warning;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+@mixin admin-badge-muted {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: $surface_muted;
+    color: $text_muted;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+@mixin admin-toolbar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+
+    input,
+    select {
+        @include admin-input;
+    }
+
+    input {
+        min-width: 260px;
+    }
+
+    select {
+        min-width: 180px;
+    }
+}
+
+@mixin admin-page-btn {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid $border_default;
+    border-radius: $radius_btn;
+    background: $surface_card;
+    color: $text_primary;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background $transition_fast, border-color $transition_fast;
+
+    &:hover:not(:disabled) {
+        background: $surface_muted;
+        border-color: $brand;
+    }
+
+    &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+}
+
+@mixin admin-page-btn-active {
+    background: $brand;
+    border-color: $brand;
+    color: $white_color;
+
+    &:hover:not(:disabled) {
+        background: $brand_hover;
+        border-color: $brand_hover;
+    }
+}

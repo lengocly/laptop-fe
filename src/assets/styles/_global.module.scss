@@ -1,3 +1,5 @@
+@import './variable.module.scss';
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 html {
@@ -6,4 +8,29 @@ html {
 
 body {
     font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    background-color: $bg_page;
+    color: $text_primary;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+    color: $brand;
+    transition: color $transition_fast;
+
+    &:hover {
+        color: $brand_hover;
+    }
+}
+
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+}
+
+*:focus-visible {
+    outline: 2px solid rgba(37, 99, 235, 0.45);
+    outline-offset: 2px;
 }

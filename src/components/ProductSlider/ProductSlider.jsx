@@ -22,7 +22,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import ProductItem from '@components/ProductItem/ProductItem';
-import ScrollReveal from '@components/ScrollReveal/ScrollReveal';
 import styles from './styles.module.scss';
 
 function ProductSlider({ data = [], title }) {
@@ -84,14 +83,8 @@ function ProductSlider({ data = [], title }) {
 
                 {/* Hàng SP — mỗi .slide bọc 1 ProductItem */}
                 <div className={styles.track} ref={trackRef}>
-                    {data.map((item, index) => (
-                        <ScrollReveal
-                            key={item.id}
-                            variant="up"
-                            delay={Math.min(index * 70, 420)}
-                            duration={700}
-                            className={styles.slide}
-                        >
+                    {data.map((item) => (
+                        <div key={item.id} className={styles.slide}>
                             <ProductItem
                                 id={item.id}
                                 src={item.images?.[0]}
@@ -103,7 +96,7 @@ function ProductSlider({ data = [], title }) {
                                 ratingAverage={item.rating_average}
                                 reviewCount={item.review_count}
                             />
-                        </ScrollReveal>
+                        </div>
                     ))}
                 </div>
 

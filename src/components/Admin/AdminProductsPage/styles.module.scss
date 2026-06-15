@@ -1,97 +1,38 @@
+@import '@styles/admin-shared.module.scss';
+
 .tableWrap {
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    @include admin-table-wrap;
 }
 
 .table {
-    width: 100%;
-    border-collapse: collapse;
-
-    th, td {
-        padding: 14px 16px;
-        text-align: left;
-        border-bottom: 1px solid #f0f0f0;
-        font-size: 14px;
-        vertical-align: middle;
-    }
-
-    th {
-        background: #fafafa;
-        font-weight: 600;
-        color: #555;
-    }
-
-    small {
-        color: #888;
-    }
+    @include admin-table;
 }
 
 .select {
+    @include admin-input;
     min-width: 150px;
-    padding: 8px 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background: #fff;
 }
 
 .payPaid {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: #e8f8ef;
-    color: #2e7d32;
-    font-size: 12px;
-    font-weight: 600;
+    @include admin-badge-success;
 }
 
 .payUnpaid {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: #fff8e1;
-    color: #f57c00;
-    font-size: 12px;
-    font-weight: 600;
+    @include admin-badge-warning;
 }
 
 .empty {
     text-align: center;
-    color: #888;
+    color: $text_muted;
 }
 
 .err {
-    color: #c62828;
+    color: $danger;
     margin-bottom: 16px;
 }
 
-// toolbar tìm kiếm, lọc trạng thái
 .toolbar {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
-
-    input,
-    select {
-        padding: 9px 12px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        background: #fff;
-        font-size: 14px;
-        outline: none;
-    }
-
-    input {
-        min-width: 260px;
-    }
-
-    select {
-        min-width: 180px;
-    }
+    @include admin-toolbar;
 }
 
 .actions {
@@ -104,14 +45,15 @@
 .iconBtn {
     width: 34px;
     height: 34px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background: #fff;
+    border: 1px solid $border_default;
+    border-radius: $radius_btn;
+    background: $surface_card;
     cursor: pointer;
     font-size: 15px;
+    transition: background $transition_fast;
 
     &:hover {
-        background: #f5f5f5;
+        background: $surface_muted;
     }
 
     &:disabled {
@@ -126,61 +68,37 @@
     bottom: 24px;
     padding: 12px 16px;
     border-radius: 10px;
-    background: #e8f8ef;
-    color: #2e7d32;
-    border: 1px solid #b7e4c7;
+    background: $success_bg;
+    color: $success;
+    border: 1px solid $success_border;
     font-weight: 600;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+    box-shadow: $shadow_card;
     z-index: 999;
 }
 
-
-// ================ Sản phẩm ================
 .thumb {
     width: 48px;
     height: 48px;
     object-fit: cover;
-    border-radius: 8px;
-    border: 1px solid #eee;
+    border-radius: $radius_btn;
+    border: 1px solid $border_default;
 }
 
 .addBtn {
+    @include admin-btn-brand;
     margin-left: auto;
-    padding: 9px 16px;
-    border: none;
-    border-radius: 8px;
-    background: #2563eb;
-    color: #fff;
-    font-weight: 600;
-    cursor: pointer;
-
-    &:hover {
-        background: #1d4ed8;
-    }
 }
 
 .badgeActive {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: #e8f8ef;
-    color: #2e7d32;
-    font-size: 12px;
-    font-weight: 600;
+    @include admin-badge-success;
 }
 
 .badgeInactive {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: #f3f4f6;
-    color: #6b7280;
-    font-size: 12px;
-    font-weight: 600;
+    @include admin-badge-muted;
 }
 
 .dangerBtn {
-    color: #dc2626;
+    color: $danger;
 }
 
 .pagination {
@@ -195,7 +113,7 @@
 
 .paginationInfo {
     font-size: 13px;
-    color: #666;
+    color: $text_muted;
 }
 
 .paginationControls {
@@ -205,36 +123,10 @@
 }
 
 .pageBtn {
-    min-width: 36px;
-    height: 36px;
-    padding: 0 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background: #fff;
-    color: #333;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
-
-    &:hover:not(:disabled) {
-        background: #f5f5f5;
-        border-color: #ccc;
-    }
-
-    &:disabled {
-        opacity: 0.4;
-        cursor: not-allowed;
-    }
+    @include admin-page-btn;
 }
 
 .pageBtnActive {
-    background: #2563eb;
-    border-color: #2563eb;
-    color: #fff;
-
-    &:hover:not(:disabled) {
-        background: #1d4ed8;
-        border-color: #1d4ed8;
-    }
+    @include admin-page-btn;
+    @include admin-page-btn-active;
 }
