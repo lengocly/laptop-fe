@@ -13,7 +13,7 @@ function ItemProduct({ item, onRemove, showSpecs = false }) {
     const detailUrl = `/product/${item.productId}`;
     const imageSrc = item.image || IMG_FALLBACK;
 
-    const specParts = [item.cpu, item.ram, item.storage].filter(Boolean);
+    const specParts = [item.cpu, item.ram, item.storage, item.screen].filter(Boolean);
 
     return (
         <div className={container}>

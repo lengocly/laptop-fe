@@ -19,6 +19,10 @@ const routers = [
         component: lazy(() => import('@components/StorePage/StorePage'))
     },
     {
+        path: '/so-sanh',
+        component: lazy(() => import('@components/ComparePage/ComparePage'))
+    },
+    {
         path: '/gioi-thieu/bai-viet/:slug',
         component: lazy(() => import('@components/AboutPage/BlogDetailPage'))
     },

@@ -9,6 +9,7 @@ import { WishlistProvider } from '@/contexts/WishlistProvider';
 import { CompareProvider } from '@/contexts/CompareProvider';
 import ChatWidget from '@/components/ChatWidget/ChatWidget';
 import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
+import CompareBar from '@/components/CompareBar/CompareBar';
 
 //để sử dụng được router thì phải bọc tất cả các component trong BrowserRouter để có thể sử dụng được các tính năng của router như là điều hướng, chuyển trang, v.v.
 function App() {
@@ -21,6 +22,7 @@ function App() {
                     <ScrollToTop />
                     <SideBarProvider>
                         <Sidebar />
+                        <CompareBar />
                             <ChatWidget />
                                 <Suspense fallback={<div>Loading...</div>}>
                                     {/* trong lúc chờ hiện chữ loading khi load component */}

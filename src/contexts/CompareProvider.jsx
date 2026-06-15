@@ -8,6 +8,7 @@ import {
     useCallback,
 } from 'react';
 import { AuthContext } from '@/contexts/AuthProvider';
+import { canCompareProduct } from '@/utils/compare';
 
 export const CompareContext = createContext();
 
@@ -15,10 +16,15 @@ const COMPARE_GUEST_KEY = 'betatech_compare_guest';
 const compareKeyForUser = (userId) => `betatech_compare_user_${userId}`;
 export const MAX_COMPARE_ITEMS = 4;
 
+function sanitizeCompareItems(raw) {
+    if (!Array.isArray(raw)) return [];
+    return raw.filter((item) => canCompareProduct(item.parentGroupSlug));
+}
+
 function loadCompareFromKey(key) {
     try {
         const raw = localStorage.getItem(key);
-        return raw ? JSON.parse(raw) : [];
+        return sanitizeCompareItems(raw ? JSON.parse(raw) : []);
     } catch {
         return [];
     }
@@ -75,13 +81,21 @@ export function CompareProvider({ children }) {
             cpu = null,
             ram = null,
             storage = null,
+            screen = null,
+            parentGroupSlug = null,
         } = payload;
 
         if (productId == null) {
             return { ok: false, message: 'Sản phẩm không hợp lệ.' };
         }
 
-        // Tính kết quả trước setItems — callback chạy sau nên return trong đó không kịp
+        if (!canCompareProduct(parentGroupSlug)) {
+            return {
+                ok: false,
+                message: 'Chỉ có thể so sánh sản phẩm laptop với nhau.',
+            };
+        }
+
         if (items.some((i) => i.productId === productId)) {
             return {
                 ok: true,
@@ -92,7 +106,15 @@ export function CompareProvider({ children }) {
         if (items.length >= MAX_COMPARE_ITEMS) {
             return {
                 ok: false,
-                message: `Bạn chỉ có thể so sánh tối đa ${MAX_COMPARE_ITEMS} sản phẩm.`,
+                message: `Bạn chỉ có thể so sánh tối đa ${MAX_COMPARE_ITEMS} laptop.`,
+            };
+        }
+
+        const listGroup = items[0]?.parentGroupSlug;
+        if (listGroup && listGroup !== parentGroupSlug) {
+            return {
+                ok: false,
+                message: 'Chỉ có thể so sánh laptop cùng nhóm với nhau.',
             };
         }
 
@@ -107,10 +129,12 @@ export function CompareProvider({ children }) {
                 cpu,
                 ram,
                 storage,
+                screen,
+                parentGroupSlug,
             },
         ]);
 
-        return { ok: true, message: 'Đã thêm vào danh sách so sánh.' };
+        return { ok: true, message: 'Đã thêm laptop vào danh sách so sánh.' };
     }, [items]);
 
     const removeFromCompare = useCallback((productId) => {

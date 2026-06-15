@@ -1,16 +1,27 @@
 import { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import HeaderSideBar from '@components/ContentSideBar/components/HeaderSidebar/HeaderSidebar';
 import { TfiReload } from 'react-icons/tfi';
 import ItemProduct from '@components/ContentSideBar/components/ItemProduct/ItemProduct';
 import { CompareContext } from '@/contexts/CompareProvider';
+import { SideBarContext } from '@/contexts/SideBarProvider';
 import styles from './styles.module.scss';
 
 function Compare() {
+    const navigate = useNavigate();
+    const { setIsOpen } = useContext(SideBarContext);
     const { items, removeFromCompare, clearCompare, count, maxItems } =
         useContext(CompareContext);
-    const { container, empty, footer, clearBtn, hint } = styles;
+    const { container, empty, footer, clearBtn, hint, compareNowBtn } = styles;
 
     const title = count > 0 ? `SO SÁNH (${count})` : 'SO SÁNH';
+    const canCompareNow = count >= 2;
+
+    const handleCompareNow = () => {
+        if (!canCompareNow) return;
+        setIsOpen(false);
+        navigate('/so-sanh');
+    };
 
     return (
         <div className={container}>
@@ -20,7 +31,7 @@ function Compare() {
             />
 
             {items.length === 0 ? (
-                <p className={empty}>Chưa có sản phẩm để so sánh</p>
+                <p className={empty}>Chưa có laptop để so sánh</p>
             ) : (
                 <>
                     {items.map((item) => (
@@ -34,8 +45,16 @@ function Compare() {
 
                     <div className={footer}>
                         <p className={hint}>
-                            Tối đa {maxItems} sản phẩm ({count}/{maxItems})
+                            Chỉ so sánh laptop (tối đa {maxItems}). ({count}/{maxItems})
                         </p>
+                        <button
+                            type="button"
+                            className={compareNowBtn}
+                            onClick={handleCompareNow}
+                            disabled={!canCompareNow}
+                        >
+                            So sánh ngay
+                        </button>
                         <button
                             type="button"
                             className={clearBtn}

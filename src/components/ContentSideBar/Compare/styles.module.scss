@@ -28,6 +28,27 @@
     text-align: center;
 }
 
+.compareNowBtn {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 8px;
+    background: $brand;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+        background: $brand_hover;
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
 .clearBtn {
     width: 100%;
     padding: 10px;

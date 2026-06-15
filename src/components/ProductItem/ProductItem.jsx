@@ -18,6 +18,7 @@ import {
     formatVnd,
     parsePriceNumber,
 } from '@/utils/price';
+import { canCompareProduct } from '@/utils/compare';
 
 const IMG_FALLBACK =
     'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=640&h=640&q=80';
@@ -36,6 +37,8 @@ function ProductItem({
     ratingAverage,
     reviewCount,
     hasVariants = false,
+    parentGroupSlug = null,
+    screen,
 }) {
     const navigate = useNavigate();
     const { addToCart } = useContext(CartContext);
@@ -55,6 +58,7 @@ function ProductItem({
     const discount = calcDiscountPercent(price, priceOriginal);
     const savings = calcSavings(price, priceOriginal);
     const specText = [cpu, ram, storage].filter(Boolean).join(' · ');
+    const compareable = canCompareProduct(parentGroupSlug);
 
     const productPayload = {
         productId: id,
@@ -65,6 +69,8 @@ function ProductItem({
         cpu: cpu || null,
         ram: ram || null,
         storage: storage || null,
+        screen: screen || null,
+        parentGroupSlug,
     };
 
     const moSidebar = (loai) => {
@@ -109,6 +115,10 @@ function ProductItem({
                 break;
             }
             case 'compare': {
+                if (!compareable) {
+                    hienThongBaoNgan('Chỉ có thể so sánh laptop với nhau.');
+                    return;
+                }
                 const result = addToCompare(productPayload);
                 if (result.ok) moSidebar('compare');
                 hienThongBaoNgan(result.message);
@@ -168,7 +178,9 @@ function ProductItem({
                     role="group"
                     aria-label="Thao tác nhanh"
                 >
-                    {QUICK_ACTIONS.map((action) => {
+                    {QUICK_ACTIONS.filter(
+                        (action) => action.id !== 'compare' || compareable
+                    ).map((action) => {
                         const isActive =
                             (action.id === 'wishlist' && isInWishlist(id)) ||
                             (action.id === 'compare' && isInCompare(id));

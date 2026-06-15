@@ -296,6 +296,11 @@ function ProductDetailPage() {
                                     ratingAverage={item.rating_average}
                                     reviewCount={item.review_count}
                                     hasVariants={item.has_variants}
+                                    parentGroupSlug={item.parent_group_slug}
+                                    cpu={item.cpu}
+                                    ram={item.ram}
+                                    storage={item.storage}
+                                    screen={item.screen}
                                 />
                             ))}
                         </div>
