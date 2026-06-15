@@ -10,6 +10,7 @@
  *  5. HeadingListProduct — countdown khuyến mãi
  *  5b. VoucherSection — mã giảm giá (Lưu voucher)
  *  6. PopularProduct — carousel SP lướt ngang ‹ ›
+ *  6b. ProductReviewSection — review video YouTube + link SP
  *  7. SaleHomepage  — banner sale
  *  8. MyFooter
  *
@@ -30,6 +31,7 @@ import ScrollReveal from '@components/ScrollReveal/ScrollReveal';
 import { useEffect, useState } from 'react';
 import { getProducts } from '@/apis/productsService';
 import PopularProduct from '@components/PopularProduct/PopularProduct';
+import ProductReviewSection from '@components/ProductReviewSection/ProductReviewSection';
 import SaleHomepage from '@components/SaleHomepage/SaleHomepage';
 import MyFooter from '@components/Footer/Footer';
 
@@ -77,6 +79,10 @@ function HomePage() {
 
             <ScrollReveal variant="up" delay={100}>
                 <PopularProduct data={listProducts} />
+            </ScrollReveal>
+
+            <ScrollReveal variant="up" delay={80}>
+                <ProductReviewSection />
             </ScrollReveal>
 
             <ScrollReveal variant="scale">
