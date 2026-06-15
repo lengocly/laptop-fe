@@ -96,6 +96,20 @@ const routers = [
         path: '/admin/voucher/:id',
         component: lazy(() => import('@components/Admin/AdminVoucherFormPage/AdminVoucherFormPage')),
     },
+
+    // Admin danh mục
+    {
+        path: '/admin/danh-muc',
+        component: lazy(() => import('@components/Admin/AdminCategoriesPage/AdminCategoriesPage')),
+    },
+    {
+        path: '/admin/danh-muc/tao',
+        component: lazy(() => import('@components/Admin/AdminCategoryFormPage/AdminCategoryFormPage')),
+    },
+    {
+        path: '/admin/danh-muc/:id',
+        component: lazy(() => import('@components/Admin/AdminCategoryFormPage/AdminCategoryFormPage')),
+    },
 ];
 
 export default routers;

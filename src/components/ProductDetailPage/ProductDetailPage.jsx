@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useParams, useNavigate } from 'react-router-dom';
 import MyHeader from '@components/Header/Header';
 import MyFooter from '@components/Footer/Footer';
 import { getProductById } from '@/apis/productsService';
@@ -17,6 +17,7 @@ import { AuthContext } from '@/contexts/AuthProvider';
 
 function ProductDetailPage() {
     const { id } = useParams();
+    const location = useLocation();
     const navigate = useNavigate();
     const { addToCart } = useContext(CartContext);
     const { isAuthenticated, loading: authLoading } = useContext(AuthContext);
@@ -27,6 +28,7 @@ function ProductDetailPage() {
     const [quantity, setQuantity] = useState(1);
     const [relatedProducts, setRelatedProducts] = useState([]);
     const [selectedVariantId, setSelectedVariantId] = useState(null);
+    const [variantHint, setVariantHint] = useState('');
     const [reviewStats, setReviewStats] = useState({ average: 0, total: 0 });
 
 
@@ -40,22 +42,17 @@ function ProductDetailPage() {
         setRelatedProducts([]);
         setActiveIdx(0);
         setQuantity(1);
-        setSelectedVariantId(null); //mỗi khi đổi sang sản phẩm khác, nó reset lại biến thể đang chọn
+        setSelectedVariantId(null);
+        setVariantHint('');
 
         getProductById(id)
             .then((data) => {
                 if (!cancelled) {
                     setProduct(data.product); //lấy sản phẩm chính
-                    setRelatedProducts(data.related_products ?? []); //nếu không có sản phẩm liên quan, trả về danh sách trống.
+                    setRelatedProducts(data.related_products ?? []);
 
-                    //Tự chọn biến thể đầu tiên.
-                    setSelectedVariantId(data.product?.variants?.[0]?.id ?? null);
                     setActiveIdx(0);
                     setQuantity(1);
-                    //Nếu sản phẩm có variant, tự chọn variant đầu tiên.
-                    //Nếu không có variant, selectedVariantId = null.
-                    //Reset ảnh về ảnh đầu tiên.
-                    //Reset số lượng về 1
                 }
             })
             .catch(() => {
@@ -65,8 +62,14 @@ function ProductDetailPage() {
                 if (!cancelled) setLoading(false);
             });
 
-        return () => { cancelled = true; }; // tránh setState sau khi unmount
+        return () => { cancelled = true; };
     }, [id]);
+
+    useEffect(() => {
+        if (!location.state?.message) return;
+        setVariantHint(location.state.message);
+        navigate(location.pathname, { replace: true, state: null });
+    }, [location.pathname, location.state?.message, navigate]);
 
   // ─── Luồng 2: UI trạng thái ───
     if (loading) {
@@ -123,9 +126,20 @@ function ProductDetailPage() {
             };
 
             const handleAddToCart = () => {
+                if (variants.length > 0 && !selectedVariantId) {
+                    const label = product.variant_group?.label || 'cấu hình';
+                    setVariantHint(`Vui lòng chọn ${label.toLowerCase()} trước khi thêm vào giỏ.`);
+                    return false;
+                }
+                if (display.stock <= 0 || quantity < 1 || quantity > display.stock) {
+                    return false;
+                }
+
+                setVariantHint('');
                 addToCart({
                     productId: product.id,
                     variantId: selectedVariantId,
+                    hasVariants: variants.length > 0,
                     name: product.name,
                     optionLabel: selectedVariant?.option_label ?? '',
                     price: display.price,
@@ -134,23 +148,25 @@ function ProductDetailPage() {
                     quantity,
                     maxStock: display.stock,
                 });
+                return true;
             };
 
             // ─── Mua ngay ───
             const handleBuyNow = () => {
-                // Validate số lượng & tồn kho
-                if (display.stock <= 0 || quantity < 1 || quantity > display.stock) {
-                    return;
-                }
-                // Validate biến thể khi sản phẩm có variant
                 if (variants.length > 0 && !selectedVariantId) {
-                    return;
+                    const label = product.variant_group?.label || 'cấu hình';
+                    setVariantHint(`Vui lòng chọn ${label.toLowerCase()} trước khi mua.`);
+                    return false;
+                }
+                if (display.stock <= 0 || quantity < 1 || quantity > display.stock) {
+                    return false;
                 }
 
-                // Gọi addToCart — merge qty nếu cùng SP + biến thể (giống Thêm vào giỏ)
+                setVariantHint('');
                 addToCart({
                     productId: product.id,
                     variantId: selectedVariantId,
+                    hasVariants: variants.length > 0,
                     name: product.name,
                     optionLabel: selectedVariant?.option_label ?? '',
                     price: display.price,
@@ -166,6 +182,7 @@ function ProductDetailPage() {
                     return;
                 }
                 navigate('/checkout');
+                return true;
             };
 
         const inStock = display.stock > 0;
@@ -181,6 +198,7 @@ function ProductDetailPage() {
         //Chọn biến thể: Khi chọn biến thể, thì số lượng reset về 1, và ảnh reset về ảnh đầu tiên.
         const handleSelectVariant = (variantId) => {
             setSelectedVariantId(variantId);
+            setVariantHint('');
             setActiveIdx(0);
             setQuantity(1);
         };
@@ -248,6 +266,7 @@ function ProductDetailPage() {
                                 onScrollToReviews={scrollToReviews}
                                 reviewStats={reviewStats}
                                 shortDesc={shortDesc}
+                                variantHint={variantHint}
                                 onAddToCart={handleAddToCart}
                                 onBuyNow={handleBuyNow}
                             />
@@ -276,6 +295,7 @@ function ProductDetailPage() {
                                     priceOriginal={item.price_original}
                                     ratingAverage={item.rating_average}
                                     reviewCount={item.review_count}
+                                    hasVariants={item.has_variants}
                                 />
                             ))}
                         </div>

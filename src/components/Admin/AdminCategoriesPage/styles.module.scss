@@ -1,0 +1,116 @@
+@import '@styles/admin-shared.module.scss';
+
+.hint {
+    margin: 0;
+    flex: 1;
+    font-size: 13px;
+    color: $text_muted;
+    line-height: 1.5;
+
+    code {
+        font-size: 12px;
+        background: $surface_muted;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+}
+
+.tableWrap {
+    @include admin-table-wrap;
+}
+
+.table {
+    @include admin-table;
+
+    code {
+        font-size: 12px;
+        color: $text_secondary;
+    }
+}
+
+.empty {
+    text-align: center;
+    color: $text_muted;
+}
+
+.err {
+    color: $danger;
+    margin-bottom: 16px;
+}
+
+.toolbar {
+    @include admin-toolbar;
+    align-items: flex-start;
+}
+
+.addBtn {
+    @include admin-btn-brand;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.parentTag {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: $brand_light;
+    color: $brand;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.imageCell code {
+    word-break: break-all;
+}
+
+.thumb {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    border-radius: 50%;
+    border: 1px solid $border_default;
+    background: $surface_muted;
+}
+
+.featuredYes {
+    @include admin-badge-success;
+}
+
+.featuredNo {
+    @include admin-badge-muted;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+}
+
+.editBtn {
+    @include admin-btn-ghost;
+    font-size: 13px;
+}
+
+.deleteBtn {
+    @include admin-btn-ghost;
+    font-size: 13px;
+    color: $danger;
+
+    &:hover {
+        border-color: $danger;
+        color: $danger;
+    }
+}
+
+.toast {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: $success_bg;
+    color: $success;
+    font-weight: 600;
+    z-index: 999;
+    box-shadow: $shadow_card;
+}

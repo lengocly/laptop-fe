@@ -13,12 +13,12 @@
 }
 
 .sub {
-    margin: 0 0 16px;
+    margin: 0 0 8px;
     font-size: 13px;
     color: $text_muted;
 }
 
-.empty {
-    color: $text_muted;
-    font-size: 14px;
+.legendText {
+    font-size: 13px;
+    color: $text_secondary;
 }

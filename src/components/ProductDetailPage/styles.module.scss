@@ -316,6 +316,19 @@
     cursor: pointer;
 }
 
+.variantHint {
+    margin: 0 0 12px;
+    font-size: 13px;
+    color: $text_muted;
+}
+
+.variantHintError {
+    margin: 0 0 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #b45309;
+}
+
 /* Số lượng */
 .qtyBlock {
     margin-bottom: 20px;

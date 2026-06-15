@@ -6,6 +6,7 @@
  *  1. MyHeader      — menu, giỏ, đăng nhập
  *  2. Banner        — carousel 3 ảnh hero
  *  3. Info          — thanh 4 lợi ích (giao hàng, bảo hành…)
+ *  3b. FeaturedCategories — danh mục nổi bật (ảnh + link cửa hàng)
  *  4. AdvanceHeadling — tiêu đề "Sản phẩm nổi bật"
  *  5. HeadingListProduct — countdown khuyến mãi
  *  5b. VoucherSection — mã giảm giá (Lưu voucher)
@@ -25,6 +26,7 @@ import MyHeader from '@components/Header/Header';
 import Banner from '@components/Banner/Banner';
 import AdvanceHeadling from '@components/AdvanceHeadling/AdvanceHeadling';
 import Info from '@components/Info/Info';
+import FeaturedCategories from '@components/FeaturedCategories/FeaturedCategories';
 import HeadingListProduct from '@components/HeadingListProduct/HeadingListProducts';
 import VoucherSection from '@components/VoucherSection/VoucherSection';
 import ScrollReveal from '@components/ScrollReveal/ScrollReveal';
@@ -56,6 +58,10 @@ function HomePage() {
             {/* Hero 3 ảnh — header nằm trên (z-index Header) */}
             <Banner />
             <Info />
+
+            <ScrollReveal variant="up" delay={60}>
+                <FeaturedCategories />
+            </ScrollReveal>
 
             <ScrollReveal variant="up">
                 <AdvanceHeadling />

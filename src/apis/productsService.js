@@ -17,12 +17,13 @@
  */
 import axiosClient from './axiosClient';
 
-//categorySlug là tên danh mục sản phẩm
-const getProducts = async (categorySlug) => {
-    //nếu có categorySlug thì thêm vào params, nếu không thì truyền rỗng
-    const params = categorySlug ? { category: categorySlug } : {};
+// categorySlug: lọc 1 danh mục con (asus, chuot...)
+// groupSlug: lọc cả nhóm (laptop-group → mọi hãng laptop)
+const getProducts = async ({ categorySlug = null, groupSlug = null } = {}) => {
+    const params = {};
+    if (categorySlug) params.category = categorySlug;
+    if (groupSlug) params.group = groupSlug;
 
-    //gọi API với params
     const res = await axiosClient.get('/products', { params });
     return res.data;
 };

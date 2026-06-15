@@ -119,6 +119,7 @@ export function CartProvider({ children }) {
         const {
             productId,
             variantId = null,
+            hasVariants = false,
             name,
             optionLabel = '',
             price,
@@ -127,6 +128,10 @@ export function CartProvider({ children }) {
             quantity = 1,
             maxStock = 99,
         } = payload;
+
+        if (hasVariants && !variantId) {
+            return false;
+        }
 
         //Tạo key từng dòng giỏ hàng: cùng SP + cùng biến thể = 1 dòng
         const key = lineKey(productId, variantId);
@@ -159,6 +164,7 @@ export function CartProvider({ children }) {
                     key,
                     productId,
                     variantId,
+                    hasVariants,
                     name,
                     optionLabel,
                     price,
@@ -173,6 +179,7 @@ export function CartProvider({ children }) {
                 },
             ];
         });
+        return true;
     };
 
     //Hàm này dùng để xóa sản phẩm khỏi giỏ hàng.

@@ -26,16 +26,38 @@ function getCategoryIcon(slug) {
     return CATEGORY_ICONS[slug] ?? FiPackage;
 }
 
+const PARENT_ICONS = {
+    laptop: PiLaptop,
+    'laptop-group': PiLaptop,
+    'phu-kien': FiHeadphones,
+};
+
+function getParentIcon(slug) {
+    return PARENT_ICONS[slug] ?? FiPackage;
+}
+
 function buildMenuItems(categories) {
-    const items = [{ id: 'all', name: 'Tất cả sản phẩm', slug: null, Icon: FiGrid }];
+    const items = [
+        { id: 'all', name: 'Tất cả sản phẩm', to: '/cua-hang', Icon: FiGrid, isChild: false },
+    ];
 
     categories.forEach((parent) => {
+        items.push({
+            id: `parent-${parent.id}`,
+            name: parent.name,
+            to: `/cua-hang?group=${parent.slug}`,
+            Icon: getParentIcon(parent.slug),
+            isChild: false,
+            isParentGroup: true,
+        });
+
         (parent.children ?? []).forEach((child) => {
             items.push({
                 id: child.id,
                 name: child.name,
-                slug: child.slug,
+                to: `/cua-hang?category=${child.slug}`,
                 Icon: getCategoryIcon(child.slug),
+                isChild: true,
             });
         });
     });
@@ -99,14 +121,14 @@ function StoreCategoryMenu() {
                 role="menu"
                 aria-hidden={!open}
             >
-                {menuItems.map(({ id, name, slug, Icon }) => {
-                    const to = slug ? `/cua-hang?category=${slug}` : '/cua-hang';
-
-                    return (
+                {menuItems.map(({ id, name, to, Icon, isChild, isParentGroup }) => (
                         <Link
                             key={id}
                             to={to}
-                            className={storeCategoryItem}
+                            className={classNames(storeCategoryItem, {
+                                [styles.storeCategoryItemChild]: isChild,
+                                [styles.storeCategoryItemParent]: isParentGroup,
+                            })}
                             role="menuitem"
                             onClick={() => setOpen(false)}
                         >
@@ -114,8 +136,7 @@ function StoreCategoryMenu() {
                             <span>{name}</span>
                             <FiChevronRight className={storeCategoryChevron} aria-hidden />
                         </Link>
-                    );
-                })}
+                ))}
             </div>
         </div>
     );

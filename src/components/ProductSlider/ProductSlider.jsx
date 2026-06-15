@@ -95,6 +95,7 @@ function ProductSlider({ data = [], title }) {
                                 stock={item.stock}
                                 ratingAverage={item.rating_average}
                                 reviewCount={item.review_count}
+                                hasVariants={item.has_variants}
                             />
                         </div>
                     ))}

@@ -35,6 +35,7 @@ function HeadingListProduct({ data = [] }) {
                                 priceOriginal={item.price_original}
                                 ratingAverage={item.rating_average}
                                 reviewCount={item.review_count}
+                                hasVariants={item.has_variants}
                             />
                         ))}
                     </div>

@@ -254,6 +254,16 @@
     }
 }
 
+.storeCategoryItemParent {
+    font-weight: 600;
+}
+
+.storeCategoryItemChild {
+    padding-left: 44px;
+    font-size: 13px;
+    color: $text_secondary;
+}
+
 .storeCategoryIcon {
     flex-shrink: 0;
     font-size: 20px;

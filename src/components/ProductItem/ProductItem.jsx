@@ -3,7 +3,7 @@
  * Logic: giỏ / yêu thích / so sánh / rating / giá — giữ nguyên.
  */
 import { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import styles from './styles.module.scss';
 import QUICK_ACTIONS from './quickActions';
@@ -35,7 +35,9 @@ function ProductItem({
     stock,
     ratingAverage,
     reviewCount,
+    hasVariants = false,
 }) {
+    const navigate = useNavigate();
     const { addToCart } = useContext(CartContext);
     const { toggleWishlist, isInWishlist } = useContext(WishlistContext);
     const { addToCompare, isInCompare } = useContext(CompareContext);
@@ -80,9 +82,16 @@ function ProductItem({
 
         switch (actionId) {
             case 'addToCart':
+                if (hasVariants) {
+                    navigate(`/product/${id}`, {
+                        state: { message: 'Vui lòng chọn cấu hình trước khi thêm vào giỏ.' },
+                    });
+                    return;
+                }
                 addToCart({
                     productId: id,
                     variantId: null,
+                    hasVariants: false,
                     name,
                     optionLabel: '',
                     price,

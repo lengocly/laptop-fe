@@ -1,0 +1,112 @@
+@import '@styles/admin-shared.module.scss';
+
+.form {
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+
+    label {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        color: $text_secondary;
+    }
+
+    input,
+    select {
+        @include admin-input;
+        font-weight: 400;
+    }
+}
+
+.fieldHint {
+    font-size: 12px;
+    font-weight: 400;
+    color: $text_muted;
+    line-height: 1.45;
+
+    code {
+        font-size: 11px;
+        background: $surface_muted;
+        padding: 1px 4px;
+        border-radius: 3px;
+    }
+}
+
+.err {
+    color: $danger;
+    margin-bottom: 16px;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.saveBtn {
+    @include admin-btn-brand;
+}
+
+.cancelBtn {
+    @include admin-btn-ghost;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.imageBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.imageLabel {
+    font-size: 14px;
+    font-weight: 600;
+    color: $text_secondary;
+}
+
+.imageRow {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.uploadBtn {
+    @include admin-btn-brand;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.preview {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    border-radius: 50%;
+    border: 1px solid $border_default;
+    background: $surface_muted;
+    padding: 6px;
+}
+
+.checkRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: $text_secondary;
+    cursor: pointer;
+
+    input {
+        width: 18px;
+        height: 18px;
+        accent-color: $brand;
+    }
+}

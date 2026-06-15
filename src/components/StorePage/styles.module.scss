@@ -20,6 +20,71 @@
     color: $badge_sale;
 }
 
+/* Lọc hãng laptop — kiểu FPT */
+.brandSection {
+    margin-bottom: 28px;
+    padding: 20px 22px;
+    background: $surface_card;
+    border: 1px solid $border_default;
+    border-radius: 14px;
+    box-shadow: $shadow_card;
+}
+
+.brandTitle {
+    margin: 0 0 16px;
+    font-size: 18px;
+    font-weight: 700;
+    color: $text_primary;
+}
+
+.brandGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.brandCard {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 8px 16px;
+    border: 1px solid $border_default;
+    border-radius: 10px;
+    background: $surface_card;
+    text-decoration: none;
+    transition:
+        border-color $transition_fast,
+        background $transition_fast,
+        box-shadow $transition_fast;
+
+    &:hover {
+        border-color: $brand;
+        background: $brand_light;
+    }
+}
+
+.brandCardActive {
+    border-color: $brand;
+    background: $brand_light;
+    box-shadow: 0 0 0 1px $brand;
+}
+
+.brandLogo {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.brandName {
+    font-size: 14px;
+    font-weight: 600;
+    color: $text_primary;
+    white-space: nowrap;
+}
+
 /* Grid đều nhau — gap 20px, card stretch full ô */
 .grid {
     display: grid;

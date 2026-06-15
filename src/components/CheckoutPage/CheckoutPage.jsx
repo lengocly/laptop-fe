@@ -7,6 +7,7 @@ import { AuthContext } from '@/contexts/AuthProvider';
 import { calcSavings, formatVnd } from '@/utils/price';
 import styles from './styles.module.scss';
 import { createOrder } from '@/apis/orderService';
+import { getProductById } from '@/apis/productsService';
 import { getMySavedVouchers, validateVoucher } from '@/apis/voucherService';
 import { calculateShippingFee } from '@/apis/shippingService';
 import GhnAddressPicker from '@components/GhnAddressPicker/GhnAddressPicker';
@@ -45,6 +46,7 @@ function CheckoutPage() {
     const [shippingError, setShippingError] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState('');
+    const [variantRequiredIds, setVariantRequiredIds] = useState({});
 
     // Voucher đã lưu — chọn và áp dụng khi checkout
     const [savedVouchers, setSavedVouchers] = useState([]);
@@ -84,6 +86,49 @@ function CheckoutPage() {
         setVoucherDiscount(0);
         setVoucherMessage('');
     }, [selectedVoucherId, subtotal]);
+
+    // SP trong giỏ cũ có thể thiếu cờ hasVariants — kiểm tra qua API
+    useEffect(() => {
+        const idsToCheck = [
+            ...new Set(
+                items
+                    .filter((i) => !i.variantId && !i.hasVariants)
+                    .map((i) => i.productId)
+            ),
+        ];
+
+        if (!idsToCheck.length) {
+            setVariantRequiredIds({});
+            return undefined;
+        }
+
+        let cancelled = false;
+
+        Promise.all(
+            idsToCheck.map((productId) =>
+                getProductById(productId)
+                    .then((data) => ({
+                        productId,
+                        hasVariants: (data.product?.variants?.length ?? 0) > 0,
+                    }))
+                    .catch(() => ({ productId, hasVariants: false }))
+            )
+        ).then((results) => {
+            if (cancelled) return;
+            const next = {};
+            results.forEach(({ productId, hasVariants }) => {
+                if (hasVariants) next[productId] = true;
+            });
+            setVariantRequiredIds(next);
+        });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [items]);
+
+    const itemNeedsVariant = (item) =>
+        (item.hasVariants || variantRequiredIds[item.productId]) && !item.variantId;
 
     useEffect(() => {
         if (!form.district?.id || !form.ward?.code) {
@@ -168,6 +213,15 @@ function CheckoutPage() {
 
         //gọi API đặt hàng
         try {
+            const missingVariantItem = items.find(itemNeedsVariant);
+            if (missingVariantItem) {
+                setError(
+                    `Vui lòng chọn cấu hình cho sản phẩm "${missingVariantItem.name}".`
+                );
+                setSubmitting(false);
+                return;
+            }
+
             if (!form.street?.trim() || form.street.trim().length < 5) {
                 setError('Vui lòng nhập địa chỉ giao hàng (ít nhất 5 ký tự).');
                 setSubmitting(false);
@@ -327,13 +381,17 @@ function CheckoutPage() {
                         {shippingError && (
                             <p className={styles.err}>{shippingError}</p>
                         )}
+                        <label className={styles.fieldLabel} htmlFor="checkout-note">
+                            Ghi chú <span className={styles.optional}>(không bắt buộc)</span>
+                        </label>
                         <textarea
+                            id="checkout-note"
                             name="note"
-                            placeholder="Ghi chú"
+                            placeholder="VD: Giao giờ hành chính, gọi trước khi giao..."
                             value={form.note}
                             onChange={onChange}
+                            spellCheck={false}
                         />
-                        {error && <p className={styles.err}>{error}</p>}
 
                         {/* phương thức thanh toán */}
                         <h2>Phương thức thanh toán</h2>
@@ -406,6 +464,8 @@ function CheckoutPage() {
                             </p>
                         )}
 
+                        {error && <p className={styles.checkoutError}>{error}</p>}
+
                         <button type="submit" className={styles.submitBtn} disabled={submitting}>
                             {submitting ? 'Đang xử lý...' : 'Xác nhận đặt hàng'}
                         </button>
@@ -430,6 +490,14 @@ function CheckoutPage() {
                                         <span className={styles.orderItemVariant}>
                                             {item.optionLabel}
                                         </span>
+                                    )}
+                                    {itemNeedsVariant(item) && (
+                                        <Link
+                                            to={`/product/${item.productId}`}
+                                            className={styles.variantWarning}
+                                        >
+                                            Chưa chọn cấu hình — nhấn để chọn
+                                        </Link>
                                     )}
                                     <span className={styles.orderItemQty}>
                                         Số lượng: {item.quantity}

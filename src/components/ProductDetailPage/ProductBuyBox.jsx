@@ -21,10 +21,14 @@ function ProductBuyBox({
     onScrollToReviews,  //Hàm xử lý khi bấm vào nút "Xem đánh giá".
     reviewStats = { average: 0, total: 0 },
     shortDesc, //Mô tả ngắn.
+    variantHint = '',
     onAddToCart,   // hàm từ cha
     onBuyNow,      // tùy chọn, phase checkout
 }) {
     const inStock = product.stock > 0;
+    const needsVariant = variants?.length > 0;
+    const variantReady = !needsVariant || selectedVariantId;
+    const canPurchase = inStock && variantReady;
     const priceOriginal = product.price_original;
     const discount = calcDiscountPercent(product.price, priceOriginal); //Tính % giảm giá
 
@@ -37,7 +41,8 @@ function ProductBuyBox({
     const { setIsOpen, setType } = useContext(SideBarContext);
 
     const handleAddToCart = () => {
-        onAddToCart?.();
+        const ok = onAddToCart?.();
+        if (ok === false) return;
         setIsOpen(true);
         setType('cart');
     };
@@ -110,7 +115,14 @@ function ProductBuyBox({
                 onSelectVariant={onSelectVariant}
             />
 
-            {inStock && (
+            {needsVariant && !selectedVariantId && (
+                <p className={styles.variantHint}>
+                    Vui lòng chọn {variantGroup?.label?.toLowerCase() || 'cấu hình'} để tiếp tục.
+                </p>
+            )}
+            {variantHint && <p className={styles.variantHintError}>{variantHint}</p>}
+
+            {inStock && variantReady && (
                 <div className={styles.qtyBlock}>
                     <span className={styles.qtyLabel}>Số lượng</span>
                     <div className={styles.qty}>
@@ -139,7 +151,7 @@ function ProductBuyBox({
                 <button
                     type="button"
                     className={styles.btnPrimary}
-                    disabled={!inStock}
+                    disabled={!canPurchase}
                     onClick={handleAddToCart}
                 >
                     Thêm vào giỏ
@@ -147,7 +159,7 @@ function ProductBuyBox({
                 <button
                     type="button"
                     className={styles.btnDanger}
-                    disabled={!inStock || !onBuyNow}
+                    disabled={!canPurchase || !onBuyNow}
                     onClick={handleBuyNow}
                 >
                     Mua ngay

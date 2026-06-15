@@ -159,7 +159,9 @@ function AdminProductsPage() {
                         <option value="">Tất cả danh mục</option>
                         {categories.map((c) => (
                             <option key={c.id} value={c.id}>
-                                {c.name}
+                                {c.parent_name
+                                    ? `${c.name} (${c.parent_name})`
+                                    : c.name}
                             </option>
                         ))}
                     </select>

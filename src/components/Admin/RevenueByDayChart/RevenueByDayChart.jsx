@@ -17,8 +17,8 @@ function RevenueByDayChart({ data }) {
 
     return (
         <div className={styles.chartCard}>
-            <h3>Doanh thu 7 ngày gần nhất</h3>
-            <p className={styles.sub}>Chỉ tính đơn đã thanh toán</p>
+            <h3>Doanh thu theo tuần</h3>
+            <p className={styles.sub}>7 ngày gần nhất — chỉ đơn đã thanh toán</p>
 
             <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
