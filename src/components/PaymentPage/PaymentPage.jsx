@@ -48,18 +48,30 @@ function PaymentPage() {
         const loadIntent = async () => {
             try {
                 const { data } = await createPaymentIntent(orderId);
-    
-                if (!cancelled) {
-                    setClientSecret(data.client_secret);
-                    setOrderInfo({
-                        orderCode: data.order_code,
-                        subtotal: data.subtotal,
-                    });
+
+                if (cancelled) return;
+
+                if (data.already_paid) {
+                    sessionStorage.setItem(
+                        'order_success',
+                        JSON.stringify({ orderCode: data.order_code }),
+                    );
+                    navigate('/don-hang-cua-toi', { replace: true });
+                    return;
                 }
+
+                setClientSecret(data.client_secret);
+                setOrderInfo({
+                    orderCode: data.order_code,
+                    subtotal: data.subtotal,
+                });
             } catch (error) {
                 if (!cancelled) {
                     console.error('Create payment intent error:', error?.response?.data || error);
-                    setError('Không thể tạo phiên thanh toán. Vui lòng thử lại.');
+                    const msg =
+                        error?.response?.data?.message ||
+                        'Không thể tạo phiên thanh toán. Vui lòng thử lại.';
+                    setError(msg);
                 }
             }
         };

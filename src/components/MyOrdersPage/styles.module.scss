@@ -258,6 +258,23 @@
     color: $text_primary;
 }
 
+.payBtnCompact {
+    margin-left: auto;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover {
+        background: #1d4ed8;
+    }
+}
+
 // ===== Chi tiết expand — 3 cột =====
 
 .detailGrid {
@@ -383,8 +400,29 @@
 // ===== Hủy đơn hàng =====
 
 
-.cancelBtnLarge {
+.orderActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
     margin-top: 20px;
+}
+
+.payBtnLarge {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+        background: #1d4ed8;
+    }
+}
+
+.cancelBtnLarge {
     padding: 12px 24px;
     border: none;
     border-radius: 8px;
@@ -393,7 +431,6 @@
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    align-self: flex-start; // nút nằm trái như ảnh mẫu
 
     &:hover:not(:disabled) {
         background: #b91c1c;

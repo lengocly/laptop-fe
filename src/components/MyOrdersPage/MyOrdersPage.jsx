@@ -15,7 +15,7 @@ import StatusBadge from '@components/shared/StatusBadge/StatusBadge';
 import { ORDER_STATUS_LABEL, PAYMENT_STATUS_LABEL } from '@/constants/orderStatus';
 
 import { cancelOrder } from '@/apis/orderService';
-import { canCustomerCancelOrder } from '@/constants/orderStatus';
+import { canCustomerCancelOrder, canRetryStripePayment } from '@/constants/orderStatus';
 
 const paymentLabel = {
     cod: 'Thanh toán khi nhận hàng',
@@ -109,7 +109,7 @@ function MyOrdersPage() {
 
     // hủy đơn hàng
     const handleCancelOrder = async (order) => {
-        if (!canCustomerCancelOrder(order.status)) return;
+        if (!canCustomerCancelOrder(order)) return;
     
         const ok = window.confirm(
             `Bạn có chắc muốn hủy đơn ${order.order_code}?`
@@ -176,7 +176,8 @@ function MyOrdersPage() {
                     orders.map((order) => {
 
                         //kiểm tra đơn hàng có thể hủy được không
-                        const canCancel = canCustomerCancelOrder(order.status);
+                        const canCancel = canCustomerCancelOrder(order);
+                        const canPayStripe = canRetryStripePayment(order);
 
                         //kiểm tra đơn hàng được mở rộng hay không
                         const isExpanded = expandedOrderId === order.id;
@@ -251,6 +252,22 @@ function MyOrdersPage() {
                                                     ` +${itemCount - 1} sản phẩm khác`}
                                             </span>
                                         </div>
+                                        {canPayStripe && (
+                                            <button
+                                                type="button"
+                                                className={styles.payBtnCompact}
+                                                onClick={() =>
+                                                    navigate(`/thanh-toan/${order.id}`, {
+                                                        state: {
+                                                            orderCode: order.order_code,
+                                                            subtotal: order.subtotal,
+                                                        },
+                                                    })
+                                                }
+                                            >
+                                                Thanh toán ngay
+                                            </button>
+                                        )}
                                     </div>
                                 )}
                                 {/* Chi tiết expand — 3 cột ShopMini */}
@@ -356,16 +373,34 @@ function MyOrdersPage() {
                                             </section>
                                         </div>
 
-                                        {canCancel && (
-                                            <button
-                                                type="button"
-                                                className={styles.cancelBtnLarge}
-                                                disabled={cancellingId === order.id}
-                                                onClick={() => handleCancelOrder(order)}
-                                            >
-                                                Hủy đơn hàng
-                                            </button>
-                                        )}
+                                        <div className={styles.orderActions}>
+                                            {canPayStripe && (
+                                                <button
+                                                    type="button"
+                                                    className={styles.payBtnLarge}
+                                                    onClick={() =>
+                                                        navigate(`/thanh-toan/${order.id}`, {
+                                                            state: {
+                                                                orderCode: order.order_code,
+                                                                subtotal: order.subtotal,
+                                                            },
+                                                        })
+                                                    }
+                                                >
+                                                    Thanh toán ngay
+                                                </button>
+                                            )}
+                                            {canCancel && (
+                                                <button
+                                                    type="button"
+                                                    className={styles.cancelBtnLarge}
+                                                    disabled={cancellingId === order.id}
+                                                    onClick={() => handleCancelOrder(order)}
+                                                >
+                                                    Hủy đơn hàng
+                                                </button>
+                                            )}
+                                        </div>
                                         </div>
                                     </>
                                 )}

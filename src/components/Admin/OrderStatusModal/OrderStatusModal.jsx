@@ -1,17 +1,25 @@
-import { useEffect, useState } from 'react';
-import { ORDER_STATUS_LABEL, ORDER_STATUS_OPTIONS } from '@/constants/orderStatus';
+import { useEffect, useMemo, useState } from 'react';
+import {
+    ORDER_STATUS_LABEL,
+    getAdminFulfillmentOptions,
+} from '@/constants/orderStatus';
 import StatusBadge from '@components/shared/StatusBadge/StatusBadge';
 import styles from './styles.module.scss';
 
 function OrderStatusModal({ open, order, onClose, onSubmit, loading }) {
+    const options = useMemo(
+        () => (order ? getAdminFulfillmentOptions(order.status) : []),
+        [order],
+    );
+
     const [status, setStatus] = useState('pending');
     const [note, setNote] = useState('');
 
     useEffect(() => {
         if (!order) return;
-        setStatus(order.status);
+        setStatus(options[0]?.value ?? order.status);
         setNote(order.admin_note || '');
-    }, [order]);
+    }, [order, options]);
 
     if (!open || !order) return null;
 
@@ -19,6 +27,8 @@ function OrderStatusModal({ open, order, onClose, onSubmit, loading }) {
         e.preventDefault();
         onSubmit(order.id, status, note);
     };
+
+    const readOnly = options.length === 0;
 
     return (
         <div className={styles.overlay} onClick={onClose}>
@@ -36,40 +46,46 @@ function OrderStatusModal({ open, order, onClose, onSubmit, loading }) {
                     />
                 </p>
 
-                <form onSubmit={handleSubmit}>
-                    <label>
-                        Trạng thái mới
-                        <select
-                            value={status}
-                            onChange={(e) => setStatus(e.target.value)}
-                        >
-                            {ORDER_STATUS_OPTIONS.map((opt) => (
-                                <option key={opt.value} value={opt.value}>
-                                    {opt.label}
-                                </option>
-                            ))}
-                        </select>
-                    </label>
+                {readOnly ? (
+                    <p className={styles.meta}>
+                        Đơn đang ở trạng thái không thể cập nhật giao hàng từ admin.
+                    </p>
+                ) : (
+                    <form onSubmit={handleSubmit}>
+                        <label>
+                            Trạng thái mới
+                            <select
+                                value={status}
+                                onChange={(e) => setStatus(e.target.value)}
+                            >
+                                {options.map((opt) => (
+                                    <option key={opt.value} value={opt.value}>
+                                        {opt.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
 
-                    <label>
-                        Ghi chú (tuỳ chọn)
-                        <textarea
-                            rows={3}
-                            value={note}
-                            onChange={(e) => setNote(e.target.value)}
-                            placeholder="VD: Đã liên hệ khách, giao trong 2 ngày..."
-                        />
-                    </label>
+                        <label>
+                            Ghi chú (tuỳ chọn)
+                            <textarea
+                                rows={3}
+                                value={note}
+                                onChange={(e) => setNote(e.target.value)}
+                                placeholder="VD: Đã liên hệ khách, giao trong 2 ngày..."
+                            />
+                        </label>
 
-                    <div className={styles.actions}>
-                        <button type="button" onClick={onClose} disabled={loading}>
-                            Hủy
-                        </button>
-                        <button type="submit" disabled={loading}>
-                            {loading ? 'Đang lưu...' : 'Cập nhật'}
-                        </button>
-                    </div>
-                </form>
+                        <div className={styles.actions}>
+                            <button type="button" onClick={onClose} disabled={loading}>
+                                Hủy
+                            </button>
+                            <button type="submit" disabled={loading}>
+                                {loading ? 'Đang lưu...' : 'Cập nhật'}
+                            </button>
+                        </div>
+                    </form>
+                )}
             </div>
         </div>
     );

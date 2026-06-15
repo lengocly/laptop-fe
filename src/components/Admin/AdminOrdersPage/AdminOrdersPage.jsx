@@ -9,7 +9,7 @@ import StatusBadge from '@components/shared/StatusBadge/StatusBadge';
 import {
     ORDER_STATUS_LABEL,
     PAYMENT_STATUS_LABEL,
-    ORDER_STATUS_OPTIONS
+    ORDER_STATUS_FILTER_OPTIONS
 } from '@/constants/orderStatus';
 import OrderStatusModal from '../OrderStatusModal/OrderStatusModal';
 
@@ -105,7 +105,7 @@ function AdminOrdersPage() {
                         onChange={(e) => setStatusFilter(e.target.value)}
                     >
                         <option value="">Tất cả trạng thái</option>
-                        {ORDER_STATUS_OPTIONS.map((o) => (
+                        {ORDER_STATUS_FILTER_OPTIONS.map((o) => (
                             <option key={o.value} value={o.value}>{o.label}</option>
                         ))}
                     </select>

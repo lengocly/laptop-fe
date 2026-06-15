@@ -1,6 +1,7 @@
 import { ORDER_STATUS_LABEL } from '@/constants/orderStatus';
 
 const STATUS_COLORS = {
+    pending_payment: '#ef4444',
     pending: '#f59e0b',
     processing: '#3b82f6',
     shipping: '#8b5cf6',
