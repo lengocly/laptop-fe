@@ -1,5 +1,7 @@
 import BoxIcon from './BoxIcon/BoxIcon';
 import Menu from './Menu/Menu';
+import StoreCategoryMenu from './StoreCategoryMenu/StoreCategoryMenu';
+import HeaderMarquee from './HeaderMarquee';
 import { dataBoxIcon, dataMenu } from './constants';
 import styles from './styles.module.scss';
 import BetaTechLogo from '@components/BetaTechLogo/BetaTechLogo';
@@ -30,7 +32,7 @@ function MyHeader() {
         containerBox,
         container,
         fixedHeader,
-        topHeader
+        topHeader,
     } = styles;
 
     //lấy ra scrollY để xử lý scroll
@@ -80,6 +82,7 @@ function MyHeader() {
                 [fixedHeader]: fixedPosition
             })}
         >
+            <HeaderMarquee />
             <div className={containerHeader}>
                 <div className={containerBox}>
                     <div className={containerBoxIcon}>
@@ -96,9 +99,8 @@ function MyHeader() {
                             content={dataMenu[0].content}
                             href={dataMenu[0].href}
                         />
-                        {dataMenu.slice(1, 3).map((item) => (
-                            <Menu key={item.content} content={item.content} href={item.href} />
-                        ))}
+                        <StoreCategoryMenu />
+                        <Menu content={dataMenu[2].content} href={dataMenu[2].href} />
                     </div>
                 </div>
                 <BetaTechLogo variant="light" />

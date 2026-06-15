@@ -15,6 +15,7 @@ import { CartContext } from '@/contexts/CartProvider';
 import { WishlistContext } from '@/contexts/WishlistProvider';
 import { CompareContext } from '@/contexts/CompareProvider';
 import { SideBarContext } from '@/contexts/SideBarProvider';
+import { FiStar } from 'react-icons/fi';
 import {
     calcDiscountPercent,
     calcSavings,
@@ -36,6 +37,8 @@ function ProductItem({
     ram,
     storage,
     stock,
+    ratingAverage,
+    reviewCount,
 }) {
     const { addToCart } = useContext(CartContext);
     const { toggleWishlist, isInWishlist } = useContext(WishlistContext);
@@ -213,6 +216,15 @@ function ProductItem({
                         </p>
                     )}
                 </div>
+                {reviewCount > 0 && ratingAverage != null && (
+                    <div
+                        className={styles.ratingRow}
+                        aria-label={`Đánh giá ${ratingAverage} trên 5, ${reviewCount} lượt`}
+                    >
+                        <FiStar className={styles.ratingStar} aria-hidden />
+                        <span>{ratingAverage}</span>
+                    </div>
+                )}
             </Link>
         </div>
     );

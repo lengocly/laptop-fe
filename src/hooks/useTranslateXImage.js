@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
  * @param {React.RefObject} sectionRef — ref gắn vào .container của SaleHomepage
  */
 const useTranslateXImage = (sectionRef) => {
-    const [translateXPosition, setTranslateXPosition] = useState(80);
+    const [translateXPosition, setTranslateXPosition] = useState(72);
 
     useEffect(() => {
         const el = sectionRef?.current;
@@ -16,14 +16,12 @@ const useTranslateXImage = (sectionRef) => {
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
-                    // Vào viewport → ảnh trượt vào (translate 0)
                     setTranslateXPosition(0);
                 } else if (entry.boundingClientRect.top > 0) {
-                    // Chưa scroll tới → ảnh ở vị trí ban đầu
-                    setTranslateXPosition(60);
+                    setTranslateXPosition(72);
                 }
             },
-            { threshold: 0.25, rootMargin: '0px 0px -30% 0px' }
+            { threshold: 0.2, rootMargin: '0px 0px -10% 0px' }
         );
 
         observer.observe(el);

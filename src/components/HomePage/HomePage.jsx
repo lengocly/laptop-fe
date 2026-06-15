@@ -26,6 +26,7 @@ import AdvanceHeadling from '@components/AdvanceHeadling/AdvanceHeadling';
 import Info from '@components/Info/Info';
 import HeadingListProduct from '@components/HeadingListProduct/HeadingListProducts';
 import VoucherSection from '@components/VoucherSection/VoucherSection';
+import ScrollReveal from '@components/ScrollReveal/ScrollReveal';
 import { useEffect, useState } from 'react';
 import { getProducts } from '@/apis/productsService';
 import PopularProduct from '@components/PopularProduct/PopularProduct';
@@ -52,29 +53,38 @@ function HomePage() {
 
             {/* Hero 3 ảnh — header nằm trên (z-index Header) */}
             <Banner />
-            {/* Thanh đen 4 cột — đè lên đáy banner */}
             <Info />
 
-            <AdvanceHeadling />
+            <ScrollReveal variant="up">
+                <AdvanceHeadling />
+            </ScrollReveal>
 
-            {/* Đếm ngược deal — không kèm SP (carousel ở dưới) */}
-            <HeadingListProduct />
+            <ScrollReveal variant="scale" delay={80}>
+                <HeadingListProduct />
+            </ScrollReveal>
 
-            {/* Voucher Shopee-style — giữa countdown và carousel */}
-            <VoucherSection />
+            <ScrollReveal variant="up" delay={120}>
+                <VoucherSection />
+            </ScrollReveal>
 
-            {/* Tiêu đề section SP — ngay trên carousel */}
-            <AdvanceHeadling
-                subtitle="KHÁM PHÁ NGAY"
-                title="Gợi ý cho bạn"
-                compact
-            />
+            <ScrollReveal variant="fade" delay={60}>
+                <AdvanceHeadling
+                    subtitle="KHÁM PHÁ NGAY"
+                    title="Gợi ý cho bạn"
+                    compact
+                />
+            </ScrollReveal>
 
-            {/* Carousel toàn bộ SP — ProductSlider */}
-            <PopularProduct data={listProducts} />
+            <ScrollReveal variant="up" delay={100}>
+                <PopularProduct data={listProducts} />
+            </ScrollReveal>
 
-            <SaleHomepage />
-            <MyFooter />
+            <ScrollReveal variant="scale">
+                <SaleHomepage />
+            </ScrollReveal>
+            <ScrollReveal variant="fade" delay={80}>
+                <MyFooter />
+            </ScrollReveal>
         </>
     );
 }

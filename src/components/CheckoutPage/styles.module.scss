@@ -433,26 +433,13 @@
     margin-top: 4px;
 }
 
-.addressFieldWrap {
-    position: relative;
+.ghnAddressSlot {
+    min-height: 0;
+}
 
-    .addressTrigger {
-        width: 100%;
-        text-align: left;
-        border: 1px solid #e5e7eb;
-        border-radius: $radius_btn;
-        padding: 13px 14px;
-        font-size: 15px;
-        color: $text_primary;
-        background: #fff;
-        cursor: pointer;
-        box-sizing: border-box;
-    
-        &:focus {
-            border-color: $accent_color;
-            box-shadow: 0 0 0 3px rgba(0, 128, 128, 0.12);
-            outline: none;
-        }
-    }
+.shippingNote {
+    font-size: 13px;
+    color: #059669;
+    margin: 4px 0 0;
 }
 

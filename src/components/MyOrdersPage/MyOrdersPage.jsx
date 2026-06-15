@@ -319,15 +319,31 @@ function MyOrdersPage() {
                                                 <h3>Tóm tắt đơn hàng</h3>
                                                 <div className={styles.summaryRow}>
                                                     <span>Tạm tính</span>
-                                                    <span>{formatVnd(order.subtotal)}</span>
+                                                    <span>
+                                                        {formatVnd(
+                                                            (order.items ?? []).reduce(
+                                                                (sum, item) =>
+                                                                    sum + (item.line_total ?? 0),
+                                                                0
+                                                            )
+                                                        )}
+                                                    </span>
                                                 </div>
+                                                {(order.voucher_discount ?? 0) > 0 && (
+                                                    <div className={styles.summaryRow}>
+                                                        <span>Giảm voucher</span>
+                                                        <span>
+                                                            -{formatVnd(order.voucher_discount)}
+                                                        </span>
+                                                    </div>
+                                                )}
                                                 <div className={styles.summaryRow}>
                                                     <span>Phí vận chuyển</span>
-                                                    <span>0 đ</span>
-                                                </div>
-                                                <div className={styles.summaryRow}>
-                                                    <span>Thuế</span>
-                                                    <span>0 đ</span>
+                                                    <span>
+                                                        {(order.shipping_fee ?? 0) > 0
+                                                            ? formatVnd(order.shipping_fee)
+                                                            : 'Miễn phí'}
+                                                    </span>
                                                 </div>
                                                 <div
                                                     className={`${styles.summaryRow} ${styles.summaryTotal}`}

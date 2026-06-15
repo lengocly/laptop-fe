@@ -8,13 +8,12 @@ import { calcSavings, formatVnd } from '@/utils/price';
 import styles from './styles.module.scss';
 import { createOrder } from '@/apis/orderService';
 import { getMySavedVouchers, validateVoucher } from '@/apis/voucherService';
-import AddressPicker from '@components/AddressPicker/AddressPicker';
-import {
-    buildFullAddress,
-    formatAdminAddress,
-    validateShippingAddress,
-} from '@/utils/address';
+import { calculateShippingFee } from '@/apis/shippingService';
+import GhnAddressPicker from '@components/GhnAddressPicker/GhnAddressPicker';
+import { buildFullAddress, estimateCartWeightGram } from '@/utils/shippingAddress';
 import { FiTruck, FiDollarSign, FiCreditCard, FiPackage } from 'react-icons/fi';
+
+const FREE_SHIPPING_THRESHOLD = 10_000_000;
 
 
 //file này là trang thanh toán
@@ -35,14 +34,15 @@ function CheckoutPage() {
     const [form, setForm] = useState({
         fullName: '',
         phone: '',
-        street: '',           // số nhà + tên đường
+        street: '',
+        note: '',
         province: null,
         district: null,
         ward: null,
-        note: '',
     });
-    const [adminKeyword, setAdminKeyword] = useState('');
-    const [pickerOpen, setPickerOpen] = useState(false);
+    const [shippingFee, setShippingFee] = useState(0);
+    const [shippingLoading, setShippingLoading] = useState(false);
+    const [shippingError, setShippingError] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState('');
 
@@ -53,7 +53,8 @@ function CheckoutPage() {
     const [voucherLoading, setVoucherLoading] = useState(false);
     const [voucherMessage, setVoucherMessage] = useState('');
 
-    const finalTotal = Math.max(subtotal - voucherDiscount, 0);
+    const isFreeShipping = subtotal >= FREE_SHIPPING_THRESHOLD;
+    const finalTotal = Math.max(subtotal - voucherDiscount + shippingFee, 0);
 
     // Chưa login → về login
     useEffect(() => {
@@ -83,6 +84,55 @@ function CheckoutPage() {
         setVoucherDiscount(0);
         setVoucherMessage('');
     }, [selectedVoucherId, subtotal]);
+
+    useEffect(() => {
+        if (!form.district?.id || !form.ward?.code) {
+            setShippingFee(0);
+            setShippingError('');
+            return;
+        }
+
+        if (isFreeShipping) {
+            setShippingFee(0);
+            setShippingError('');
+            return;
+        }
+
+        let cancelled = false;
+        setShippingLoading(true);
+        setShippingError('');
+
+        calculateShippingFee({
+            to_district_id: form.district.id,
+            to_ward_code: form.ward.code,
+            weight: estimateCartWeightGram(items),
+            insurance_value: subtotal,
+        })
+            .then((data) => {
+                if (!cancelled) setShippingFee(data.fee ?? 0);
+            })
+            .catch((err) => {
+                if (!cancelled) {
+                    setShippingFee(0);
+                    setShippingError(
+                        err.response?.data?.message || 'Không tính được phí vận chuyển.'
+                    );
+                }
+            })
+            .finally(() => {
+                if (!cancelled) setShippingLoading(false);
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [
+        form.district?.id,
+        form.ward?.code,
+        subtotal,
+        items,
+        isFreeShipping,
+    ]);
 
     const handleApplyVoucher = async () => {
         if (!selectedVoucherId) {
@@ -118,23 +168,36 @@ function CheckoutPage() {
 
         //gọi API đặt hàng
         try {
-            // validate địa chỉ
-            const addrError = validateShippingAddress(form);
-            if (addrError) {
-                setError(addrError);
+            if (!form.street?.trim() || form.street.trim().length < 5) {
+                setError('Vui lòng nhập địa chỉ giao hàng (ít nhất 5 ký tự).');
                 setSubmitting(false);
                 return;
             }
-            // tạo địa chỉ đầy đủ
+            if (!form.province?.id || !form.district?.id || !form.ward?.code) {
+                setError('Vui lòng chọn đầy đủ Tỉnh/Quận/Phường.');
+                setSubmitting(false);
+                return;
+            }
+            if (!isFreeShipping && shippingLoading) {
+                setError('Đang tính phí vận chuyển, vui lòng đợi.');
+                setSubmitting(false);
+                return;
+            }
+            if (!isFreeShipping && shippingError) {
+                setError(shippingError);
+                setSubmitting(false);
+                return;
+            }
+
             const fullAddress = buildFullAddress(form);
 
-            //gửi dữ liệu đặt hàng lên backend
-            
             const { data } = await createOrder({
                 full_name: form.fullName,
                 phone: form.phone,
-                address: fullAddress,   // ← vẫn 1 chuỗi, BE không đổi
+                address: fullAddress,
                 note: form.note,
+                to_district_id: form.district.id,
+                to_ward_code: form.ward.code,
                 payment_method: paymentMethod,
                 voucher_id: voucherDiscount > 0 ? Number(selectedVoucherId) : undefined,
                 items: items.map((i) => ({
@@ -250,49 +313,20 @@ function CheckoutPage() {
                             onChange={onChange}
                             required
                         />
-                        <label className={styles.fieldLabel}>Tỉnh/TP, Quận/Huyện, Phường/Xã *</label>
-                        <div className={styles.addressFieldWrap}>
-                            <input
-                                type="text"
-                                className={styles.addressTrigger}
-                                placeholder="Tỉnh/TP, Quận/Huyện, Phường/Xã"
-                                value={
-                                    pickerOpen
-                                        ? adminKeyword                    // đang chọn → chỉ hiện text đang gõ
-                                        : formatAdminAddress(form)        // đóng picker → hiện địa chỉ đã chọn
-                                }
-                                onChange={(e) => {
-                                    setAdminKeyword(e.target.value);
-                                    setPickerOpen(true);
-                                }}
-                                onFocus={() => {
-                                    setAdminKeyword('');                  // mở lại → xóa filter, hiện full list
-                                    setPickerOpen(true);
-                                }}
-                                autoComplete="off"
-                            />
-                            <AddressPicker
-                                open={pickerOpen}
-                                keyword={adminKeyword}
-                                onClose={() => {
-                                    setPickerOpen(false);
-                                    setAdminKeyword('');                  // đóng → xóa search, input hiện formatAdminAddress
-                                }}
-                                value={form}
-                                onChange={(admin) => {
-                                    setForm((f) => ({
-                                        ...f,
-                                        province: admin.province,
-                                        district: admin.district,
-                                        ward: admin.ward,
-                                    }));
-                                    if (!admin.ward) {
-                                        setAdminKeyword('');              // chọn tỉnh/quận → bước tiếp, ô gõ trống
-                                    }
-                                    setPickerOpen(true);
-                                }}
-                            />
-                        </div>
+                        <GhnAddressPicker
+                            value={form}
+                            onChange={(address) =>
+                                setForm((f) => ({ ...f, ...address }))
+                            }
+                        />
+                        {isFreeShipping && (
+                            <p className={styles.shippingNote}>
+                                Miễn phí vận chuyển cho đơn từ {formatVnd(FREE_SHIPPING_THRESHOLD)}
+                            </p>
+                        )}
+                        {shippingError && (
+                            <p className={styles.err}>{shippingError}</p>
+                        )}
                         <textarea
                             name="note"
                             placeholder="Ghi chú"
@@ -474,6 +508,16 @@ function CheckoutPage() {
                                 <span>-{formatVnd(voucherDiscount)}</span>
                             </div>
                         )}
+                        <div className={styles.subtotalRow}>
+                            <span>Phí vận chuyển</span>
+                            <span>
+                                {isFreeShipping
+                                    ? 'Miễn phí'
+                                    : shippingLoading
+                                      ? 'Đang tính...'
+                                      : formatVnd(shippingFee)}
+                            </span>
+                        </div>
                         <div className={styles.total}>
                             <span>Tổng cộng</span>
                             <strong>{formatVnd(finalTotal)}</strong>

@@ -11,6 +11,7 @@ import { TfiClose } from 'react-icons/tfi';
 import { getProducts } from '@/apis/productsService';
 import { formatVnd, parsePriceNumber } from '@/utils/price';
 import styles from './styles.module.scss';
+import { searchByImage } from '@/apis/imageSearchService';
 
 const IMG_FALLBACK =
     'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=160&h=160&q=80';
@@ -103,8 +104,15 @@ function SearchOverlay({ isOpen, onClose }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
+    // state mới
+const [imageLoading, setImageLoading] = useState(false);
+const [imageResults, setImageResults] = useState([]);
+const [imageKeywords, setImageKeywords] = useState([]);
+const [searchMode, setSearchMode] = useState('text'); // 'text' | 'image'
+
     const trimmedQuery = query.trim();
     const isSearching = trimmedQuery.length > 0;
+    const isImageSearch = searchMode === 'image';
 
     const filteredProducts = useMemo(() => {
         if (!isSearching) return products.slice(0, POPULAR_LIMIT);
@@ -158,11 +166,35 @@ function SearchOverlay({ isOpen, onClose }) {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [isOpen, onClose]);
 
+//xử lý ảnh
+    const handleImageUpload = async (event) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+        setImageLoading(true);
+        setError('');
+        setSearchMode('image');
+        setQuery('');
+        try {
+            const data = await searchByImage(file);
+            setImageKeywords(data.keywords ?? []);
+            setImageResults(data.products ?? []);
+        } catch (err) {
+            setImageResults([]);
+            setError(err.response?.data?.message || 'Không phân tích được ảnh.');
+        } finally {
+            setImageLoading(false);
+            event.target.value = '';
+        }
+    };
+
     // Reset ô tìm kiếm + focus khi mở
     useEffect(() => {
         if (!isOpen) return;
 
         setQuery('');
+        setSearchMode('text');
+        setImageResults([]);
+        setImageKeywords([]);
         const timer = window.setTimeout(() => {
             inputRef.current?.focus();
         }, 80);
@@ -171,6 +203,9 @@ function SearchOverlay({ isOpen, onClose }) {
     }, [isOpen]);
 
     if (!isOpen) return null;
+
+    //hiển thị sản phẩm
+    const displayProducts = searchMode === 'image' ? imageResults : filteredProducts;
 
     return createPortal(
         <div
@@ -191,11 +226,37 @@ function SearchOverlay({ isOpen, onClose }) {
                         ref={inputRef}
                         type="search"
                         value={query}
-                        onChange={(event) => setQuery(event.target.value)}
+                        onChange={(event) => {
+                            setQuery(event.target.value);
+                            setSearchMode('text');
+                            setImageResults([]);
+                            setImageKeywords([]);
+                        }}
                         placeholder="Tìm kiếm..."
                         className={styles.searchInput}
                         aria-label="Tìm kiếm sản phẩm"
                     />
+                    {/* nút tìm kiếm theo ảnh */}
+                    <label className={styles.imageSearchBtn}>
+                            📷 Chọn ảnh
+                            <input
+                                type="file"
+                                accept="image/*"
+                                hidden
+                                onChange={handleImageUpload}
+                            />
+                        </label>
+
+                        {searchMode === 'image' && imageKeywords.length > 0 && (
+                            <p className={styles.sectionHint}>
+                                Nhận diện: {imageKeywords.slice(0, 8).join(', ')}
+                            </p>
+                        )}
+
+                        {imageLoading && (
+                            <p className={styles.sectionHint}>Đang phân tích ảnh...</p>
+                        )}
+
                     <button
                         type="button"
                         className={styles.closeBtn}
@@ -207,28 +268,38 @@ function SearchOverlay({ isOpen, onClose }) {
                 </div>
 
                 <div className={styles.resultsWrap}>
-                    {!isSearching && (
+                    {!isSearching && !isImageSearch && (
                         <p className={styles.sectionHint}>
-                            Gợi ý: thử tìm theo tên laptop, chuột, bàn phím…
+                            Gợi ý: thử tìm theo tên laptop, chuột, bàn phím, tai nghe…
                         </p>
                     )}
 
-                    {loading && <p className={styles.statusText}>Đang tải sản phẩm…</p>}
+                    {loading && !isImageSearch && (
+                        <p className={styles.statusText}>Đang tải sản phẩm…</p>
+                    )}
                     {error && <p className={styles.errorText}>{error}</p>}
 
-                    {!loading && !error && isSearching && filteredProducts.length === 0 && (
+                    {!loading && !error && isSearching && !isImageSearch && filteredProducts.length === 0 && (
                         <p className={styles.emptyText}>Không tìm thấy sản phẩm</p>
                     )}
 
-                    {!loading && !error && filteredProducts.length > 0 && (
+                    {isImageSearch && !imageLoading && imageResults.length === 0 && !error && (
+                        <p className={styles.emptyText}>
+                            Không tìm thấy sản phẩm phù hợp với ảnh
+                        </p>
+                    )}
+
+                    {!loading && !error && displayProducts.length > 0 && (
                         <>
                             <h3 className={styles.sectionTitle}>
-                                {isSearching
-                                    ? `Kết quả (${filteredProducts.length})`
-                                    : 'Sản phẩm nổi bật'}
+                                {isImageSearch
+                                    ? `Kết quả ảnh (${displayProducts.length})`
+                                    : isSearching
+                                      ? `Kết quả (${displayProducts.length})`
+                                      : 'Sản phẩm nổi bật'}
                             </h3>
                             <div className={styles.resultsGrid}>
-                                {filteredProducts.map((product) => (
+                                {displayProducts.map((product) => (
                                     <SearchResultCard
                                         key={product.id}
                                         product={product}

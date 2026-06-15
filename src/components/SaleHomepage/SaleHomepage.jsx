@@ -16,9 +16,9 @@ function SaleHomepage() {
             <div
                 className={boxImage}
                 style={{
-                    // áp dụng hiệu ứng trượt sang 2 bên cho ảnh khi cuộn xuống dưới
                     transform: `translateX(${translateXPosition}px)`,
-                    transition: 'transform 0.6s ease'
+                    transition: 'transform 0.85s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.85s ease',
+                    opacity: translateXPosition === 0 ? 1 : 0.7,
                 }}
             >
                 <img
@@ -40,9 +40,9 @@ function SaleHomepage() {
             <div
                 className={boxImage}
                 style={{
-                    // áp dụng hiệu ứng trượt sang 2 bên cho ảnh khi cuộn xuống dưới
                     transform: `translateX(-${translateXPosition}px)`,
-                    transition: 'transform 0.6s ease'
+                    transition: 'transform 0.85s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.85s ease',
+                    opacity: translateXPosition === 0 ? 1 : 0.7,
                 }}
             >
                 <img

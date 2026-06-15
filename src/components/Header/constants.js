@@ -1,9 +1,28 @@
 // lưu trữ data header
 
+const headerMarqueeItems = [
+    {
+        id: 'warranty',
+        text: 'Laptop chính hãng – Bảo hành đầy đủ',
+    },
+    {
+        id: 'shipping',
+        text: 'Giao nhanh toàn quốc',
+    },
+    {
+        id: 'guarantee',
+        text: 'Cam kết máy đúng mô tả – Hỗ trợ đổi trả',
+    },
+    {
+        id: 'support',
+        text: 'Tư vấn cấu hình miễn phí',
+    },
+];
+
 const dataBoxIcon = [
     { type: 'fb', href: '#' },
     { type: 'ins', href: '#' },
-    { type: 'ytb', href: '#' }
+    { type: 'ytb', href: '#' },
 ];
 
 const dataMenu = [
@@ -13,7 +32,7 @@ const dataMenu = [
     { content: 'Liên hệ', href: '/lien-he' },
     // href '#' — mở SearchOverlay trong Header, không điều hướng trang
     { content: 'Tìm kiếm', href: '#', action: 'search' },
-    { content: 'Đăng nhập', href: '#' }
+    { content: 'Đăng nhập', href: '#' },
 ];
 
-export { dataBoxIcon, dataMenu };
+export { dataBoxIcon, dataMenu, headerMarqueeItems };

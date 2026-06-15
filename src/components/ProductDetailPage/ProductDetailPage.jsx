@@ -274,6 +274,8 @@ function ProductDetailPage() {
                                     name={item.name}
                                     price={item.price}
                                     priceOriginal={item.price_original}
+                                    ratingAverage={item.rating_average}
+                                    reviewCount={item.review_count}
                                 />
                             ))}
                         </div>

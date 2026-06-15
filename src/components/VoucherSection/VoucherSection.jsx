@@ -6,6 +6,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '@components/Layout/Layout';
+import ScrollReveal from '@components/ScrollReveal/ScrollReveal';
 import { AuthContext } from '@/contexts/AuthProvider';
 import { getPublicVouchers, saveVoucher } from '@/apis/voucherService';
 import { formatVnd } from '@/utils/price';
@@ -125,13 +126,19 @@ function VoucherSection() {
                 </div>
 
                 <div className={styles.scroll}>
-                    {vouchers.map((v) => (
-                        <VoucherCard
+                    {vouchers.map((v, index) => (
+                        <ScrollReveal
                             key={v.id}
-                            voucher={v}
-                            onSave={handleSave}
-                            saving={savingId === v.id}
-                        />
+                            variant="up"
+                            delay={index * 85}
+                            className={styles.revealItem}
+                        >
+                            <VoucherCard
+                                voucher={v}
+                                onSave={handleSave}
+                                saving={savingId === v.id}
+                            />
+                        </ScrollReveal>
                     ))}
                 </div>
 

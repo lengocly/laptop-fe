@@ -1,0 +1,40 @@
+.reveal {
+    opacity: 0;
+    will-change: opacity, transform;
+    transition-property: opacity, transform;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    transition-duration: 0.75s;
+}
+
+.up {
+    transform: translateY(56px);
+}
+
+.left {
+    transform: translateX(-48px);
+}
+
+.right {
+    transform: translateX(48px);
+}
+
+.scale {
+    transform: translateY(40px) scale(0.94);
+}
+
+.fade {
+    transform: none;
+}
+
+.visible {
+    opacity: 1;
+    transform: translate(0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}

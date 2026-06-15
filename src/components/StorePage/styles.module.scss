@@ -11,26 +11,6 @@
     color: $text_primary;
 }
 
-.storeLayout {
-    display: flex;
-    gap: 32px;
-    align-items: flex-start;
-}
-
-.sidebar {
-    width: 260px;
-    flex-shrink: 0;
-    background: $white_color;
-    border-radius: $radius_card;
-    box-shadow: $shadow_card;
-    padding: 20px;
-}
-
-.main {
-    flex: 1;
-    min-width: 0;
-}
-
 .resultText {
     color: $text_muted;
     margin-bottom: 20px;
@@ -47,10 +27,13 @@
 }
 
 @media (max-width: 900px) {
-    .storeLayout {
-        flex-direction: column;
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
     }
-    .sidebar {
-        width: 100%;
+}
+
+@media (max-width: 560px) {
+    .grid {
+        grid-template-columns: 1fr;
     }
 }

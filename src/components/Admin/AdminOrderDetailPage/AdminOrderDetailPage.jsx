@@ -183,8 +183,31 @@ function AdminOrderDetailPage() {
                         </div>
 
                         <div className={styles.summary}>
-                            <div><span>Tiền hàng</span><span>{formatVnd(order.subtotal)}</span></div>
-                            <div><span>Phí vận chuyển</span><span>0 ₫</span></div>
+                            <div>
+                                <span>Tiền hàng</span>
+                                <span>
+                                    {formatVnd(
+                                        (order.items ?? []).reduce(
+                                            (sum, item) => sum + (item.line_total ?? 0),
+                                            0
+                                        )
+                                    )}
+                                </span>
+                            </div>
+                            {(order.voucher_discount ?? 0) > 0 && (
+                                <div>
+                                    <span>Giảm voucher</span>
+                                    <span>-{formatVnd(order.voucher_discount)}</span>
+                                </div>
+                            )}
+                            <div>
+                                <span>Phí vận chuyển</span>
+                                <span>
+                                    {(order.shipping_fee ?? 0) > 0
+                                        ? formatVnd(order.shipping_fee)
+                                        : 'Miễn phí'}
+                                </span>
+                            </div>
                             <div className={styles.total}>
                                 <span>Tổng tiền</span>
                                 <span>{formatVnd(order.subtotal)}</span>

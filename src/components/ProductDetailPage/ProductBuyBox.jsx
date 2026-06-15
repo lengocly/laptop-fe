@@ -156,7 +156,7 @@ function ProductBuyBox({
 
             <ul className={styles.trustList}>
                 <li>✓ Thanh toán an toàn</li>
-                <li>✓ Miễn phí vận chuyển đơn từ 500.000₫</li>
+                <li>✓ Miễn phí vận chuyển đơn từ 10.000.000₫</li>
                 <li>✓ Đổi trả trong 30 ngày</li>
             </ul>
         </div>

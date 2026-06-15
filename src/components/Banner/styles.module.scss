@@ -7,7 +7,7 @@
     z-index: 1;
     @include flex_box_custom(center, center, 0px);
     min-height: 680px;
-    padding-top: 83px; // không đè vùng header (chiều cao menu)
+    padding-top: $header_total_height; // không đè vùng header (marquee + menu)
     padding-bottom: 72px;
     overflow: hidden;
 }
