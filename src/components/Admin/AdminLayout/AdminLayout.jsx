@@ -6,6 +6,7 @@ import styles from './styles.module.scss';
 const menuItems = [
     { to: '/admin/dashboard', label: 'Dashboard' },
     { to: '/admin/don-hang', label: 'Đơn hàng' },
+    { to: '/admin/nguoi-dung', label: 'Người dùng' },
     { to: '/admin/san-pham', label: 'Sản phẩm' },
     { to: '/admin/danh-muc', label: 'Danh mục' },
     { to: '/admin/voucher', label: 'Voucher' },

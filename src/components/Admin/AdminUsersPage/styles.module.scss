@@ -1,0 +1,188 @@
+@import '@styles/admin-shared.module.scss';
+
+.err {
+    color: $danger;
+    margin-bottom: 16px;
+}
+
+.toolbar {
+    @include admin-toolbar;
+    margin-bottom: 12px;
+}
+
+.searchBox {
+    position: relative;
+    flex: 1;
+    min-width: 220px;
+
+    input {
+        width: 300px;
+        padding-left: 40px;
+    }
+}
+
+.searchIcon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $text_muted;
+    pointer-events: none;
+}
+
+.searchBtn {
+    @include admin-btn-brand;
+}
+
+.summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: $text_muted;
+}
+
+.summaryFilter {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: $brand_light;
+    color: $brand;
+    font-weight: 600;
+}
+
+.tableWrap {
+    @include admin-table-wrap;
+}
+
+.table {
+    @include admin-table;
+
+    tbody tr {
+        transition: background $transition_fast;
+
+        &:hover {
+            background: rgba($brand, 0.03);
+        }
+    }
+}
+
+.empty {
+    text-align: center;
+    color: $text_muted;
+    padding: 32px 16px !important;
+}
+
+.userCell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    strong {
+        display: block;
+        font-size: 14px;
+        color: $text_primary;
+    }
+
+    small {
+        display: block;
+        margin-top: 2px;
+        font-size: 12px;
+        color: $text_muted;
+    }
+}
+
+.avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, $brand 0%, #6366f1 100%);
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba($brand, 0.25);
+}
+
+.badgeAdmin {
+    @include admin-badge-success;
+}
+
+.badgeCustomer {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.orderCount {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 8px;
+    border-radius: 8px;
+    background: $surface_muted;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.viewBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: 1px solid $border_default;
+    border-radius: $radius_btn;
+    background: $surface_card;
+    color: $text_primary;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all $transition_fast;
+
+    &:hover {
+        border-color: $brand;
+        color: $brand;
+        background: $brand_light;
+    }
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.paginationInfo {
+    font-size: 13px;
+    color: $text_muted;
+}
+
+.paginationControls {
+    display: flex;
+    gap: 6px;
+}
+
+.pageBtn {
+    @include admin-page-btn;
+
+    &:disabled {
+        opacity: 0.4;
+    }
+}
+
+.pageBtnActive {
+    @include admin-page-btn;
+    @include admin-page-btn-active;
+}

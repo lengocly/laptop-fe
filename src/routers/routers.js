@@ -70,6 +70,14 @@ const routers = [
         path: '/admin/don-hang/:orderId',
         component: lazy(() => import('@components/Admin/AdminOrderDetailPage/AdminOrderDetailPage')),
     },
+    {
+        path: '/admin/nguoi-dung',
+        component: lazy(() => import('@components/Admin/AdminUsersPage/AdminUsersPage')),
+    },
+    {
+        path: '/admin/nguoi-dung/:userId',
+        component: lazy(() => import('@components/Admin/AdminUserDetailPage/AdminUserDetailPage')),
+    },
 
     //Admin xem danh sách sản phẩm
     {
