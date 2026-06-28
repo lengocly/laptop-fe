@@ -1,19 +1,13 @@
-/**
- * ProductReviewSection — REVIEW SẢN PHẨM (Shorts kiểu CellphoneS)
- * Thumbnail YouTube → bấm Play nhúng iframe → thẻ SP link /product/:id
- */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import MainLayout from '@components/Layout/Layout';
 import ReviewVideoCard from './ReviewVideoCard';
 import { reviewChannelUrl, reviewVideos } from './constants';
 import styles from './styles.module.scss';
-
 function ProductReviewSection() {
     const trackRef = useRef(null);
     const [canPrev, setCanPrev] = useState(false);
     const [canNext, setCanNext] = useState(false);
-
     const updateNav = useCallback(() => {
         const el = trackRef.current;
         if (!el) return;
@@ -21,12 +15,10 @@ function ProductReviewSection() {
         setCanPrev(el.scrollLeft > 8);
         setCanNext(el.scrollLeft < maxScroll - 8);
     }, []);
-
     useEffect(() => {
         updateNav();
         const el = trackRef.current;
         if (!el) return undefined;
-
         el.addEventListener('scroll', updateNav, { passive: true });
         window.addEventListener('resize', updateNav);
         return () => {
@@ -34,16 +26,13 @@ function ProductReviewSection() {
             window.removeEventListener('resize', updateNav);
         };
     }, [updateNav]);
-
     const scrollByPage = (direction) => {
         const el = trackRef.current;
         if (!el) return;
         const amount = Math.max(el.clientWidth * 0.85, 220);
         el.scrollBy({ left: direction * amount, behavior: 'smooth' });
     };
-
     if (!reviewVideos.length) return null;
-
     return (
         <MainLayout>
             <section className={styles.section} aria-labelledby="review-section-title">
@@ -60,7 +49,6 @@ function ProductReviewSection() {
                         Xem YouTube ›
                     </a>
                 </header>
-
                 <div className={styles.slider}>
                     <button
                         type="button"
@@ -71,7 +59,6 @@ function ProductReviewSection() {
                     >
                         <FiChevronLeft size={22} />
                     </button>
-
                     <div className={styles.track} ref={trackRef}>
                         {reviewVideos.map((item) => (
                             <div key={item.youtubeId} className={styles.slide}>
@@ -79,7 +66,6 @@ function ProductReviewSection() {
                             </div>
                         ))}
                     </div>
-
                     <button
                         type="button"
                         className={styles.navBtn}
@@ -94,5 +80,5 @@ function ProductReviewSection() {
         </MainLayout>
     );
 }
-
 export default ProductReviewSection;
+

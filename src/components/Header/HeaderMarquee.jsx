@@ -1,5 +1,3 @@
-//file này dùng để hiển thị thanh chữ chạy trên header
-
 import {
     FiMessageCircle,
     FiPackage,
@@ -8,22 +6,18 @@ import {
 } from 'react-icons/fi';
 import { headerMarqueeItems } from './constants';
 import styles from './styles.module.scss';
-
 const MARQUEE_ICONS = {
     warranty: FiPackage,
     shipping: FiTruck,
     guarantee: FiShield,
     support: FiMessageCircle,
 };
-
 function MarqueeRow({ ariaHidden = false }) {
     const { marqueeContent, marqueeItem, marqueeIcon, marqueeDot } = styles;
-
     return (
         <div className={marqueeContent} aria-hidden={ariaHidden || undefined}>
             {headerMarqueeItems.map((item, index) => {
                 const Icon = MARQUEE_ICONS[item.id];
-
                 return (
                     <span key={item.id} className={marqueeItem}>
                         {index > 0 && (
@@ -39,10 +33,8 @@ function MarqueeRow({ ariaHidden = false }) {
         </div>
     );
 }
-
 function HeaderMarquee() {
     const { marqueeBar, marqueeTrack } = styles;
-
     return (
         <div className={marqueeBar} aria-label="Thông tin dịch vụ BetaTech">
             <div className={marqueeTrack}>
@@ -52,5 +44,5 @@ function HeaderMarquee() {
         </div>
     );
 }
-
 export default HeaderMarquee;
+

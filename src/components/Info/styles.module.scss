@@ -1,11 +1,16 @@
 @import '@styles/variable.module.scss';
 @import '@styles/mixin.module.scss';
 
+// Phải đặt ở wrapper ngoài — margin âm trong MainLayout không kéo lên được banner
+.root {
+    position: relative;
+    z-index: 5;
+    margin-top: -72px; // đè lên đáy banner (khớp padding-bottom Banner)
+}
+
 .container {
     position: relative;
-    z-index: 5; // nằm TRÊN banner, không bị ảnh che
     background-color: $brand_dark;
-    margin-top: -72px; // đè lên đáy banner (khớp padding-bottom Banner)
     padding: 20px 50px;
     box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.12);
 

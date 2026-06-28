@@ -11,31 +11,26 @@ import {
     PAYMENT_STATUS_LABEL,
 } from '@/constants/orderStatus';
 import styles from './styles.module.scss';
-
 function getInitials(name) {
     if (!name) return '?';
     const parts = name.trim().split(/\s+/);
     if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
     return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
 }
-
 function formatDateTime(iso) {
     if (!iso) return '—';
     return new Date(iso).toLocaleString('vi-VN');
 }
-
 const paymentMethodLabel = {
     cod: 'COD',
     stripe: 'Stripe',
 };
-
 function AdminUserDetailPage() {
     const { userId } = useParams();
     const navigate = useNavigate();
     const [data, setData] = useState(null);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
-
     const loadUser = async () => {
         try {
             setLoading(true);
@@ -48,13 +43,10 @@ function AdminUserDetailPage() {
             setLoading(false);
         }
     };
-
     useEffect(() => {
         loadUser();
     }, [userId]);
-
     const user = data?.user;
-
     return (
         <AdminRoute>
             <AdminLayout title="Chi tiết người dùng">
@@ -66,11 +58,8 @@ function AdminUserDetailPage() {
                     <FiArrowLeft size={16} aria-hidden />
                     Quay lại danh sách
                 </button>
-
                 {error && <p className={styles.err}>{error}</p>}
-
                 {loading && <p className={styles.loading}>Đang tải...</p>}
-
                 {!loading && user && (
                     <>
                         <section className={styles.profileCard}>
@@ -108,7 +97,6 @@ function AdminUserDetailPage() {
                                     </div>
                                 </div>
                             </div>
-
                             <div className={styles.stats}>
                                 <div className={styles.statItem}>
                                     <FiShoppingBag className={styles.statIcon} aria-hidden />
@@ -133,10 +121,8 @@ function AdminUserDetailPage() {
                                 </div>
                             </div>
                         </section>
-
                         <section className={styles.ordersSection}>
                             <h3>Lịch sử đơn hàng</h3>
-
                             <div className={styles.tableWrap}>
                                 <table className={styles.table}>
                                     <thead>
@@ -219,5 +205,5 @@ function AdminUserDetailPage() {
         </AdminRoute>
     );
 }
-
 export default AdminUserDetailPage;
+

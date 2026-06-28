@@ -1,6 +1,3 @@
-// lịch sử mua hàng
-//status là trạng thái giao hàng, còn payment_status là trạng thái thanh toán
-
 import { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import MyHeader from '@components/Header/Header';
@@ -13,16 +10,12 @@ import classNames from 'classnames';
 import { FiCheckCircle, FiX, FiPackage } from 'react-icons/fi';
 import StatusBadge from '@components/shared/StatusBadge/StatusBadge';
 import { ORDER_STATUS_LABEL, PAYMENT_STATUS_LABEL } from '@/constants/orderStatus';
-
 import { cancelOrder } from '@/apis/orderService';
 import { canCustomerCancelOrder, canRetryStripePayment } from '@/constants/orderStatus';
-
 const paymentLabel = {
     cod: 'Thanh toán khi nhận hàng',
     stripe: 'Thẻ (Stripe)',
 };
-
-//format ngày tháng giờ
 function formatOrderDate(iso) {
     return new Date(iso).toLocaleString('vi-VN', {
         hour: '2-digit',
@@ -32,69 +25,44 @@ function formatOrderDate(iso) {
         year: 'numeric',
     });
 }
-
 function MyOrdersPage() {
-
-    // id đơn hàng đang hủy
     const [cancellingId, setCancellingId] = useState(null);
-
     const { loading, isAuthenticated } = useContext(AuthContext);
     const navigate = useNavigate();
     const [orders, setOrders] = useState([]);
-
-    //id đơn hàng được mở rộng
     const [expandedOrderId, setExpandedOrderId] = useState(null);
-
-    //lỗi
     const [error, setError] = useState('');
-
-    // hiện toast thành công
     const [showSuccess, setShowSuccess] = useState(false);
     const [newOrderCode, setNewOrderCode] = useState('');
-
-    //bật tắt chi tiết đơn hàng
     const toggleOrderDetail = (orderId) => {
         setExpandedOrderId((currentId) =>
             currentId === orderId ? null : orderId
         );
     };
-
-        // hiện toast thành công (đọc từ sessionStorage, 1 lần khi mount)
     useEffect(() => {
-        //Mount trang → đọc order_success từ sessionStorage
         const raw = sessionStorage.getItem('order_success');
         if (!raw) return;
-
         try {
             const { orderCode } = JSON.parse(raw);
-            setShowSuccess(true); //có dữ liệu mã đơn hàng
+            setShowSuccess(true);
             setNewOrderCode(orderCode || '');
         } catch {
-            // bỏ qua nếu JSON lỗi
         } finally {
             sessionStorage.removeItem('order_success');
         }
     }, []);
-
-
-    // tự động ẩn toast sau 5 giây
     useEffect(() => {
         if (!showSuccess) return undefined;
         const timer = setTimeout(() => setShowSuccess(false), 5000);
         return () => clearTimeout(timer);
     }, [showSuccess]);
-
-    // chưa login → về login
     useEffect(() => {
         if (!loading && !isAuthenticated) {
             navigate('/dang-nhap?next=/don-hang-cua-toi', { replace: true });
         }
     }, [loading, isAuthenticated, navigate]);
-
-    // lấy đơn hàng
     useEffect(() => {
         if (loading || !isAuthenticated) return;
-
         const fetchOrders = async () => {
             try {
                 const { data } = await getMyOrders();
@@ -103,19 +71,14 @@ function MyOrdersPage() {
                 setError('Không thể tải đơn hàng.');
             }
         };
-
-        fetchOrders(); // gọi API lấy đơn hàng
+        fetchOrders();
     }, [loading, isAuthenticated, showSuccess]);
-
-    // hủy đơn hàng
     const handleCancelOrder = async (order) => {
         if (!canCustomerCancelOrder(order)) return;
-    
         const ok = window.confirm(
             `Bạn có chắc muốn hủy đơn ${order.order_code}?`
         );
         if (!ok) return;
-    
         try {
             setCancellingId(order.id);
             setError('');
@@ -132,15 +95,10 @@ function MyOrdersPage() {
             setCancellingId(null);
         }
     };
-
-    //loading hoặc chưa login → không hiển thị
     if (loading || !isAuthenticated) return null;
-
     return (
         <>
             <MyHeader />
-
-            {/* hiện toast thành công */}
             {showSuccess && (
                 <div className={styles.toast}>
                     <FiCheckCircle className={styles.toastIcon} />
@@ -158,40 +116,23 @@ function MyOrdersPage() {
                     </button>
                 </div>
             )}
-
             <main className={styles.wrap}>
                 <div className={styles.pageHead}>
                     <h1>Đơn hàng của tôi</h1>
                     <span>{orders.length} đơn hàng tổng cộng</span>
                 </div>
-
-                {/* hiện lỗi */}
                 {error && <p className={styles.err}>{error}</p>}
-
                 {orders.length === 0 ? (
                     <p className={styles.empty}>Chưa có đơn hàng.</p>
                 ) : (
-
-                    //hiển thị danh sách đơn hàng
                     orders.map((order) => {
-
-                        //kiểm tra đơn hàng có thể hủy được không
                         const canCancel = canCustomerCancelOrder(order);
                         const canPayStripe = canRetryStripePayment(order);
-
-                        //kiểm tra đơn hàng được mở rộng hay không
                         const isExpanded = expandedOrderId === order.id;
-
-                        //lấy sản phẩm đầu tiên và số lượng sản phẩm
                         const firstItem = order.items?.[0];
-
-                        //lấy số lượng sản phẩm
                         const itemCount = order.items?.length || 0;
-
                         return (
-                        //mỗi đơn hàng là 1 article
                         <article key={order.id} className={styles.card}>
-                             {/* Hàng 1: mã + badge giao hàng | giá + badge thanh toán + link chi tiết */}
                              <div className={styles.cardHeader}>
                                     <div className={styles.cardHeaderLeft}>
                                         <strong className={styles.orderCode}>
@@ -205,7 +146,6 @@ function MyOrdersPage() {
                                             }
                                         />
                                     </div>
-                                    
                                     <div className={styles.cardHeaderRight}>
                                         <div className={styles.priceRow}>
                                             <strong className={styles.amount}>
@@ -220,8 +160,6 @@ function MyOrdersPage() {
                                                 }
                                             />
                                         </div>
-
-                                        {/* chi tiết + hủy đơn */}
                                         <button
                                             type="button"
                                             className={styles.detailToggle}
@@ -229,14 +167,11 @@ function MyOrdersPage() {
                                         >
                                             {isExpanded ? 'Ẩn chi tiết' : 'Xem chi tiết'}
                                         </button>
-
                                     </div>
                                 </div>
-                                {/* Hàng 2: ngày đặt */}
                                 <p className={styles.orderDate}>
                                     Đặt hàng vào {formatOrderDate(order.created_at)}
                                 </p>
-                                {/* Hàng 3: preview sản phẩm (khi chưa expand) */}
                                 {!isExpanded && firstItem && (
                                     <div className={styles.preview}>
                                         <div className={styles.previewThumb}>
@@ -270,7 +205,6 @@ function MyOrdersPage() {
                                         )}
                                     </div>
                                 )}
-                                {/* Chi tiết expand — 3 cột ShopMini */}
                                 {isExpanded && (
                                     <>
                                     <div className={styles.detailWrap}>
@@ -372,7 +306,6 @@ function MyOrdersPage() {
                                                 </div>
                                             </section>
                                         </div>
-
                                         <div className={styles.orderActions}>
                                             {canPayStripe && (
                                                 <button
@@ -408,12 +341,10 @@ function MyOrdersPage() {
                     );
                 })
                 )}
-
                 <Link to="/" className={styles.backLink}>← Về trang chủ</Link>
             </main>
             <MyFooter />
         </>
     );
 }
-
 export default MyOrdersPage;

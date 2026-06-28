@@ -5,10 +5,8 @@ export function buildFullAddress({ street, ward, district, province }) {
         district?.name,
         province?.name,
     ].filter(Boolean);
-
     return parts.join(', ');
 }
-
 export function estimateCartWeightGram(items) {
     const gram = (items ?? []).reduce(
         (sum, item) => sum + 1500 * (item.quantity ?? 1),
@@ -16,3 +14,4 @@ export function estimateCartWeightGram(items) {
     );
     return Math.max(gram, 500);
 }
+

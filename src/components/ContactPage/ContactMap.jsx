@@ -1,18 +1,7 @@
-/**
- * ContactMap — Nhúng Google Maps (iframe)
- *
- * Cách hoạt động:
- *  - Google cung cấp URL embed → đặt vào thẻ <iframe>
- *  - Khách bấm "Chỉ đường" → mở Google Maps tab mới
- *
- * Config: constants.js → mapConfig
- */
 import { mapConfig } from './constants';
 import styles from './styles.module.scss';
-
 function ContactMap() {
     const { title, address, embedUrl, directionsUrl } = mapConfig;
-
     return (
         <section className={styles.mapSection}>
             <div className={styles.mapHeader}>
@@ -29,7 +18,6 @@ function ContactMap() {
                     Chỉ đường
                 </a>
             </div>
-
             <div className={styles.mapFrame}>
                 <iframe
                     title={`Bản đồ ${address}`}
@@ -42,5 +30,5 @@ function ContactMap() {
         </section>
     );
 }
-
 export default ContactMap;
+

@@ -443,3 +443,156 @@
         background: #fff5f5;
     }
 }
+
+// --- Mobile ---
+.mobileMenuBtn {
+    display: none;
+}
+
+.desktopOnly {
+    display: flex;
+}
+
+.mobileActions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+    .marqueeBar {
+        display: none;
+    }
+
+    .containerHeader {
+        height: 64px;
+        padding: 0 12px;
+        gap: 8px;
+    }
+
+    .mobileMenuBtn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border: none;
+        background: transparent;
+        color: $text_primary;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .desktopOnly {
+        display: none !important;
+    }
+
+    .mobileActions {
+        display: flex !important;
+        gap: 14px;
+        margin-left: auto;
+    }
+
+    .fixedHeader {
+        top: -64px;
+        transform: translateY(64px);
+    }
+}
+
+.mobileNavOverlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    background: rgba(15, 23, 42, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.mobileNavOverlayOpen {
+    display: block;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.mobileNav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1300;
+    width: min(300px, 86vw);
+    height: 100dvh;
+    background: #fff;
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.12);
+    transform: translateX(-105%);
+    transition: transform 0.28s ease;
+    overflow-y: auto;
+    padding: 12px 0 24px;
+}
+
+.mobileNavOpen {
+    transform: translateX(0);
+}
+
+.mobileNavHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px 12px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 8px;
+
+    strong {
+        font-size: 16px;
+        color: $text_primary;
+    }
+}
+
+.mobileNavClose {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: #f3f4f6;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.mobileNavLink,
+.mobileNavLogout {
+    display: block;
+    width: 100%;
+    padding: 14px 18px;
+    font-size: 15px;
+    color: $text_primary;
+    text-decoration: none;
+    text-align: left;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    cursor: pointer;
+
+    &:active {
+        background: #f3f4f6;
+    }
+}
+
+.mobileNavUser {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 18px 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: $text_primary;
+}
+
+.mobileNavLogout {
+    color: #e74c3c;
+    margin-top: 8px;
+    border-top: 1px solid #eee;
+}

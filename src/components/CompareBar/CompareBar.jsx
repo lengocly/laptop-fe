@@ -4,40 +4,32 @@ import { IoCloseOutline } from 'react-icons/io5';
 import { CompareContext, MAX_COMPARE_ITEMS } from '@/contexts/CompareProvider';
 import { SideBarContext } from '@/contexts/SideBarProvider';
 import styles from './styles.module.scss';
-
 const IMG_FALLBACK =
     'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=640&h=640&q=80';
-
 function CompareBar() {
     const navigate = useNavigate();
     const location = useLocation();
     const { items, removeFromCompare, clearCompare, count } = useContext(CompareContext);
     const { setIsOpen } = useContext(SideBarContext);
-
     const isComparePage = location.pathname === '/so-sanh';
     const isAdmin = location.pathname.startsWith('/admin');
     const showBar = count > 0 && !isComparePage && !isAdmin;
-
     useEffect(() => {
         document.body.style.paddingBottom = showBar ? '120px' : '';
         return () => {
             document.body.style.paddingBottom = '';
         };
     }, [showBar]);
-
     if (!showBar) {
         return null;
     }
-
     const slots = Array.from({ length: MAX_COMPARE_ITEMS }, (_, i) => items[i] ?? null);
     const canCompareNow = count >= 2;
-
     const handleCompareNow = () => {
         if (!canCompareNow) return;
         setIsOpen(false);
         navigate('/so-sanh');
     };
-
     return (
         <div className={styles.bar} role="region" aria-label="Thanh so sánh sản phẩm">
             <div className={styles.inner}>
@@ -70,7 +62,6 @@ function CompareBar() {
                         </div>
                     ))}
                 </div>
-
                 <div className={styles.actions}>
                     <button
                         type="button"
@@ -97,5 +88,5 @@ function CompareBar() {
         </div>
     );
 }
-
 export default CompareBar;
+

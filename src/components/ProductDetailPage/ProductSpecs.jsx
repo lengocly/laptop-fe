@@ -1,12 +1,7 @@
-/**
- * ProductSpecs — bảng CPU, RAM, ổ cứng, màn hình.
- */
 import styles from './styles.module.scss';
-
 function ProductSpecs({ product }) {
     const hasSpecs =
         product.cpu || product.ram || product.storage || product.screen;
-
     return (
         <section className={styles.specsCard}>
             <h2 className={styles.sectionTitle}>Thông số kỹ thuật</h2>
@@ -44,5 +39,4 @@ function ProductSpecs({ product }) {
         </section>
     );
 }
-
 export default ProductSpecs;

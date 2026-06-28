@@ -2,8 +2,6 @@ import truckIcon from '@icons/svgs/truckIcon.svg';
 import boxIcon from '@icons/svgs/boxIcon.svg';
 import chatIcon from '@icons/svgs/chatIcon.svg';
 import debitCartIcon from '@icons/svgs/debitCartIcon.svg';
-
-//data
 export const dataInfo = [
     {
         title: 'Giao hàng nhanh',
@@ -26,3 +24,4 @@ export const dataInfo = [
         src: chatIcon
     }
 ];
+

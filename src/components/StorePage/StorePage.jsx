@@ -12,31 +12,23 @@ import {
     findParentBySlug,
 } from '@/apis/categoriesService';
 import styles from './styles.module.scss';
-
 function StorePage() {
     const [searchParams] = useSearchParams();
     const categorySlug = searchParams.get('category') || null;
     const groupSlug = searchParams.get('group') || null;
-
     const [listProducts, setListProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-
-    // Tải cây danh mục 1 lần — dùng cho tiêu đề + hàng lọc hãng
     useEffect(() => {
         getCategories()
             .then((res) => setCategories(res.categories ?? []))
             .catch(() => setCategories([]));
     }, []);
-
-    // Tải SP theo ?category= hoặc ?group=
     useEffect(() => {
         let cancelled = false;
-
         setLoading(true);
         setError('');
-
         getProducts({ categorySlug, groupSlug })
             .then((res) => {
                 if (!cancelled) setListProducts(res.contents ?? []);
@@ -50,17 +42,14 @@ function StorePage() {
             .finally(() => {
                 if (!cancelled) setLoading(false);
             });
-
         return () => {
             cancelled = true;
         };
     }, [categorySlug, groupSlug]);
-
     const matchedChild = useMemo(() => {
         if (!categorySlug) return null;
         return findChildCategory(categories, categorySlug);
     }, [categories, categorySlug]);
-
     const activeParent = useMemo(() => {
         if (groupSlug) {
             return findParentBySlug(categories, groupSlug);
@@ -70,9 +59,7 @@ function StorePage() {
         }
         return null;
     }, [categories, groupSlug, matchedChild]);
-
     const showGroupFilter = (activeParent?.children?.length ?? 0) > 0;
-
     const pageTitle = useMemo(() => {
         if (categorySlug && matchedChild) {
             return matchedChild.child.name;
@@ -82,14 +69,12 @@ function StorePage() {
         }
         return 'Cửa hàng';
     }, [categorySlug, groupSlug, matchedChild, activeParent]);
-
     return (
         <>
             <MyHeader />
             <MainLayout>
                 <div className={styles.page}>
                     <h1 className={styles.pageTitle}>{pageTitle}</h1>
-
                     {showGroupFilter && (
                         <CategoryBrandFilter
                             title={activeParent.name}
@@ -98,14 +83,11 @@ function StorePage() {
                             activeSlug={categorySlug}
                         />
                     )}
-
                     <p className={styles.resultText}>
                         Hiển thị {listProducts.length} sản phẩm
                     </p>
-
                     {loading && <p>Đang tải…</p>}
                     {error && <p className={styles.error}>{error}</p>}
-
                     <div className={styles.grid}>
                         {listProducts.map((item) => (
                             <ProductItem
@@ -128,7 +110,6 @@ function StorePage() {
                             />
                         ))}
                     </div>
-
                     {!loading && !error && listProducts.length === 0 && (
                         <p>Không có sản phẩm.</p>
                     )}
@@ -138,5 +119,5 @@ function StorePage() {
         </>
     );
 }
-
 export default StorePage;
+

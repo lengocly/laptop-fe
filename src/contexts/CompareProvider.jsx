@@ -9,18 +9,14 @@ import {
 } from 'react';
 import { AuthContext } from '@/contexts/AuthProvider';
 import { canCompareProduct } from '@/utils/compare';
-
 export const CompareContext = createContext();
-
 const COMPARE_GUEST_KEY = 'betatech_compare_guest';
 const compareKeyForUser = (userId) => `betatech_compare_user_${userId}`;
 export const MAX_COMPARE_ITEMS = 4;
-
 function sanitizeCompareItems(raw) {
     if (!Array.isArray(raw)) return [];
     return raw.filter((item) => canCompareProduct(item.parentGroupSlug));
 }
-
 function loadCompareFromKey(key) {
     try {
         const raw = localStorage.getItem(key);
@@ -29,21 +25,17 @@ function loadCompareFromKey(key) {
         return [];
     }
 }
-
 export function CompareProvider({ children }) {
     const { user, loading: authLoading } = useContext(AuthContext);
     const prevUserIdRef = useRef(undefined);
     const storageKey = user?.id
         ? compareKeyForUser(user.id)
         : COMPARE_GUEST_KEY;
-
     const [items, setItems] = useState([]);
-
     useEffect(() => {
         if (authLoading) return;
         const currentUserId = user?.id ?? null;
         const prevUserId = prevUserIdRef.current;
-
         if (prevUserId === undefined) {
             setItems(loadCompareFromKey(storageKey));
             prevUserIdRef.current = currentUserId;
@@ -60,17 +52,14 @@ export function CompareProvider({ children }) {
             prevUserIdRef.current = currentUserId;
         }
     }, [user?.id, authLoading, storageKey]);
-
     useEffect(() => {
         if (authLoading) return;
         localStorage.setItem(storageKey, JSON.stringify(items));
     }, [items, storageKey, authLoading]);
-
     const isInCompare = useCallback(
         (productId) => items.some((i) => i.productId === productId),
         [items]
     );
-
     const addToCompare = useCallback((payload) => {
         const {
             productId,
@@ -84,32 +73,27 @@ export function CompareProvider({ children }) {
             screen = null,
             parentGroupSlug = null,
         } = payload;
-
         if (productId == null) {
             return { ok: false, message: 'Sản phẩm không hợp lệ.' };
         }
-
         if (!canCompareProduct(parentGroupSlug)) {
             return {
                 ok: false,
                 message: 'Chỉ có thể so sánh sản phẩm laptop với nhau.',
             };
         }
-
         if (items.some((i) => i.productId === productId)) {
             return {
                 ok: true,
                 message: 'Sản phẩm đã có trong danh sách so sánh.',
             };
         }
-
         if (items.length >= MAX_COMPARE_ITEMS) {
             return {
                 ok: false,
                 message: `Bạn chỉ có thể so sánh tối đa ${MAX_COMPARE_ITEMS} laptop.`,
             };
         }
-
         const listGroup = items[0]?.parentGroupSlug;
         if (listGroup && listGroup !== parentGroupSlug) {
             return {
@@ -117,7 +101,6 @@ export function CompareProvider({ children }) {
                 message: 'Chỉ có thể so sánh laptop cùng nhóm với nhau.',
             };
         }
-
         setItems((prev) => [
             ...prev,
             {
@@ -133,18 +116,13 @@ export function CompareProvider({ children }) {
                 parentGroupSlug,
             },
         ]);
-
         return { ok: true, message: 'Đã thêm laptop vào danh sách so sánh.' };
     }, [items]);
-
     const removeFromCompare = useCallback((productId) => {
         setItems((prev) => prev.filter((i) => i.productId !== productId));
     }, []);
-
     const clearCompare = useCallback(() => setItems([]), []);
-
     const count = useMemo(() => items.length, [items]);
-
     const value = {
         items,
         addToCompare,
@@ -154,10 +132,10 @@ export function CompareProvider({ children }) {
         count,
         maxItems: MAX_COMPARE_ITEMS,
     };
-
     return (
         <CompareContext.Provider value={value}>
             {children}
         </CompareContext.Provider>
     );
 }
+

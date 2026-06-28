@@ -3,7 +3,6 @@ import styles from './styles.module.scss';
 import { sendChatMessage } from '@/apis/chatService';
 import { Link } from 'react-router-dom';
 import { FiSend, FiX, FiMessageCircle } from 'react-icons/fi';
-
 function ChatWidget() {
     const [open, setOpen] = useState(false);
     const [input, setInput] = useState('');
@@ -20,29 +19,22 @@ function ChatWidget() {
             ],
         },
     ]);
-
     const sendingRef = useRef(false);
     const isMountedRef = useRef(true);
-
-    // Tránh setState sau khi component unmount
     useEffect(() => {
         isMountedRef.current = true;
         return () => {
             isMountedRef.current = false;
         };
     }, []);
-
     const handleSend = async (textOverride) => {
         const text = (textOverride ?? input).trim();
         if (!text || loading || sendingRef.current) return;
-
         sendingRef.current = true;
-
         const nextMessages = [...messages, { role: 'user', text }];
         setMessages(nextMessages);
         setInput('');
         setLoading(true);
-
         try {
             const apiMessages = nextMessages
                 .filter(
@@ -52,18 +44,14 @@ function ChatWidget() {
                         !msg.text?.includes('gửi quá nhanh')
                 )
                 .slice(-10);
-
             const { reply, suggestions, products } = await sendChatMessage(apiMessages);
-
             if (!isMountedRef.current) return;
-
             setMessages([
                 ...nextMessages,
                 { role: 'model', text: reply, suggestions, products },
             ]);
         } catch (err) {
             if (!isMountedRef.current) return;
-
             const isRateLimit = err?.response?.status === 429;
             setMessages([
                 ...nextMessages,
@@ -81,18 +69,15 @@ function ChatWidget() {
             }
         }
     };
-
     const sendSuggestion = (text) => {
         handleSend(text);
     };
-
     const onKeyDown = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             handleSend();
         }
     };
-
     return (
         <div className={styles.wrapper}>
             {!open && (
@@ -105,7 +90,6 @@ function ChatWidget() {
                     <FiMessageCircle size={26} />
                 </button>
             )}
-
             {open && (
                 <div className={styles.panel}>
                     <div className={styles.header}>
@@ -133,7 +117,6 @@ function ChatWidget() {
                             <FiX size={20} />
                         </button>
                     </div>
-
                     <div className={styles.body}>
                         {messages.map((msg, index) => (
                             <div
@@ -147,7 +130,6 @@ function ChatWidget() {
                                 {msg.role === 'model' && (
                                     <div className={styles.avatar}>AI</div>
                                 )}
-
                                 <div className={styles.messageContent}>
                                     <div
                                         className={
@@ -158,7 +140,6 @@ function ChatWidget() {
                                     >
                                         {msg.text}
                                     </div>
-
                                     {msg.role === 'model' && msg.suggestions?.length > 0 && (
                                         <div className={styles.suggestionGrid}>
                                             {msg.suggestions.map((s) => (
@@ -174,7 +155,6 @@ function ChatWidget() {
                                             ))}
                                         </div>
                                     )}
-
                                     {msg.role === 'model' && msg.products?.length > 0 && (
                                         <div className={styles.productList}>
                                             {msg.products.map((p) => (
@@ -196,7 +176,6 @@ function ChatWidget() {
                                 </div>
                             </div>
                         ))}
-
                         {loading && (
                             <div className={styles.messageRowBot}>
                                 <div className={styles.avatar}>AI</div>
@@ -206,7 +185,6 @@ function ChatWidget() {
                             </div>
                         )}
                     </div>
-
                     <div className={styles.footer}>
                         <div className={styles.inputWrap}>
                             <input
@@ -233,5 +211,5 @@ function ChatWidget() {
         </div>
     );
 }
-
 export default ChatWidget;
+

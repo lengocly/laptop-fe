@@ -1,7 +1,3 @@
-/**
- * ProductItem — thẻ sản phẩm (UI kiểu e-commerce hiện đại, cảm hứng CellphoneS).
- * Logic: giỏ / yêu thích / so sánh / rating / giá — giữ nguyên.
- */
 import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
@@ -19,10 +15,8 @@ import {
     parsePriceNumber,
 } from '@/utils/price';
 import { canCompareProduct } from '@/utils/compare';
-
 const IMG_FALLBACK =
     'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=640&h=640&q=80';
-
 function ProductItem({
     id,
     src,
@@ -46,11 +40,9 @@ function ProductItem({
     const { addToCompare, isInCompare } = useContext(CompareContext);
     const { setIsOpen, setType } = useContext(SideBarContext);
     const [flashMessage, setFlashMessage] = useState('');
-
     const mainSrc = src || IMG_FALLBACK;
     const hoverSrc = prevSrc || mainSrc;
     const detailUrl = id != null ? `/product/${id}` : '#';
-
     const priceText = formatVnd(parsePriceNumber(price));
     const priceOriginalText = priceOriginal
         ? formatVnd(parsePriceNumber(priceOriginal))
@@ -59,7 +51,6 @@ function ProductItem({
     const savings = calcSavings(price, priceOriginal);
     const specText = [cpu, ram, storage].filter(Boolean).join(' · ');
     const compareable = canCompareProduct(parentGroupSlug);
-
     const productPayload = {
         productId: id,
         name,
@@ -72,20 +63,16 @@ function ProductItem({
         screen: screen || null,
         parentGroupSlug,
     };
-
     const moSidebar = (loai) => {
         setType(loai);
         setIsOpen(true);
     };
-
     const hienThongBaoNgan = (message) => {
         setFlashMessage(message);
         setTimeout(() => setFlashMessage(''), 2500);
     };
-
     const xuLyThaoTacNhanh = (actionId) => {
         if (id == null) return;
-
         switch (actionId) {
             case 'addToCart':
                 if (hasVariants) {
@@ -128,7 +115,6 @@ function ProductItem({
                 break;
         }
     };
-
     return (
         <article className={styles.card}>
             {flashMessage && (
@@ -136,13 +122,10 @@ function ProductItem({
                     {flashMessage}
                 </p>
             )}
-
-            {/* Vùng ảnh + thao tác nhanh */}
             <div className={styles.media}>
                 {discount > 0 && (
                     <span className={styles.badgeDiscount}>Giảm {discount}%</span>
                 )}
-
                 <Link
                     className={styles.imageHit}
                     to={detailUrl}
@@ -168,7 +151,6 @@ function ProductItem({
                         e.currentTarget.src = mainSrc;
                     }}
                 />
-
                 <div
                     className={styles.quickActions}
                     onClick={(e) => {
@@ -184,7 +166,6 @@ function ProductItem({
                         const isActive =
                             (action.id === 'wishlist' && isInWishlist(id)) ||
                             (action.id === 'compare' && isInCompare(id));
-
                         return (
                             <button
                                 key={action.id}
@@ -203,11 +184,8 @@ function ProductItem({
                     })}
                 </div>
             </div>
-
-            {/* Nội dung: tên, giá, rating */}
             <Link className={styles.body} to={detailUrl}>
                 <h3 className={styles.title}>{name}</h3>
-
                 <div className={styles.priceArea}>
                     <div className={styles.priceRow}>
                         <span className={styles.priceCurrent}>{priceText}</span>
@@ -223,13 +201,11 @@ function ProductItem({
                         <span className={styles.savePlaceholder} aria-hidden />
                     )}
                 </div>
-
                 {specText ? (
                     <p className={styles.specLine}>{specText}</p>
                 ) : (
                     <span className={styles.specPlaceholder} aria-hidden />
                 )}
-
                 <div
                     className={styles.footer}
                     aria-label={
@@ -252,5 +228,5 @@ function ProductItem({
         </article>
     );
 }
-
 export default ProductItem;
+

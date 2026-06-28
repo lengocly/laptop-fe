@@ -1,17 +1,11 @@
 import BlogProductEmbed from './BlogProductEmbed';
 import BlogImage from './BlogImage';
 import styles from './blogDetail.module.scss';
-
-/**
- * Render nội dung bài viết theo blocks (p, h2, h3, img, product).
- * Hỗ trợ legacy: content là mảng string → tự chuyển thành paragraph.
- */
 function BlogArticleBody({ blocks = [] }) {
     return (
         <div className={styles.articleBody}>
             {blocks.map((block, index) => {
                 const key = `${block.type}-${index}`;
-
                 switch (block.type) {
                     case 'h2':
                         return (
@@ -58,5 +52,5 @@ function BlogArticleBody({ blocks = [] }) {
         </div>
     );
 }
-
 export default BlogArticleBody;
+

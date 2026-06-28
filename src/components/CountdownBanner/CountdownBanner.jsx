@@ -3,10 +3,7 @@ import CountdownTimer from '@components/CountdownTimer/CountdownTimer';
 import styles from './styles.module.scss';
 import Button from '@components/Button/Button';
 import demImg from '@icons/images/dem.jpg';
-
-// SP khuyến mãi gắn với banner countdown — MacBook Pro 14
 const PROMO_PRODUCT_ID = 3;
-
 function CountdownBanner() {
     const navigate = useNavigate();
     const { container, containerTimmer, title, boxBtn } = styles;
@@ -19,8 +16,6 @@ function CountdownBanner() {
             <div className={containerTimmer}>
                 <CountdownTimer targetDate={targetDate} />
             </div>
-
-
             <div className={boxBtn}>
                 <Button
                     content="Mua ngay"
@@ -30,5 +25,5 @@ function CountdownBanner() {
         </div>
     );
 }
-
 export default CountdownBanner;
+

@@ -5,31 +5,24 @@ import {
 } from '@/constants/orderStatus';
 import StatusBadge from '@components/shared/StatusBadge/StatusBadge';
 import styles from './styles.module.scss';
-
 function OrderStatusModal({ open, order, onClose, onSubmit, loading }) {
     const options = useMemo(
         () => (order ? getAdminFulfillmentOptions(order.status) : []),
         [order],
     );
-
     const [status, setStatus] = useState('pending');
     const [note, setNote] = useState('');
-
     useEffect(() => {
         if (!order) return;
         setStatus(options[0]?.value ?? order.status);
         setNote(order.admin_note || '');
     }, [order, options]);
-
     if (!open || !order) return null;
-
     const handleSubmit = (e) => {
         e.preventDefault();
         onSubmit(order.id, status, note);
     };
-
     const readOnly = options.length === 0;
-
     return (
         <div className={styles.overlay} onClick={onClose}>
             <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
@@ -45,7 +38,6 @@ function OrderStatusModal({ open, order, onClose, onSubmit, loading }) {
                         label={ORDER_STATUS_LABEL[order.status]}
                     />
                 </p>
-
                 {readOnly ? (
                     <p className={styles.meta}>
                         Đơn đang ở trạng thái không thể cập nhật giao hàng từ admin.
@@ -65,7 +57,6 @@ function OrderStatusModal({ open, order, onClose, onSubmit, loading }) {
                                 ))}
                             </select>
                         </label>
-
                         <label>
                             Ghi chú (tuỳ chọn)
                             <textarea
@@ -75,7 +66,6 @@ function OrderStatusModal({ open, order, onClose, onSubmit, loading }) {
                                 placeholder="VD: Đã liên hệ khách, giao trong 2 ngày..."
                             />
                         </label>
-
                         <div className={styles.actions}>
                             <button type="button" onClick={onClose} disabled={loading}>
                                 Hủy
@@ -90,5 +80,5 @@ function OrderStatusModal({ open, order, onClose, onSubmit, loading }) {
         </div>
     );
 }
-
 export default OrderStatusModal;
+

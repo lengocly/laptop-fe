@@ -1,10 +1,7 @@
 import { useState } from 'react';
 import { resolveImageUrl, IMG_FALLBACK } from '@/utils/image';
-
-/** Ảnh blog — tự fallback khi storage chưa có file */
 function BlogImage({ src, alt = '', className, ...props }) {
     const [imgSrc, setImgSrc] = useState(() => resolveImageUrl(src));
-
     return (
         <img
             src={imgSrc}
@@ -16,5 +13,5 @@ function BlogImage({ src, alt = '', className, ...props }) {
         />
     );
 }
-
 export default BlogImage;
+

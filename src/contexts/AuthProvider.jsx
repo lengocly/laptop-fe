@@ -7,15 +7,10 @@ import {
     getUser,
     updateProfile as updateProfileApi,
 } from '@/apis/authService';
-
-//AuthContext — Tạo “ống” để component khác bơm vào / hút ra user, login, logout
 export const AuthContext = createContext();
-
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-
-    // Mở app: có token thì lấy thông tin user
     useEffect(() => {
         const checkLogin = async () => {
             const token = localStorage.getItem(AUTH_TOKEN_KEY);
@@ -34,47 +29,38 @@ export function AuthProvider({ children }) {
         };
         checkLogin();
     }, []);
-
     const login = async (email, password) => {
         const data = await loginApi({ email, password });
         setUser(data.user);
         return data;
     };
-
     const logout = async () => {
         await logoutApi();
         setUser(null);
-        //CartProvider tự xóa giỏ khi user = null
     };
-
-    //Chỉ gọi API đăng ký, không setUser (chưa verify mail).
     const register = async (formData) => {
         return registerApi(formData);
     };
-
     const updateProfile = async (formData) => {
         const data = await updateProfileApi(formData);
         setUser(data.user);
         return data;
     };
-
     const refreshUser = async () => {
         const data = await getUser();
         setUser(data);
         return data;
     };
-
     const value = {
         user,
         loading,
         isAuthenticated: !!user,
-        isAdmin: !!user?.is_admin,   //kiểm tra user có phải admin không
+        isAdmin: !!user?.is_admin,
         login,
         logout,
         register,
         updateProfile,
         refreshUser,
     };
-
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

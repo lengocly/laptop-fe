@@ -7,5 +7,5 @@ function MainLayout({ children }) {
         </main>
     );
 }
-
 export default MainLayout;
+

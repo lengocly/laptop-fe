@@ -1,10 +1,8 @@
 import styles from './styles.module.scss';
 import { FiTrash2 } from 'react-icons/fi';
-
 function CartItem({ item, onRemove, onUpdateQty }) {
     const { item: itemClass, image, body, name, variant, price, qtyRow, qtyBtn, qtyValue } =
         styles;
-
     return (
         <div className={itemClass}>
             <img src={item.image} alt="" className={image} />
@@ -33,7 +31,6 @@ function CartItem({ item, onRemove, onUpdateQty }) {
                     </button>
                 </div>
             </div>
-            {/* //lõi xoá */}
             <button
                 type="button"
                 className={styles.removeBtn}
@@ -45,5 +42,4 @@ function CartItem({ item, onRemove, onUpdateQty }) {
         </div>
     );
 }
-
 export default CartItem;

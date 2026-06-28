@@ -1,16 +1,3 @@
-/**
- * AdminProductFormPage — Thêm / Sửa sản phẩm (Phase 2C)
- *
- * URL:
- *   /admin/san-pham/tao     → Thêm mới (POST)
- *   /admin/san-pham/:id     → Sửa (GET rồi PUT)
- *
- * API (Phase 1):
- *   GET    /admin/products/:id
- *   POST   /admin/products
- *   PUT    /admin/products/:id
- */
-
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import AdminRoute from '@components/AdminRoute/AdminRoute';
@@ -23,9 +10,6 @@ import {
 } from '@/apis/adminOrderService';
 import styles from './styles.module.scss';
 import { uploadProductImage } from '@/apis/adminOrderService';
-
-
-// Form mặc định khi tạo mới
 const emptyForm = {
     name: '',
     slug: '',
@@ -42,8 +26,6 @@ const emptyForm = {
     is_active: true,
     variants: [],
 };
-
-// Biến thể trống khi bấm "+ Thêm biến thể"
 const emptyVariant = {
     group_key: 'config',
     group_label: 'Cấu hình',
@@ -54,29 +36,20 @@ const emptyVariant = {
     stock: 0,
     is_active: true,
 };
-
 function AdminProductFormPage() {
     const { id } = useParams();
     const navigate = useNavigate();
-
-    // Chỉ có id trên route /admin/san-pham/:id (không phải /tao)
     const isEdit = Boolean(id);
-
     const [form, setForm] = useState(emptyForm);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(isEdit);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
-
-    // --- Ảnh ---
 const [previewMain, setPreviewMain] = useState('');
 const [uploadingMain, setUploadingMain] = useState(false);
-
-// --- Chọn ảnh chính ---
 const handlePickMainImage = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     setUploadingMain(true);
     setError('');
     try {
@@ -87,19 +60,14 @@ const handlePickMainImage = async (e) => {
         setError(err.response?.data?.message || 'Upload ảnh thất bại.');
     } finally {
         setUploadingMain(false);
-        e.target.value = ''; // chọn lại cùng file được
+        e.target.value = '';
     }
 };
-
-// --- Chọn ảnh hover ---
 const [previewHover, setPreviewHover] = useState('');
 const [uploadingHover, setUploadingHover] = useState(false);
-
-// --- Chọn ảnh hover ---
 const handlePickHoverImage = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     setUploadingHover(true);
     setError('');
     try {
@@ -113,21 +81,14 @@ const handlePickHoverImage = async (e) => {
         e.target.value = '';
     }
 };
-
-    // --- Đổi 1 field trong form ---
     const setField = (key, value) => {
         setForm((prev) => ({ ...prev, [key]: value }));
     };
-
-    // --- Tải danh mục cho dropdown ---
     useEffect(() => {
         getFlatChildCategories().then(setCategories).catch(() => {});
     }, []);
-
-    // --- Sửa: tải SP từ API ---
     useEffect(() => {
         if (!isEdit) return;
-
         setLoading(true);
         getAdminProduct(id)
             .then(({ data }) => {
@@ -135,7 +96,6 @@ const handlePickHoverImage = async (e) => {
                     ...emptyForm,
                     ...data,
                     category_id: data.category_id ? String(data.category_id) : '',
-                    // Laravel JSON: all_variants (snake_case)
                     variants: data.all_variants || [],
                 });
                 setError('');
@@ -145,24 +105,18 @@ const handlePickHoverImage = async (e) => {
             })
             .finally(() => setLoading(false));
     }, [id, isEdit]);
-
-    // --- Biến thể: thêm dòng ---
     const addVariant = () => {
         setForm((prev) => ({
             ...prev,
             variants: [...prev.variants, { ...emptyVariant }],
         }));
     };
-
-    // --- Biến thể: xóa dòng ---
     const removeVariant = (index) => {
         setForm((prev) => ({
             ...prev,
             variants: prev.variants.filter((_, i) => i !== index),
         }));
     };
-
-    // --- Biến thể: sửa 1 ô ---
     const updateVariant = (index, key, value) => {
         setForm((prev) => {
             const variants = [...prev.variants];
@@ -170,14 +124,10 @@ const handlePickHoverImage = async (e) => {
             return { ...prev, variants };
         });
     };
-
-    // --- Gửi form: POST hoặc PUT ---
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaving(true);
         setError('');
-
-        // Body khớp validate Phase 1 (AdminProductController)
         const payload = {
             name: form.name.trim(),
             slug: form.slug.trim() || undefined,
@@ -210,7 +160,6 @@ const handlePickHoverImage = async (e) => {
                 is_active: v.is_active !== false,
             })),
         };
-
         try {
             if (isEdit) {
                 await updateProduct(id, payload);
@@ -230,7 +179,6 @@ const handlePickHoverImage = async (e) => {
             setSaving(false);
         }
     };
-
     if (loading) {
         return (
             <AdminRoute>
@@ -240,7 +188,6 @@ const handlePickHoverImage = async (e) => {
             </AdminRoute>
         );
     }
-
     return (
         <AdminRoute>
             <AdminLayout title={isEdit ? 'Sửa sản phẩm' : 'Thêm sản phẩm'}>
@@ -251,11 +198,8 @@ const handlePickHoverImage = async (e) => {
                 >
                     ← Quay lại danh sách
                 </button>
-
                 {error && <p className={styles.err}>{error}</p>}
-
                 <form className={styles.formCard} onSubmit={handleSubmit}>
-                    {/* ===== Thông tin cơ bản ===== */}
                     <section className={styles.section}>
                         <h3>Thông tin cơ bản</h3>
                         <div className={styles.grid}>
@@ -306,8 +250,6 @@ const handlePickHoverImage = async (e) => {
                             </label>
                         </div>
                     </section>
-
-                    {/* ===== Giá & kho ===== */}
                     <section className={styles.section}>
                         <h3>Giá & kho hàng</h3>
                         <div className={styles.grid}>
@@ -339,8 +281,6 @@ const handlePickHoverImage = async (e) => {
                             </label>
                         </div>
                     </section>
-
-                    {/* ===== Thông số laptop ===== */}
                     <section className={styles.section}>
                         <h3>Thông số (hiện trang chi tiết SP)</h3>
                         <div className={styles.grid}>
@@ -374,8 +314,6 @@ const handlePickHoverImage = async (e) => {
                             </label>
                         </div>
                     </section>
-
-                    {/* ===== Ảnh (path trong storage) ===== */}
                     <section className={styles.section}>
                         <h3>Hình ảnh</h3>
                         <p className={styles.hint}>
@@ -411,8 +349,6 @@ const handlePickHoverImage = async (e) => {
                         </label>
                         </div>
                     </section>
-
-                    {/* ===== Biến thể ===== */}
                     <section className={styles.section}>
                         <div className={styles.sectionHead}>
                             <h3>Biến thể (cấu hình / màu...)</h3>
@@ -427,7 +363,6 @@ const handlePickHoverImage = async (e) => {
                         <p className={styles.hint}>
                             Khách chọn biến thể trên trang chi tiết. Giá để trống = dùng giá SP chính.
                         </p>
-
                         {form.variants.length === 0 ? (
                             <p className={styles.empty}>Chưa có biến thể (vẫn bán được SP đơn).</p>
                         ) : (
@@ -480,8 +415,6 @@ const handlePickHoverImage = async (e) => {
                             </div>
                         )}
                     </section>
-
-                    {/* ===== Nút lưu ===== */}
                     <div className={styles.footer}>
                         <button
                             type="button"
@@ -503,5 +436,4 @@ const handlePickHoverImage = async (e) => {
         </AdminRoute>
     );
 }
-
 export default AdminProductFormPage;

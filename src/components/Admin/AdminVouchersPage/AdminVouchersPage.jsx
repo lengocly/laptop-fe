@@ -1,7 +1,3 @@
-/**
- * AdminVouchersPage — Quản lý voucher/khuyến mãi
- * Admin tạo voucher: giảm giá, đơn tối thiểu, HSD...
- */
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminRoute from '@components/AdminRoute/AdminRoute';
@@ -13,19 +9,16 @@ import {
 } from '@/apis/adminOrderService';
 import { formatVnd } from '@/utils/price';
 import styles from './styles.module.scss';
-
 function formatHsd(iso) {
     if (!iso) return '—';
     const d = new Date(iso);
     return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
 }
-
 function discountText(v) {
     if (v.discount_type === 'fixed') return formatVnd(v.discount_value);
     const max = v.max_discount ? ` (tối đa ${formatVnd(v.max_discount)})` : '';
     return `${v.discount_value}%${max}`;
 }
-
 function getPageNumbers(current, last) {
     if (last <= 1) return last === 1 ? [1] : [];
     const pages = [];
@@ -38,7 +31,6 @@ function getPageNumbers(current, last) {
     for (let i = start; i <= end; i += 1) pages.push(i);
     return pages;
 }
-
 function AdminVouchersPage() {
     const navigate = useNavigate();
     const [vouchers, setVouchers] = useState([]);
@@ -50,23 +42,19 @@ function AdminVouchersPage() {
     const [perPage] = useState(10);
     const [totalPages, setTotalPages] = useState(1);
     const [total, setTotal] = useState(0);
-
     const loadVouchers = async () => {
         try {
             const params = { page, per_page: perPage };
             if (keyword.trim()) params.keyword = keyword.trim();
             if (activeFilter === '1') params.is_active = true;
             if (activeFilter === '0') params.is_active = false;
-
             const { data } = await getAdminVouchers(params);
             const items = data.data || [];
             const last = data.last_page || 1;
-
             if (items.length === 0 && page > 1 && page > last) {
                 setPage(last);
                 return;
             }
-
             setVouchers(items);
             setTotalPages(last);
             setTotal(data.total || 0);
@@ -75,11 +63,9 @@ function AdminVouchersPage() {
             setError('Không tải được danh sách voucher.');
         }
     };
-
     useEffect(() => {
         loadVouchers();
     }, [page, keyword, activeFilter]);
-
     const handleDelete = async (voucher) => {
         if (!window.confirm(`Xóa voucher "${voucher.code}"?`)) return;
         try {
@@ -90,7 +76,6 @@ function AdminVouchersPage() {
             setError('Không xóa được voucher.');
         }
     };
-
     const handleToggle = async (voucher) => {
         try {
             await toggleVoucherActive(voucher.id);
@@ -100,12 +85,10 @@ function AdminVouchersPage() {
             setError('Không đổi trạng thái được.');
         }
     };
-
     return (
         <AdminRoute>
             <AdminLayout title="Quản lý voucher">
                 {error && <p className={styles.err}>{error}</p>}
-
                 <div className={styles.toolbar}>
                     <input
                         placeholder="Tìm mã, tiêu đề..."
@@ -134,7 +117,6 @@ function AdminVouchersPage() {
                         + Thêm voucher
                     </button>
                 </div>
-
                 <div className={styles.tableWrap}>
                     <table className={styles.table}>
                         <thead>
@@ -213,7 +195,6 @@ function AdminVouchersPage() {
                         </tbody>
                     </table>
                 </div>
-
                 {totalPages > 1 && (
                     <div className={styles.pagination}>
                         <span className={styles.paginationInfo}>
@@ -253,11 +234,10 @@ function AdminVouchersPage() {
                         </div>
                     </div>
                 )}
-
                 {toast && <p className={styles.toast}>{toast}</p>}
             </AdminLayout>
         </AdminRoute>
     );
 }
-
 export default AdminVouchersPage;
+

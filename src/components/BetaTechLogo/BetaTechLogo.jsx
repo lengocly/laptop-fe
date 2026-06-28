@@ -2,19 +2,13 @@ import { useId } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './styles.module.scss';
 import classNames from 'classnames';
-
-/**
- * Logo BetaTech — SVG vector, hỗ trợ nền sáng (header) và nền tối (footer).
- */
 function BetaTechLogo({ variant = 'light', className, asLink = true }) {
     const uid = useId().replace(/:/g, '');
     const gradId = `bt-grad-${uid}`;
     const glowId = `bt-glow-${uid}`;
-
     const isDark = variant === 'dark';
     const betaFill = isDark ? '#f8fafc' : '#0f172a';
     const tagFill = isDark ? 'rgba(248,250,252,0.55)' : '#64748b';
-
     const svg = (
         <svg
             className={classNames(styles.logo, className)}
@@ -37,8 +31,6 @@ function BetaTechLogo({ variant = 'light', className, asLink = true }) {
                     </feMerge>
                 </filter>
             </defs>
-
-            {/* Icon mark */}
             <rect
                 x="0"
                 y="4"
@@ -58,8 +50,6 @@ function BetaTechLogo({ variant = 'light', className, asLink = true }) {
                 strokeWidth="1.5"
                 strokeLinecap="round"
             />
-
-            {/* Wordmark */}
             <text
                 x="52"
                 y="31"
@@ -95,7 +85,6 @@ function BetaTechLogo({ variant = 'light', className, asLink = true }) {
             </text>
         </svg>
     );
-
     if (asLink) {
         return (
             <Link to="/" className={styles.link} aria-label="BetaTech — Trang chủ">
@@ -103,8 +92,7 @@ function BetaTechLogo({ variant = 'light', className, asLink = true }) {
             </Link>
         );
     }
-
     return svg;
 }
-
 export default BetaTechLogo;
+

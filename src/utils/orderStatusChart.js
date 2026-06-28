@@ -1,5 +1,4 @@
 import { ORDER_STATUS_LABEL } from '@/constants/orderStatus';
-
 const STATUS_COLORS = {
     pending_payment: '#ef4444',
     pending: '#f59e0b',
@@ -8,16 +7,12 @@ const STATUS_COLORS = {
     delivered: '#22c55e',
     cancelled: '#ef4444',
 };
-
-/** Gom số đơn theo trạng thái — dùng cho biểu đồ tròn */
 export function buildOrderStatusChart(orders = []) {
     const counts = {};
-
     orders.forEach((order) => {
         const key = order.status || 'pending';
         counts[key] = (counts[key] || 0) + 1;
     });
-
     return Object.entries(ORDER_STATUS_LABEL)
         .map(([status, name]) => ({
             status,
@@ -27,5 +22,5 @@ export function buildOrderStatusChart(orders = []) {
         }))
         .filter((item) => item.value > 0);
 }
-
 export { STATUS_COLORS };
+

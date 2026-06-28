@@ -17,3 +17,10 @@
     width: auto;
     margin-left: 30px;
 }
+
+@media (max-width: 900px) {
+    .logo {
+        height: 36px;
+        margin-left: 0;
+    }
+}

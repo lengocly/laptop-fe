@@ -19,11 +19,9 @@ import { WishlistContext } from '@/contexts/WishlistProvider';
 import { CompareContext } from '@/contexts/CompareProvider';
 import { Link } from 'react-router-dom';
 import { PiUserCircle } from 'react-icons/pi';
+import { FiMenu, FiX } from 'react-icons/fi';
 import SearchOverlay from './SearchOverlay/SearchOverlay';
-
-
 function MyHeader() {
-    // cho icon nằm ngang
     const {
         containerBoxIcon,
         containerMenu,
@@ -34,49 +32,39 @@ function MyHeader() {
         fixedHeader,
         topHeader,
     } = styles;
-
-    //lấy ra scrollY để xử lý scroll
     const { scrollPosition } = useScrollHandling();
-
-    //= true khi scrollY > 0, false khi scrollY = 0
     const [fixedPosition, setFixedPosition] = useState(false);
-
-    //sử dụng context để lấy trạng thái mở đóng của sidebar
     const { setIsOpen, setType } = useContext(SideBarContext);
-
-    //AuthContext lấy user, logout, loading, isAdmin để kiểm tra user có phải admin không
     const { user, logout, loading , isAdmin} = useContext(AuthContext);
-
     const handleOpenSideBar = (type) => {
         setIsOpen(true);
         setType(type);
     };
-
-    
     const { totalCount } = useContext(CartContext);
     const { count: wishlistCount } = useContext(WishlistContext);
     const { count: compareCount } = useContext(CompareContext);
-
-    // Trạng thái mở/đóng overlay tìm kiếm
     const [isSearchOpen, setIsSearchOpen] = useState(false);
-
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     useEffect(() => {
-        //cách 1
-        // if (scrollPosition > 80) {
-        //     setFixedPosition(true);
-        // } else {
-        //     setFixedPosition(false);
-        // }
-
-        //cách 2 ngắn gọn hơn
-        // setFixedPosition(scrollPosition > 80 ? true : false);
-
-        //cách 3:
+        document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [mobileMenuOpen]);
+    const closeMobileMenu = () => setMobileMenuOpen(false);
+    const openSearch = () => {
+        setIsSearchOpen(true);
+        closeMobileMenu();
+    };
+    const openLogin = () => {
+        setIsOpen(true);
+        setType('login');
+        closeMobileMenu();
+    };
+    useEffect(() => {
         setFixedPosition(scrollPosition > 80);
     }, [scrollPosition]);
-
     return (
-        // nếu fixedPosition = true thì thêm class fixedHeader, ngược lại thì thêm class topHeader; cả 2 class đều có class container
         <div
             className={classNames(container, topHeader, {
                 [fixedHeader]: fixedPosition
@@ -84,7 +72,16 @@ function MyHeader() {
         >
             <HeaderMarquee />
             <div className={containerHeader}>
-                <div className={containerBox}>
+                <button
+                    type="button"
+                    className={styles.mobileMenuBtn}
+                    aria-label={mobileMenuOpen ? 'Đóng menu' : 'Mở menu'}
+                    aria-expanded={mobileMenuOpen}
+                    onClick={() => setMobileMenuOpen((open) => !open)}
+                >
+                    {mobileMenuOpen ? <FiX size={22} /> : <FiMenu size={22} />}
+                </button>
+                <div className={classNames(containerBox, styles.desktopOnly)}>
                     <div className={containerBoxIcon}>
                         {dataBoxIcon.map((item) => {
                             return (
@@ -92,7 +89,6 @@ function MyHeader() {
                             );
                         })}
                     </div>
-                    {/* lấy data từ constant */}
                     <div className={containerMenu}>
                         <Menu
                             key={dataMenu[0].content}
@@ -104,10 +100,8 @@ function MyHeader() {
                     </div>
                 </div>
                 <BetaTechLogo variant="light" />
-                <div className={containerBox}>
+                <div className={classNames(containerBox, styles.desktopOnly)}>
                     <div className={containerMenu}>
-                        {/* lấy tiếp theo đến cuối cùng */}
-                        {/* Menu phải — Tìm kiếm mở overlay, không dùng link # */}
                             {dataMenu
                                 .slice(3)
                                 .filter(
@@ -122,19 +116,14 @@ function MyHeader() {
                                         href={item.href}
                                     />
                                 ))}
-
                             <Menu
                                 content="Tìm kiếm"
                                 href="#"
                                 onClick={() => setIsSearchOpen(true)}
                             />
-
-                            {/* Chưa login → Đăng nhập */}
                             {!loading && !user && (
                                 <Menu content="Đăng nhập" href="#" />
                             )}
-
-                            {/* Đã login → chào + đăng xuất */}
                             {user && (
                                 <div className={styles.userMenuWrap}>
                                     <button type="button"       className={classNames(menu, styles.userMenuTrigger)}>
@@ -143,38 +132,24 @@ function MyHeader() {
                                             <span>{user.name}</span>
                                         </span>
                                     </button>
-                                    {/* hiển thị menu dropdown */}
                                     <div className={styles.userDropdown}>
-
-                                        {/* hiển thị thông tin user */}
                                         <div className={styles.userInfo}>
                                             <strong>{user.name}</strong>
                                             <span>{user.email}</span>
                                         </div>
-
-                                        {/* hiển thị đường ngắn */}
                                         <div className={styles.userDivider} />
-
-                                        {/* hiển thị menu item đơn hàng */}
                                         <Link to="/don-hang-cua-toi" className={styles.userMenuItem}>
                                             Đơn hàng
                                         </Link>
-
                                         <Link to="/tai-khoan" className={styles.userMenuItem}>
                                             Tài khoản
                                         </Link>
-
-                                        {/* hiển thị menu item admin */}
-                                
                                         {isAdmin && (
                                             <Link to="/admin/dashboard" className={styles.userMenuItem}>
                                                 Admin
                                             </Link>
                                         )}
-                                        {/* hiển thị đường ngắn */}
                                         <div className={styles.userDivider} />
-
-                                        {/* hiển thị menu item đăng xuất */}
                                         <button
                                             type="button"
                                             className={styles.userMenuItemLogout}
@@ -186,8 +161,8 @@ function MyHeader() {
                                 </div>
                             )}
                     </div>
-
-                    <div className={containerBoxIcon}>
+                </div>
+                <div className={classNames(containerBoxIcon, styles.mobileActions)}>
                         <div
                             style={{ position: 'relative', cursor: 'pointer' }}
                             onClick={() => handleOpenSideBar('compare')}
@@ -240,8 +215,6 @@ function MyHeader() {
                                 </span>
                             )}
                         </div>
-                        
-                        {/* // bọc icon giỏ (thêm span badge): */}
                         <div style={{ position: 'relative', cursor: 'pointer' }}
                             onClick={() => handleOpenSideBar('cart')}>
                             <PiShoppingCart style={{ fontSize: '25px' }} />
@@ -267,9 +240,76 @@ function MyHeader() {
                             )}
                         </div>
                     </div>
-                </div>
             </div>
-
+            <div
+                className={classNames(styles.mobileNavOverlay, {
+                    [styles.mobileNavOverlayOpen]: mobileMenuOpen,
+                })}
+                aria-hidden={!mobileMenuOpen}
+                onClick={closeMobileMenu}
+            />
+            <nav
+                className={classNames(styles.mobileNav, {
+                    [styles.mobileNavOpen]: mobileMenuOpen,
+                })}
+                aria-hidden={!mobileMenuOpen}
+            >
+                <div className={styles.mobileNavHeader}>
+                    <strong>Menu</strong>
+                    <button type="button" className={styles.mobileNavClose} onClick={closeMobileMenu}>
+                        <FiX size={20} />
+                    </button>
+                </div>
+                <Link to="/" className={styles.mobileNavLink} onClick={closeMobileMenu}>
+                    Trang chủ
+                </Link>
+                <Link to="/cua-hang" className={styles.mobileNavLink} onClick={closeMobileMenu}>
+                    Cửa hàng
+                </Link>
+                <Link to="/gioi-thieu" className={styles.mobileNavLink} onClick={closeMobileMenu}>
+                    Giới thiệu
+                </Link>
+                <Link to="/lien-he" className={styles.mobileNavLink} onClick={closeMobileMenu}>
+                    Liên hệ
+                </Link>
+                <button type="button" className={styles.mobileNavLink} onClick={openSearch}>
+                    Tìm kiếm
+                </button>
+                {!loading && !user && (
+                    <button type="button" className={styles.mobileNavLink} onClick={openLogin}>
+                        Đăng nhập
+                    </button>
+                )}
+                {user && (
+                    <>
+                        <div className={styles.mobileNavUser}>
+                            <PiUserCircle size={20} />
+                            <span>{user.name}</span>
+                        </div>
+                        <Link to="/don-hang-cua-toi" className={styles.mobileNavLink} onClick={closeMobileMenu}>
+                            Đơn hàng
+                        </Link>
+                        <Link to="/tai-khoan" className={styles.mobileNavLink} onClick={closeMobileMenu}>
+                            Tài khoản
+                        </Link>
+                        {isAdmin && (
+                            <Link to="/admin/dashboard" className={styles.mobileNavLink} onClick={closeMobileMenu}>
+                                Admin
+                            </Link>
+                        )}
+                        <button
+                            type="button"
+                            className={styles.mobileNavLogout}
+                            onClick={() => {
+                                logout();
+                                closeMobileMenu();
+                            }}
+                        >
+                            Đăng xuất
+                        </button>
+                    </>
+                )}
+            </nav>
             <SearchOverlay
                 isOpen={isSearchOpen}
                 onClose={() => setIsSearchOpen(false)}
@@ -277,5 +317,5 @@ function MyHeader() {
         </div>
     );
 }
-
 export default MyHeader;
+

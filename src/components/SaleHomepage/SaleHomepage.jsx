@@ -4,13 +4,10 @@ import Button from '@components/Button/Button';
 import MainLayout from '@components/Layout/Layout';
 import styles from './styles.module.scss';
 import useTranslateXImage from '@/hooks/useTranslateXImage';
-
-// Khối sale cuối trang chủ — ảnh 2 bên, chữ giữa (căn trong MainLayout 1250px)
 function SaleHomepage() {
     const navigate = useNavigate();
     const sectionRef = useRef(null);
     const { translateXPosition } = useTranslateXImage(sectionRef);
-
     return (
         <MainLayout>
             <div className={styles.container} ref={sectionRef}>
@@ -29,7 +26,6 @@ function SaleHomepage() {
                         loading="lazy"
                     />
                 </div>
-
                 <div className={styles.content}>
                     <h2 className={styles.title}>Sale tưng bừng</h2>
                     <p className={styles.des}>Số lượng có hạn nhanh tay rinh quà.</p>
@@ -41,7 +37,6 @@ function SaleHomepage() {
                         />
                     </div>
                 </div>
-
                 <div
                     className={`${styles.boxImage} ${styles.boxImageRight}`}
                     style={{
@@ -61,5 +56,5 @@ function SaleHomepage() {
         </MainLayout>
     );
 }
-
 export default SaleHomepage;
+

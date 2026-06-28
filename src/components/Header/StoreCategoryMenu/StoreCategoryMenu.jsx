@@ -1,5 +1,3 @@
-//file này dùng để hiển thị menu danh mục sản phẩm trên header
-
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import classNames from 'classnames';
@@ -14,33 +12,27 @@ import { PiKeyboard, PiLaptop } from 'react-icons/pi';
 import { TbMouse } from 'react-icons/tb';
 import { getCategories } from '@/apis/categoriesService';
 import styles from '../styles.module.scss';
-
 const CATEGORY_ICONS = {
     laptop: PiLaptop,
     chuot: TbMouse,
     'ban-phim': PiKeyboard,
     'tai-nghe': FiHeadphones,
 };
-
 function getCategoryIcon(slug) {
     return CATEGORY_ICONS[slug] ?? FiPackage;
 }
-
 const PARENT_ICONS = {
     laptop: PiLaptop,
     'laptop-group': PiLaptop,
     'phu-kien': FiHeadphones,
 };
-
 function getParentIcon(slug) {
     return PARENT_ICONS[slug] ?? FiPackage;
 }
-
 function buildMenuItems(categories) {
     const items = [
         { id: 'all', name: 'Tất cả sản phẩm', to: '/cua-hang', Icon: FiGrid, isChild: false },
     ];
-
     categories.forEach((parent) => {
         items.push({
             id: `parent-${parent.id}`,
@@ -50,7 +42,6 @@ function buildMenuItems(categories) {
             isChild: false,
             isParentGroup: true,
         });
-
         (parent.children ?? []).forEach((child) => {
             items.push({
                 id: child.id,
@@ -61,25 +52,19 @@ function buildMenuItems(categories) {
             });
         });
     });
-
     return items;
 }
-
 function StoreCategoryMenu() {
     const location = useLocation();
     const [categories, setCategories] = useState([]);
     const [open, setOpen] = useState(false);
-
     const isStorePage = location.pathname === '/cua-hang';
-
     useEffect(() => {
         getCategories()
             .then((res) => setCategories(res.categories ?? []))
             .catch(() => setCategories([]));
     }, []);
-
     const menuItems = buildMenuItems(categories);
-
     const {
         storeCategoryWrap,
         storeCategoryTrigger,
@@ -92,7 +77,6 @@ function StoreCategoryMenu() {
         storeCategoryChevronDown,
         storeCategoryTriggerLabel,
     } = styles;
-
     return (
         <div
             className={storeCategoryWrap}
@@ -113,7 +97,6 @@ function StoreCategoryMenu() {
                     <FiChevronDown className={storeCategoryChevronDown} aria-hidden />
                 </span>
             </Link>
-
             <div
                 className={classNames(storeCategoryDropdown, {
                     [storeCategoryDropdownOpen]: open,
@@ -141,5 +124,5 @@ function StoreCategoryMenu() {
         </div>
     );
 }
-
 export default StoreCategoryMenu;
+

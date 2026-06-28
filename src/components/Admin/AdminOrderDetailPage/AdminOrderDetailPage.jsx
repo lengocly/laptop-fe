@@ -16,33 +16,26 @@ import {
 import OrderStatusModal from '../OrderStatusModal/OrderStatusModal';
 import styles from './styles.module.scss';
 import { sendOrderInvoice } from '@/apis/adminOrderService';
-
 const STORE = {
     name: 'BetaTech Shop',
     address: 'Tây Sơn, Đống Đa, Hà Nội',
     phone: '0909090909',
     email: 'beta.shop@gmail.com',
 };
-
 const paymentMethodLabel = {
     cod: 'Thanh toán khi nhận hàng (COD)',
     stripe: 'Thẻ / Stripe',
 };
-
 function AdminOrderDetailPage() {
-    const { orderId } = useParams(); //lấy id đơn hàng từ url
+    const { orderId } = useParams();
     const navigate = useNavigate();
-    const [order, setOrder] = useState(null); //đơn hàng
-    const [error, setError] = useState(''); //lỗi
-    const [toast, setToast] = useState(''); //thông báo
-    const [statusModalOpen, setStatusModalOpen] = useState(false); //modal cập nhật trạng thái
-    const [loading, setLoading] = useState(false); //loading
-
-    const location = useLocation(); //lấy location từ url
-    const backTo = location.state?.from || '/admin/don-hang'; //lấy từ url hoặc mặc định là trang đơn hàng
-
-
-    //tải đơn hàng
+    const [order, setOrder] = useState(null);
+    const [error, setError] = useState('');
+    const [toast, setToast] = useState('');
+    const [statusModalOpen, setStatusModalOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const location = useLocation();
+    const backTo = location.state?.from || '/admin/don-hang';
     const loadOrder = async () => {
         try {
             const { data } = await getAdminOrder(orderId);
@@ -52,17 +45,11 @@ function AdminOrderDetailPage() {
             setError('Không tải được đơn hàng.');
         }
     };
-
-    //tải đơn hàng khi component mount
     useEffect(() => {
         loadOrder();
     }, [orderId]);
-
-    //kiểm tra xem đơn hàng có thể hủy không
     const canAdminCancel =
         order && !['delivered', 'cancelled'].includes(order.status);
-
-        //hủy đơn hàng
     const handleCancel = async () => {
         if (!window.confirm('Bạn chắc chắn muốn hủy đơn này?')) return;
         try {
@@ -76,16 +63,12 @@ function AdminOrderDetailPage() {
             setLoading(false);
         }
     };
-
-    //cập nhật trạng thái đơn hàng
     const handleStatusSubmit = async (id, status, note) => {
         await updateOrderStatus(id, status, note);
         setStatusModalOpen(false);
         setToast('Cập nhật trạng thái thành công.');
         await loadOrder();
     };
-
-    //gửi hóa đơn qua email cho khách hàng
     const handleSendInvoice = async () => {
         try {
             setLoading(true);
@@ -97,21 +80,15 @@ function AdminOrderDetailPage() {
             setLoading(false);
         }
     };
-
-    //loading hoặc chưa login → không hiển thị
     if (!order && !error) return <AdminRoute><AdminLayout title="Hóa đơn">Đang tải...</AdminLayout></AdminRoute>;
-
     return (
         <AdminRoute>
             <AdminLayout title="Hóa đơn">
-                {/* nút quay lại */}
                 <button onClick={() => navigate(backTo)}>
                     ← Quay lại
                 </button>
-
                 {error && <p className={`${styles.err} ${styles.noPrint}`}>{error}</p>}
                 {toast && <p className={`${styles.toast} ${styles.noPrint}`}>{toast}</p>}
-
                 {order && (
                     <div className={styles.invoice} id="invoice-print">
                         <header className={styles.invoiceHead}>
@@ -119,7 +96,6 @@ function AdminOrderDetailPage() {
                             <p>Ngày tạo: {new Date(order.created_at).toLocaleString('vi-VN')}</p>
                             <p>Mã đơn: <strong>{order.order_code}</strong></p>
                         </header>
-
                         <div className={styles.addressGrid}>
                             <div>
                                 <h4>Từ (cửa hàng)</h4>
@@ -127,7 +103,6 @@ function AdminOrderDetailPage() {
                                 <p>{STORE.address}</p>
                                 <p>SĐT: {STORE.phone}</p>
                                 <p>{STORE.email}</p>
-                               
                             </div>
                             <div>
                                 <h4>Đến (khách hàng)</h4>
@@ -152,7 +127,6 @@ function AdminOrderDetailPage() {
                                 </p>
                             </div>
                         </div>
-
                         <table className={styles.itemsTable}>
                             <thead>
                                 <tr>
@@ -176,12 +150,10 @@ function AdminOrderDetailPage() {
                                 ))}
                             </tbody>
                         </table>
-
                         <div className={styles.paymentBlock}>
                             <h4>Phương thức thanh toán</h4>
                             <p>{paymentMethodLabel[order.payment_method] || order.payment_method}</p>
                         </div>
-
                         <div className={styles.summary}>
                             <div>
                                 <span>Tiền hàng</span>
@@ -213,7 +185,6 @@ function AdminOrderDetailPage() {
                                 <span>{formatVnd(order.subtotal)}</span>
                             </div>
                         </div>
-
                         <div className={`${styles.footerActions} ${styles.noPrint}`}>
                             <button type="button" onClick={() => window.print()}>
                                 In hóa đơn
@@ -235,7 +206,6 @@ function AdminOrderDetailPage() {
                             >
                                 Cập nhật trạng thái
                             </button>
-                            {/* nút Gửi hóa đơn */}
                             <button
                                 type="button"
                                 className={styles.send}
@@ -247,8 +217,6 @@ function AdminOrderDetailPage() {
                         </div>
                     </div>
                 )}
-
-                {/* modal cập nhật trạng thái */}
                 <OrderStatusModal
                     open={statusModalOpen}
                     order={order}
@@ -256,10 +224,8 @@ function AdminOrderDetailPage() {
                     onSubmit={handleStatusSubmit}
                     loading={loading}
                 />
-
             </AdminLayout>
         </AdminRoute>
     );
 }
-
 export default AdminOrderDetailPage;

@@ -5,14 +5,12 @@ import AdminRoute from '@components/AdminRoute/AdminRoute';
 import AdminLayout from '../AdminLayout/AdminLayout';
 import { getAdminUsers } from '@/apis/adminUserService';
 import styles from './styles.module.scss';
-
 function getInitials(name) {
     if (!name) return '?';
     const parts = name.trim().split(/\s+/);
     if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
     return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
 }
-
 function formatDate(iso) {
     if (!iso) return '—';
     return new Date(iso).toLocaleDateString('vi-VN', {
@@ -21,7 +19,6 @@ function formatDate(iso) {
         year: 'numeric',
     });
 }
-
 function getPageNumbers(current, last) {
     if (last <= 1) return last === 1 ? [1] : [];
     const pages = [];
@@ -34,7 +31,6 @@ function getPageNumbers(current, last) {
     for (let i = start; i <= end; i += 1) pages.push(i);
     return pages;
 }
-
 function AdminUsersPage() {
     const navigate = useNavigate();
     const [users, setUsers] = useState([]);
@@ -46,22 +42,18 @@ function AdminUsersPage() {
     const [perPage] = useState(10);
     const [totalPages, setTotalPages] = useState(1);
     const [total, setTotal] = useState(0);
-
     const loadUsers = async () => {
         try {
             setLoading(true);
             const params = { page, per_page: perPage };
             if (appliedKeyword.trim()) params.keyword = appliedKeyword.trim();
-
             const { data } = await getAdminUsers(params);
             const items = data.data || [];
             const last = data.last_page || 1;
-
             if (items.length === 0 && page > 1 && page > last) {
                 setPage(last);
                 return;
             }
-
             setUsers(items);
             setTotalPages(last);
             setTotal(data.total || 0);
@@ -72,17 +64,14 @@ function AdminUsersPage() {
             setLoading(false);
         }
     };
-
     useEffect(() => {
         loadUsers();
     }, [page, appliedKeyword]);
-
     const handleSearch = (e) => {
         e?.preventDefault();
         setAppliedKeyword(keyword);
         setPage(1);
     };
-
     return (
         <AdminRoute>
             <AdminLayout
@@ -90,7 +79,6 @@ function AdminUsersPage() {
                 subtitle="Xem danh sách khách hàng và tài khoản admin"
             >
                 {error && <p className={styles.err}>{error}</p>}
-
                 <form className={styles.toolbar} onSubmit={handleSearch}>
                     <div className={styles.searchBox}>
                         <FiSearch className={styles.searchIcon} aria-hidden />
@@ -104,7 +92,6 @@ function AdminUsersPage() {
                         Tìm kiếm
                     </button>
                 </form>
-
                 <div className={styles.summary}>
                     <span>{total} người dùng</span>
                     {appliedKeyword && (
@@ -113,7 +100,6 @@ function AdminUsersPage() {
                         </span>
                     )}
                 </div>
-
                 <div className={styles.tableWrap}>
                     <table className={styles.table}>
                         <thead>
@@ -196,7 +182,6 @@ function AdminUsersPage() {
                         </tbody>
                     </table>
                 </div>
-
                 {totalPages > 1 && (
                     <div className={styles.pagination}>
                         <span className={styles.paginationInfo}>
@@ -240,5 +225,5 @@ function AdminUsersPage() {
         </AdminRoute>
     );
 }
-
 export default AdminUsersPage;
+

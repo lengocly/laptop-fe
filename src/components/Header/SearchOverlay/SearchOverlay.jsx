@@ -1,8 +1,3 @@
-/**
- * SearchOverlay — lớp phủ tìm kiếm toàn màn hình (giống ecochic.vn).
- * - Mở từ menu "Tìm kiếm" trên Header
- * - Gõ tên SP → lọc client-side → bấm vào kết quả → /product/:id
- */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
@@ -12,33 +7,25 @@ import { getProducts } from '@/apis/productsService';
 import { formatVnd, parsePriceNumber } from '@/utils/price';
 import styles from './styles.module.scss';
 import { searchByImage } from '@/apis/imageSearchService';
-
 const IMG_FALLBACK =
     'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=160&h=160&q=80';
-
 const POPULAR_LIMIT = 8;
 const SEARCH_RESULT_LIMIT = 12;
-
-// Cache danh sách SP — tránh gọi API lại mỗi lần mở overlay
-const CACHE_TTL_MS = 5 * 60 * 1000; // 5 phút — đủ mới mà không spam API
+const CACHE_TTL_MS = 5 * 60 * 1000;
 let productsCache = null;
 let productsCachePromise = null;
 let productsCacheTime = 0;
-
 function invalidateProductsCache() {
     productsCache = null;
     productsCachePromise = null;
     productsCacheTime = 0;
 }
-
 async function loadProductsCached(forceRefresh = false) {
     const cacheExpired = Date.now() - productsCacheTime > CACHE_TTL_MS;
     if (!forceRefresh && productsCache && !cacheExpired) return productsCache;
-
     if (forceRefresh || cacheExpired) {
         invalidateProductsCache();
     }
-
     if (!productsCachePromise) {
         productsCachePromise = getProducts()
             .then((res) => {
@@ -51,11 +38,8 @@ async function loadProductsCached(forceRefresh = false) {
                 return [];
             });
     }
-
     return productsCachePromise;
 }
-
-// Bỏ dấu tiếng Việt để so khớp dễ hơn (vd: "san pham" khớp "sản phẩm")
 function normalizeSearchText(str) {
     return String(str || '')
         .normalize('NFD')
@@ -63,17 +47,14 @@ function normalizeSearchText(str) {
         .toLowerCase()
         .trim();
 }
-
 function matchProductByName(product, query) {
     const normalizedQuery = normalizeSearchText(query);
     if (!normalizedQuery) return true;
     return normalizeSearchText(product.name).includes(normalizedQuery);
 }
-
 function SearchResultCard({ product, onNavigate }) {
     const imageSrc = product.images?.[0] || IMG_FALLBACK;
     const priceText = formatVnd(parsePriceNumber(product.price));
-
     return (
         <Link
             to={`/product/${product.id}`}
@@ -96,43 +77,32 @@ function SearchResultCard({ product, onNavigate }) {
         </Link>
     );
 }
-
 function SearchOverlay({ isOpen, onClose }) {
     const inputRef = useRef(null);
     const [query, setQuery] = useState('');
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-
-    // state mới
 const [imageLoading, setImageLoading] = useState(false);
 const [imageResults, setImageResults] = useState([]);
 const [imageKeywords, setImageKeywords] = useState([]);
-const [searchMode, setSearchMode] = useState('text'); // 'text' | 'image'
-
+const [searchMode, setSearchMode] = useState('text');
     const trimmedQuery = query.trim();
     const isSearching = trimmedQuery.length > 0;
     const isImageSearch = searchMode === 'image';
-
     const filteredProducts = useMemo(() => {
         if (!isSearching) return products.slice(0, POPULAR_LIMIT);
         return products
             .filter((item) => matchProductByName(item, trimmedQuery))
             .slice(0, SEARCH_RESULT_LIMIT);
     }, [products, trimmedQuery, isSearching]);
-
     const handleNavigate = useCallback(() => {
         onClose();
     }, [onClose]);
-
-    // Tải SP khi overlay mở
     useEffect(() => {
         if (!isOpen) return;
-
         setLoading(true);
         setError('');
-
-        // Làm mới cache khi mở — SP mới/thay đổi giá vẫn hiện đúng
         loadProductsCached(true)
             .then((list) => setProducts(list))
             .catch(() => {
@@ -141,32 +111,22 @@ const [searchMode, setSearchMode] = useState('text'); // 'text' | 'image'
             })
             .finally(() => setLoading(false));
     }, [isOpen]);
-
-    // Khóa scroll body khi overlay đang mở
     useEffect(() => {
         if (!isOpen) return undefined;
-
         const previousOverflow = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
-
         return () => {
             document.body.style.overflow = previousOverflow;
         };
     }, [isOpen]);
-
-    // ESC để đóng
     useEffect(() => {
         if (!isOpen) return undefined;
-
         const handleKeyDown = (event) => {
             if (event.key === 'Escape') onClose();
         };
-
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [isOpen, onClose]);
-
-//xử lý ảnh
     const handleImageUpload = async (event) => {
         const file = event.target.files?.[0];
         if (!file) return;
@@ -186,11 +146,8 @@ const [searchMode, setSearchMode] = useState('text'); // 'text' | 'image'
             event.target.value = '';
         }
     };
-
-    // Reset ô tìm kiếm + focus khi mở
     useEffect(() => {
         if (!isOpen) return;
-
         setQuery('');
         setSearchMode('text');
         setImageResults([]);
@@ -198,15 +155,10 @@ const [searchMode, setSearchMode] = useState('text'); // 'text' | 'image'
         const timer = window.setTimeout(() => {
             inputRef.current?.focus();
         }, 80);
-
         return () => window.clearTimeout(timer);
     }, [isOpen]);
-
     if (!isOpen) return null;
-
-    //hiển thị sản phẩm
     const displayProducts = searchMode === 'image' ? imageResults : filteredProducts;
-
     return createPortal(
         <div
             className={styles.backdrop}
@@ -236,7 +188,6 @@ const [searchMode, setSearchMode] = useState('text'); // 'text' | 'image'
                         className={styles.searchInput}
                         aria-label="Tìm kiếm sản phẩm"
                     />
-                    {/* nút tìm kiếm theo ảnh */}
                     <label className={styles.imageSearchBtn}>
                             📷 Chọn ảnh
                             <input
@@ -246,17 +197,14 @@ const [searchMode, setSearchMode] = useState('text'); // 'text' | 'image'
                                 onChange={handleImageUpload}
                             />
                         </label>
-
                         {searchMode === 'image' && imageKeywords.length > 0 && (
                             <p className={styles.sectionHint}>
                                 Nhận diện: {imageKeywords.slice(0, 8).join(', ')}
                             </p>
                         )}
-
                         {imageLoading && (
                             <p className={styles.sectionHint}>Đang phân tích ảnh...</p>
                         )}
-
                     <button
                         type="button"
                         className={styles.closeBtn}
@@ -266,29 +214,24 @@ const [searchMode, setSearchMode] = useState('text'); // 'text' | 'image'
                         <TfiClose />
                     </button>
                 </div>
-
                 <div className={styles.resultsWrap}>
                     {!isSearching && !isImageSearch && (
                         <p className={styles.sectionHint}>
                             Gợi ý: thử tìm theo tên laptop, chuột, bàn phím, tai nghe…
                         </p>
                     )}
-
                     {loading && !isImageSearch && (
                         <p className={styles.statusText}>Đang tải sản phẩm…</p>
                     )}
                     {error && <p className={styles.errorText}>{error}</p>}
-
                     {!loading && !error && isSearching && !isImageSearch && filteredProducts.length === 0 && (
                         <p className={styles.emptyText}>Không tìm thấy sản phẩm</p>
                     )}
-
                     {isImageSearch && !imageLoading && imageResults.length === 0 && !error && (
                         <p className={styles.emptyText}>
                             Không tìm thấy sản phẩm phù hợp với ảnh
                         </p>
                     )}
-
                     {!loading && !error && displayProducts.length > 0 && (
                         <>
                             <h3 className={styles.sectionTitle}>
@@ -315,5 +258,5 @@ const [searchMode, setSearchMode] = useState('text'); // 'text' | 'image'
         document.body
     );
 }
-
 export default SearchOverlay;
+

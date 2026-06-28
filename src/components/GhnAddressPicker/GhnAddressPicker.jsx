@@ -5,9 +5,7 @@ import {
     getWards,
 } from '@/apis/shippingService';
 import styles from './styles.module.scss';
-
 const emptyAddress = { province: null, district: null, ward: null };
-
 function GhnAddressPicker({ value = emptyAddress, onChange }) {
     const [provinces, setProvinces] = useState([]);
     const [districts, setDistricts] = useState([]);
@@ -16,7 +14,6 @@ function GhnAddressPicker({ value = emptyAddress, onChange }) {
     const [loadingDistricts, setLoadingDistricts] = useState(false);
     const [loadingWards, setLoadingWards] = useState(false);
     const [error, setError] = useState('');
-
     useEffect(() => {
         setLoadingProvinces(true);
         setError('');
@@ -25,17 +22,14 @@ function GhnAddressPicker({ value = emptyAddress, onChange }) {
             .catch(() => setError('Không tải được danh sách tỉnh/thành.'))
             .finally(() => setLoadingProvinces(false));
     }, []);
-
     useEffect(() => {
         if (!value.province?.id) {
             setDistricts([]);
             return;
         }
-
         let cancelled = false;
         setLoadingDistricts(true);
         setError('');
-
         getDistricts(value.province.id)
             .then((list) => {
                 if (!cancelled) setDistricts(list);
@@ -46,22 +40,18 @@ function GhnAddressPicker({ value = emptyAddress, onChange }) {
             .finally(() => {
                 if (!cancelled) setLoadingDistricts(false);
             });
-
         return () => {
             cancelled = true;
         };
     }, [value.province?.id]);
-
     useEffect(() => {
         if (!value.district?.id) {
             setWards([]);
             return;
         }
-
         let cancelled = false;
         setLoadingWards(true);
         setError('');
-
         getWards(value.district.id)
             .then((list) => {
                 if (!cancelled) setWards(list);
@@ -72,30 +62,25 @@ function GhnAddressPicker({ value = emptyAddress, onChange }) {
             .finally(() => {
                 if (!cancelled) setLoadingWards(false);
             });
-
         return () => {
             cancelled = true;
         };
     }, [value.district?.id]);
-
     const handleProvinceChange = (e) => {
         const id = Number(e.target.value);
         const province = provinces.find((p) => p.id === id) ?? null;
         onChange({ province, district: null, ward: null });
     };
-
     const handleDistrictChange = (e) => {
         const id = Number(e.target.value);
         const district = districts.find((d) => d.id === id) ?? null;
         onChange({ ...value, district, ward: null });
     };
-
     const handleWardChange = (e) => {
         const code = e.target.value;
         const ward = wards.find((w) => w.code === code) ?? null;
         onChange({ ...value, ward });
     };
-
     return (
         <div className={styles.wrap}>
             <label className={styles.fieldLabel}>Tỉnh / Thành phố *</label>
@@ -115,7 +100,6 @@ function GhnAddressPicker({ value = emptyAddress, onChange }) {
                     </option>
                 ))}
             </select>
-
             <label className={styles.fieldLabel}>Quận / Huyện *</label>
             <select
                 className={styles.select}
@@ -133,7 +117,6 @@ function GhnAddressPicker({ value = emptyAddress, onChange }) {
                     </option>
                 ))}
             </select>
-
             <label className={styles.fieldLabel}>Phường / Xã *</label>
             <select
                 className={styles.select}
@@ -151,10 +134,9 @@ function GhnAddressPicker({ value = emptyAddress, onChange }) {
                     </option>
                 ))}
             </select>
-
             {error && <p className={styles.error}>{error}</p>}
         </div>
     );
 }
-
 export default GhnAddressPicker;
+

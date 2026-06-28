@@ -1,9 +1,4 @@
-/**
- * Review video — data tĩnh, nhúng YouTube qua youtubeId (không cần API).
- * Đổi youtubeId: copy phần sau /shorts/ hoặc ?v= trong URL YouTube.
- */
 export const reviewChannelUrl = 'https://www.youtube.com/shorts/hDrlSUjz8yU';
-
 export const reviewVideos = [
     {
         youtubeId: 'hDrlSUjz8yU',
@@ -42,11 +37,9 @@ export const reviewVideos = [
         image: 'products/dell1.jpg',
     },
 ];
-
 export function youtubeThumbUrl(youtubeId) {
     return `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
 }
-
 export function youtubeEmbedUrl(youtubeId, autoplay = false) {
     const params = new URLSearchParams({
         rel: '0',
@@ -55,3 +48,4 @@ export function youtubeEmbedUrl(youtubeId, autoplay = false) {
     });
     return `https://www.youtube.com/embed/${youtubeId}?${params}`;
 }
+

@@ -14,10 +14,8 @@ import {
     isRowDifferent,
 } from './compareSpecs';
 import styles from './styles.module.scss';
-
 const IMG_FALLBACK =
     'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=640&h=640&q=80';
-
 function ComparePage() {
     const { items, removeFromCompare, clearCompare, count, maxItems } =
         useContext(CompareContext);
@@ -27,16 +25,13 @@ function ComparePage() {
     const [openSections, setOpenSections] = useState(() =>
         COMPARE_SPEC_SECTIONS.reduce((acc, s) => ({ ...acc, [s.id]: true }), {})
     );
-
     useEffect(() => {
         if (items.length === 0) {
             setProducts([]);
             return;
         }
-
         let cancelled = false;
         setLoading(true);
-
         Promise.all(
             items.map((item) =>
                 getProductById(item.productId)
@@ -80,18 +75,14 @@ function ComparePage() {
             .finally(() => {
                 if (!cancelled) setLoading(false);
             });
-
         return () => {
             cancelled = true;
         };
     }, [items, removeFromCompare]);
-
     const canCompare = count >= 2;
-
     const toggleSection = (id) => {
         setOpenSections((prev) => ({ ...prev, [id]: !prev[id] }));
     };
-
     const visibleSections = useMemo(() => {
         return COMPARE_SPEC_SECTIONS.map((section) => {
             const rows = section.rows.filter((row) => {
@@ -101,7 +92,6 @@ function ComparePage() {
             return { ...section, rows };
         }).filter((section) => section.rows.length > 0);
     }, [onlyDiff, products]);
-
     return (
         <>
             <MyHeader />
@@ -119,7 +109,6 @@ function ComparePage() {
                             </button>
                         )}
                     </div>
-
                     {count === 0 && (
                         <div className={styles.empty}>
                             <p>Chưa có laptop để so sánh.</p>
@@ -128,14 +117,12 @@ function ComparePage() {
                             </Link>
                         </div>
                     )}
-
                     {count === 1 && (
                         <div className={styles.hintBox}>
                             Hãy thêm ít nhất <strong>2 laptop</strong> để so sánh (
                             {count}/{maxItems}).
                         </div>
                     )}
-
                     {count > 0 && (
                         <>
                             <label className={styles.diffToggle}>
@@ -147,9 +134,7 @@ function ComparePage() {
                                 />
                                 Chỉ xem điểm khác biệt
                             </label>
-
                             {loading && <p className={styles.loading}>Đang tải thông số…</p>}
-
                             <div className={styles.compareScroll}>
                             <div
                                 className={styles.compareGrid}
@@ -187,7 +172,6 @@ function ComparePage() {
                                             </div>
                                         ))}
                                 </div>
-
                                 {products.map((product) => {
                                     const image =
                                         product.images?.[0] ||
@@ -206,7 +190,6 @@ function ComparePage() {
                                         product.ram,
                                         product.storage,
                                     ].filter(Boolean);
-
                                     return (
                                         <div key={product.id} className={styles.productCol}>
                                             <div className={styles.productCard}>
@@ -220,7 +203,6 @@ function ComparePage() {
                                                 >
                                                     <IoCloseOutline />
                                                 </button>
-
                                                 <Link
                                                     to={`/product/${product.id}`}
                                                     className={styles.imageWrap}
@@ -233,14 +215,12 @@ function ComparePage() {
                                                         }}
                                                     />
                                                 </Link>
-
                                                 <Link
                                                     to={`/product/${product.id}`}
                                                     className={styles.productName}
                                                 >
                                                     {product.name}
                                                 </Link>
-
                                                 <div className={styles.priceBlock}>
                                                     <span className={styles.priceCurrent}>
                                                         {formatVnd(priceNum)}
@@ -256,7 +236,6 @@ function ComparePage() {
                                                         </span>
                                                     )}
                                                 </div>
-
                                                 {quickSpecs.length > 0 && (
                                                     <ul className={styles.quickList}>
                                                         {quickSpecs.map((spec) => (
@@ -264,7 +243,6 @@ function ComparePage() {
                                                         ))}
                                                     </ul>
                                                 )}
-
                                                 <Link
                                                     to={`/product/${product.id}`}
                                                     className={styles.buyBtn}
@@ -272,7 +250,6 @@ function ComparePage() {
                                                     MUA NGAY
                                                 </Link>
                                             </div>
-
                                             {canCompare &&
                                                 visibleSections.map((section) => (
                                                     <div
@@ -302,7 +279,6 @@ function ComparePage() {
                                 })}
                             </div>
                             </div>
-
                             {canCompare && visibleSections.length === 0 && !loading && (
                                 <p className={styles.noDiff}>
                                     Các sản phẩm đang chọn có thông số giống nhau.
@@ -316,5 +292,5 @@ function ComparePage() {
         </>
     );
 }
-
 export default ComparePage;
+

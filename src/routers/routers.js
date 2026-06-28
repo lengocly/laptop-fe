@@ -1,6 +1,4 @@
 import { lazy } from 'react';
-
-// chỉ tải component khi nó được sử dụng, giúp giảm thời gian tải trang ban đầu và cải thiện hiệu suất của ứng dụng
 const routers = [
     {
         path: '/',
@@ -13,7 +11,7 @@ const routers = [
     {
         path: '/product/:id',
         component: lazy(() => import('@components/ProductDetailPage/ProductDetailPage'))
-    }, 
+    },
     {
         path: '/cua-hang',
         component: lazy(() => import('@components/StorePage/StorePage'))
@@ -38,26 +36,18 @@ const routers = [
         path: '/checkout',
         component: lazy(() => import('@components/CheckoutPage/CheckoutPage')),
     },
-    // thanh toán Stripe
     {
         path: '/thanh-toan/:orderId',
         component: lazy(() => import('@components/PaymentPage/PaymentPage'))
     },
-
-    // lịch sử mua hàng
     {
         path: '/don-hang-cua-toi',
         component: lazy(() => import('@components/MyOrdersPage/MyOrdersPage')),
     },
-
-    // quản lý tài khoản
     {
         path: '/tai-khoan',
         component: lazy(() => import('@components/AccountPage/AccountPage')),
     },
-
-
-    // ====== ADMIN ======
     {
         path: '/admin/dashboard',
         component: lazy(() => import('@components/Admin/AdminDashboardPage/AdminDashboardPage')),
@@ -78,24 +68,18 @@ const routers = [
         path: '/admin/nguoi-dung/:userId',
         component: lazy(() => import('@components/Admin/AdminUserDetailPage/AdminUserDetailPage')),
     },
-
-    //Admin xem danh sách sản phẩm
     {
         path: '/admin/san-pham',
         component: lazy(() => import('@components/Admin/AdminProductsPage/AdminProductsPage')),
     },
-    //Admin thêm sản phẩm
     {
         path: '/admin/san-pham/tao',
         component: lazy(() => import('@components/Admin/AdminProductFormPage/AdminProductFormPage')),
     },
-    //Admin sửa sản phẩm
     {
         path: '/admin/san-pham/:id',
         component: lazy(() => import('@components/Admin/AdminProductFormPage/AdminProductFormPage')),
     },
-
-    // Admin voucher
     {
         path: '/admin/voucher',
         component: lazy(() => import('@components/Admin/AdminVouchersPage/AdminVouchersPage')),
@@ -108,8 +92,6 @@ const routers = [
         path: '/admin/voucher/:id',
         component: lazy(() => import('@components/Admin/AdminVoucherFormPage/AdminVoucherFormPage')),
     },
-
-    // Admin danh mục
     {
         path: '/admin/danh-muc',
         component: lazy(() => import('@components/Admin/AdminCategoriesPage/AdminCategoriesPage')),
@@ -123,5 +105,5 @@ const routers = [
         component: lazy(() => import('@components/Admin/AdminCategoryFormPage/AdminCategoryFormPage')),
     },
 ];
-
 export default routers;
+

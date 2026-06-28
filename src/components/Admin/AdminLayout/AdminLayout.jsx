@@ -2,7 +2,6 @@ import { Link, useLocation } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 import classNames from 'classnames';
 import styles from './styles.module.scss';
-
 const menuItems = [
     { to: '/admin/dashboard', label: 'Dashboard' },
     { to: '/admin/don-hang', label: 'Đơn hàng' },
@@ -11,10 +10,8 @@ const menuItems = [
     { to: '/admin/danh-muc', label: 'Danh mục' },
     { to: '/admin/voucher', label: 'Voucher' },
 ];
-
 function AdminLayout({ title, subtitle, children }) {
     const { pathname } = useLocation();
-
     return (
         <div className={styles.page}>
             <aside className={styles.sidebar}>
@@ -25,7 +22,6 @@ function AdminLayout({ title, subtitle, children }) {
                         <span>Về cửa hàng</span>
                     </Link>
                 </div>
-
                 <nav className={styles.nav}>
                     {menuItems.map((item) => (
                         <Link
@@ -40,7 +36,6 @@ function AdminLayout({ title, subtitle, children }) {
                     ))}
                 </nav>
             </aside>
-
             <main className={styles.main}>
                 <header className={styles.mainHead}>
                     <h1>{title}</h1>
@@ -51,5 +46,4 @@ function AdminLayout({ title, subtitle, children }) {
         </div>
     );
 }
-
 export default AdminLayout;

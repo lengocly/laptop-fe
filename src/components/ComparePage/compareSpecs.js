@@ -1,4 +1,3 @@
-/** Nhóm thông số hiển thị trên trang so sánh */
 export const COMPARE_SPEC_SECTIONS = [
     {
         id: 'config',
@@ -23,7 +22,6 @@ export const COMPARE_SPEC_SECTIONS = [
         ],
     },
 ];
-
 export function getProductSpecValue(product, key) {
     if (!product) return '—';
     if (key === 'category') {
@@ -35,10 +33,10 @@ export function getProductSpecValue(product, key) {
     const value = product[key];
     return value && String(value).trim() ? String(value).trim() : '—';
 }
-
 export function isRowDifferent(products, key) {
     const values = products.map((p) => getProductSpecValue(p, key).toLowerCase());
     const filled = values.filter((v) => v !== '—');
     if (filled.length <= 1) return filled.length > 0;
     return new Set(filled).size > 1;
 }
+

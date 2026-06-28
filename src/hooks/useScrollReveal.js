@@ -1,8 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-
-/**
- * Theo dõi phần tử vào viewport → bật isVisible (dùng cho hiệu ứng cuộn nổi).
- */
 export default function useScrollReveal({
     once = true,
     threshold = 0.12,
@@ -10,11 +6,9 @@ export default function useScrollReveal({
 } = {}) {
     const ref = useRef(null);
     const [isVisible, setIsVisible] = useState(false);
-
     useEffect(() => {
         const el = ref.current;
         if (!el) return undefined;
-
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
@@ -22,17 +16,15 @@ export default function useScrollReveal({
                     if (once) observer.disconnect();
                     return;
                 }
-
                 if (!once && entry.boundingClientRect.top > window.innerHeight) {
                     setIsVisible(false);
                 }
             },
             { threshold, rootMargin }
         );
-
         observer.observe(el);
         return () => observer.disconnect();
     }, [once, threshold, rootMargin]);
-
     return { ref, isVisible };
 }
+

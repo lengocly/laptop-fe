@@ -34,14 +34,12 @@ const footerColumns = [
         ],
     },
 ];
-
 const footerContact = {
     hotline: '1900 1234',
     email: 'support@betatech.vn',
     address: '175 Tây Sơn, P. Quang Trung, Q. Đống Đa, Hà Nội',
     hours: '9:00 – 21:00 (T2 – CN)',
 };
-
 const paymentMethods = ['Visa', 'Mastercard', 'COD', 'Stripe'];
-
 export { footerColumns, footerContact, paymentMethods };
+

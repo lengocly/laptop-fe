@@ -6,7 +6,6 @@ import {
     submitProductReview,
 } from '@/apis/reviewsService';
 import styles from './styles.module.scss';
-
 const RATING_LABELS = {
     5: 'Tuyệt vời',
     4: 'Hài lòng',
@@ -14,7 +13,6 @@ const RATING_LABELS = {
     2: 'Không hài lòng',
     1: 'Rất tệ',
 };
-
 const EMPTY_STATS = {
     average: 0,
     total: 0,
@@ -23,7 +21,6 @@ const EMPTY_STATS = {
     verified_count: 0,
     satisfied_percent: 0,
 };
-
 function formatReviewDate(iso) {
     return new Date(iso).toLocaleDateString('vi-VN', {
         day: 'numeric',
@@ -31,7 +28,6 @@ function formatReviewDate(iso) {
         year: 'numeric',
     });
 }
-
 function renderStars(rating, size = 'md') {
     const full = Math.round(rating);
     return (
@@ -44,7 +40,6 @@ function renderStars(rating, size = 'md') {
         </span>
     );
 }
-
 function ProductReviews({ productId, onStatsChange }) {
     const { isAuthenticated, loading: authLoading } = useContext(AuthContext);
     const [tab, setTab] = useState('overview');
@@ -59,7 +54,6 @@ function ProductReviews({ productId, onStatsChange }) {
     const [sortBy, setSortBy] = useState('newest');
     const [filterStar, setFilterStar] = useState('all');
     const [form, setForm] = useState({ rating: 0, title: '', content: '' });
-
     const loadReviews = async (cancelledRef) => {
         setLoading(true);
         try {
@@ -78,7 +72,6 @@ function ProductReviews({ productId, onStatsChange }) {
             }
         }
     };
-
     const loadEligibility = async () => {
         if (!isAuthenticated) {
             setEligibility(null);
@@ -91,27 +84,22 @@ function ProductReviews({ productId, onStatsChange }) {
             setEligibility(null);
         }
     };
-
     useEffect(() => {
         const cancelledRef = { current: false };
-
         setTab('overview');
         setShowForm(false);
         setForm({ rating: 0, title: '', content: '' });
         setError('');
         loadReviews(cancelledRef);
-
         return () => {
             cancelledRef.current = true;
         };
     }, [productId]);
-
     useEffect(() => {
         if (!authLoading) {
             loadEligibility();
         }
     }, [productId, isAuthenticated, authLoading]);
-
     const sortedReviews = useMemo(() => {
         let list = [...reviews];
         if (filterStar !== 'all') {
@@ -126,7 +114,6 @@ function ProductReviews({ productId, onStatsChange }) {
         }
         return list;
     }, [reviews, sortBy, filterStar]);
-
     const handleWriteReview = () => {
         if (!isAuthenticated) {
             setToast('Vui lòng đăng nhập để đánh giá sản phẩm.');
@@ -141,7 +128,6 @@ function ProductReviews({ productId, onStatsChange }) {
         setToast(eligibility?.message || 'Bạn chưa đủ điều kiện để đánh giá sản phẩm này.');
         setTimeout(() => setToast(''), 3500);
     };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (form.rating < 1) {
@@ -165,13 +151,10 @@ function ProductReviews({ productId, onStatsChange }) {
             setSubmitting(false);
         }
     };
-
     const maxDist = Math.max(...Object.values(stats.distribution || {}), 1);
-
     return (
         <section className={styles.reviewsCard} id="reviews">
             <h2 className={styles.sectionTitle}>Đánh giá từ khách hàng</h2>
-
             <div className={styles.reviewTabs}>
                 <button
                     type="button"
@@ -188,9 +171,7 @@ function ProductReviews({ productId, onStatsChange }) {
                     Tất cả đánh giá ({stats.total})
                 </button>
             </div>
-
             {toast && <p className={styles.reviewToast}>{toast}</p>}
-
             {loading ? (
                 <p className={styles.reviewsPlaceholder}>Đang tải đánh giá…</p>
             ) : tab === 'overview' ? (
@@ -232,7 +213,6 @@ function ProductReviews({ productId, onStatsChange }) {
                         <form className={styles.reviewForm} onSubmit={handleSubmit}>
                             <h4 className={styles.reviewFormTitle}>Viết đánh giá của bạn</h4>
                             {error && <p className={styles.err}>{error}</p>}
-
                             <div className={styles.formGroup}>
                                 <label className={styles.formLabel}>
                                     Đánh giá sao <span className={styles.required}>*</span>
@@ -259,7 +239,6 @@ function ProductReviews({ productId, onStatsChange }) {
                                     )}
                                 </div>
                             </div>
-
                             <div className={styles.formGroup}>
                                 <label className={styles.formLabel} htmlFor="review-title">
                                     Tiêu đề đánh giá <span className={styles.required}>*</span>
@@ -277,7 +256,6 @@ function ProductReviews({ productId, onStatsChange }) {
                                 />
                                 <span className={styles.charCount}>{form.title.length}/100</span>
                             </div>
-
                             <div className={styles.formGroup}>
                                 <label className={styles.formLabel} htmlFor="review-content">
                                     Nội dung đánh giá <span className={styles.required}>*</span>
@@ -296,7 +274,6 @@ function ProductReviews({ productId, onStatsChange }) {
                                 />
                                 <span className={styles.charCount}>{form.content.length}/1000</span>
                             </div>
-
                             <div className={styles.formActions}>
                                 <button
                                     type="button"
@@ -315,7 +292,6 @@ function ProductReviews({ productId, onStatsChange }) {
                             </div>
                         </form>
                     )}
-
                     <div className={styles.reviewListHeader}>
                         <div className={styles.reviewListTitleRow}>
                             <h3 className={styles.reviewSubTitle}>
@@ -355,7 +331,6 @@ function ProductReviews({ productId, onStatsChange }) {
                             </select>
                         </div>
                     </div>
-
                     {sortedReviews.length === 0 ? (
                         <p className={styles.reviewsPlaceholder}>
                             Chưa có đánh giá nào cho sản phẩm này
@@ -394,5 +369,5 @@ function ProductReviews({ productId, onStatsChange }) {
         </section>
     );
 }
-
 export default ProductReviews;
+

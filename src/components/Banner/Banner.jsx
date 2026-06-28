@@ -1,35 +1,20 @@
-/**
- * =============================================================================
- * Banner — Hero carousel trang chủ (3 ảnh)
- * =============================================================================
- * - 3 file ảnh: banner.png, banner1.avif, banner2.webp (assets/icons/images)
- * - Tự đổi slide 5 giây; click chấm tròn để chọn slide
- * - overlay + glass: chữ trắng nổi trên ảnh; header không bị che (padding-top + z-index Header)
- * - Info bar đè lên đáy banner (margin-top âm trong Info/styles)
- * =============================================================================
- */
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './styles.module.scss';
-
 import bannerImg from '@icons/images/banner.png';
 import banner1Img from '@icons/images/banner1.avif';
 import banner2Img from '@icons/images/banner2.webp';
-
 const BANNERS = [bannerImg, banner1Img, banner2Img];
 const AUTO_MS = 5000;
-
 function Banner() {
     const navigate = useNavigate();
     const [index, setIndex] = useState(0);
-
     useEffect(() => {
         const timer = setInterval(() => {
             setIndex((i) => (i + 1) % BANNERS.length);
         }, AUTO_MS);
         return () => clearInterval(timer);
     }, []);
-
     return (
         <div className={styles.container}>
             {BANNERS.map((src, i) => (
@@ -43,9 +28,7 @@ function Banner() {
                     aria-hidden={i !== index}
                 />
             ))}
-
             <div className={styles.overlay} aria-hidden />
-
             <div className={styles.content}>
                 <h1 className={styles.title}>BetaTech</h1>
                 <div className={styles.des}>Khám phá laptop phù hợp với bạn.</div>
@@ -57,7 +40,6 @@ function Banner() {
                     Khám phá ngay
                 </button>
             </div>
-
             <div className={styles.dots}>
                 {BANNERS.map((_, i) => (
                     <button
@@ -72,5 +54,5 @@ function Banner() {
         </div>
     );
 }
-
 export default Banner;
+

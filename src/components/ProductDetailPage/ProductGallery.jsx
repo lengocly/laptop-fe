@@ -1,12 +1,6 @@
-/**
- * ProductGallery — chỉ lo phần ảnh (ShopMini: ảnh lớn + mũi tên + thumbnail).
- * Không fetch API. Cha truyền images + activeIdx + onChange.
- */
 import styles from './styles.module.scss';
-
 function ProductGallery({ images, activeIdx, onChange, alt = 'Sản phẩm' }) {
-    // Đảm bảo luôn có ít nhất 1 ảnh
-    const list = images ?? []; //trả về array rỗng nếu không có ảnh
+    const list = images ?? [];
     if (!list.length) {
         return (
             <div className={styles.gallery}>
@@ -16,23 +10,18 @@ function ProductGallery({ images, activeIdx, onChange, alt = 'Sản phẩm' }) {
             </div>
         );
     }
-    
     const safeIdx = Math.min(activeIdx, list.length - 1);
     const mainSrc = list[safeIdx];
     const showArrows = list.length > 1;
-
     const goPrev = () => {
         onChange(safeIdx === 0 ? list.length - 1 : safeIdx - 1);
     };
-
     const goNext = () => {
         onChange(safeIdx === list.length - 1 ? 0 : safeIdx + 1);
     };
-
     return (
         <div className={styles.gallery}>
             <div className={styles.mainImgWrap}>
-                
                 {showArrows && (
                     <button
                         type="button"
@@ -43,13 +32,11 @@ function ProductGallery({ images, activeIdx, onChange, alt = 'Sản phẩm' }) {
                         ‹
                     </button>
                 )}
-
                 <img
                     src={mainSrc}
                     alt={alt}
                     className={styles.mainImg}
                 />
-
                 {showArrows && (
                     <button
                         type="button"
@@ -61,7 +48,6 @@ function ProductGallery({ images, activeIdx, onChange, alt = 'Sản phẩm' }) {
                     </button>
                 )}
             </div>
-
             <div className={styles.thumbs}>
                 {list.map((src, i) => (
                     <button
@@ -77,5 +63,4 @@ function ProductGallery({ images, activeIdx, onChange, alt = 'Sản phẩm' }) {
         </div>
     );
 }
-
 export default ProductGallery;

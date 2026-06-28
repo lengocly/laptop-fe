@@ -4,11 +4,9 @@ import { FiPlay } from 'react-icons/fi';
 import BlogImage from '@components/AboutPage/BlogImage';
 import { youtubeEmbedUrl, youtubeThumbUrl } from './constants';
 import styles from './styles.module.scss';
-
 function ReviewVideoCard({ item }) {
     const [playing, setPlaying] = useState(false);
     const { youtubeId, videoTitle, productId, name, price, priceOriginal, image } = item;
-
     return (
         <article className={styles.card}>
             <div className={styles.videoWrap}>
@@ -40,7 +38,6 @@ function ReviewVideoCard({ item }) {
                     </button>
                 )}
             </div>
-
             <Link to={`/product/${productId}`} className={styles.productBar}>
                 <div className={styles.productThumb}>
                     <BlogImage src={image} alt={name} />
@@ -56,5 +53,5 @@ function ReviewVideoCard({ item }) {
         </article>
     );
 }
-
 export default ReviewVideoCard;
+

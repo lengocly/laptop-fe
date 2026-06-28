@@ -1,9 +1,6 @@
 import styles from './styles.module.scss';
-
-// HeaderSidebar là một component con của Compare, hiển thị icon và tiêu đề của header
 function HeaderSidebar({ icon, title }) {
     const { container } = styles;
-
     return (
         <div className={container}>
             {icon}
@@ -11,5 +8,5 @@ function HeaderSidebar({ icon, title }) {
         </div>
     );
 }
-
 export default HeaderSidebar;
+

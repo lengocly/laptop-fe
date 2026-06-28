@@ -1,11 +1,7 @@
 import styles from './styles.module.scss';
 import classNames from 'classnames';
-
-// go to shop
-// có 2 loại button: primaryBtn và secondaryBtn, mặc định là primaryBtn, nếu muốn là secondaryBtn thì truyền isPrimary = false vào props
 function Button({ content, isPrimary = true, onClick, disabled = false }) {
-    const { btn, primaryBtn, secondaryBtn } = styles;  // chỉ 3 class
-
+    const { btn, primaryBtn, secondaryBtn } = styles;
     return (
         <button
             type="button"
@@ -20,5 +16,5 @@ function Button({ content, isPrimary = true, onClick, disabled = false }) {
         </button>
     );
 }
-
 export default Button;
+

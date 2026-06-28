@@ -13,25 +13,13 @@ import { calculateShippingFee } from '@/apis/shippingService';
 import GhnAddressPicker from '@components/GhnAddressPicker/GhnAddressPicker';
 import { buildFullAddress, estimateCartWeightGram } from '@/utils/shippingAddress';
 import { FiTruck, FiDollarSign, FiCreditCard, FiPackage } from 'react-icons/fi';
-
 const FREE_SHIPPING_THRESHOLD = 10_000_000;
-
-
-//file này là trang thanh toán
 function CheckoutPage() {
-
-    // để tránh hiện toast thành công 2 lần
     const orderCompletedRef = useRef(false);
-
-    //phương thức thanh toán
     const [paymentMethod, setPaymentMethod] = useState('cod');
-
     const navigate = useNavigate();
-
-    //Lấy dữ liệu giỏ hàng từ từ CartProvider
     const { items, subtotal, clearCart } = useContext(CartContext);
     const { user, loading, isAuthenticated } = useContext(AuthContext);
-
     const [form, setForm] = useState({
         fullName: '',
         phone: '',
@@ -47,47 +35,40 @@ function CheckoutPage() {
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState('');
     const [variantRequiredIds, setVariantRequiredIds] = useState({});
-
-    // Voucher đã lưu — chọn và áp dụng khi checkout
     const [savedVouchers, setSavedVouchers] = useState([]);
     const [selectedVoucherId, setSelectedVoucherId] = useState('');
     const [voucherDiscount, setVoucherDiscount] = useState(0);
     const [voucherLoading, setVoucherLoading] = useState(false);
     const [voucherMessage, setVoucherMessage] = useState('');
-
     const isFreeShipping = subtotal >= FREE_SHIPPING_THRESHOLD;
     const finalTotal = Math.max(subtotal - voucherDiscount + shippingFee, 0);
-
-    // Chưa login → về login
     useEffect(() => {
         if (!loading && !isAuthenticated) {
             navigate('/dang-nhap?next=/checkout', { replace: true });
         }
     }, [loading, isAuthenticated, navigate]);
-
-    // Giỏ trống → về cửa hàng
     useEffect(() => {
-        //orderCompletedRef.current = true trước khi khi giỏ rỗng, effect không redirect về cửa hàng → navigate('/don-hang-cua-toi') giữ được
+        if (!user?.name) return;
+        setForm((f) => {
+            if (f.fullName.trim()) return f;
+            return { ...f, fullName: user.name };
+        });
+    }, [user?.name]);
+    useEffect(() => {
         if (!loading && items.length === 0 && !orderCompletedRef.current) {
             navigate('/cua-hang', { replace: true });
         }
     }, [items.length, loading, navigate]);
-
-    // Tải voucher user đã lưu
     useEffect(() => {
         if (!isAuthenticated) return;
         getMySavedVouchers()
             .then(({ data }) => setSavedVouchers(data.vouchers || []))
             .catch(() => setSavedVouchers([]));
     }, [isAuthenticated]);
-
-    // Reset giảm giá khi đổi voucher hoặc giỏ thay đổi
     useEffect(() => {
         setVoucherDiscount(0);
         setVoucherMessage('');
     }, [selectedVoucherId, subtotal]);
-
-    // SP trong giỏ cũ có thể thiếu cờ hasVariants — kiểm tra qua API
     useEffect(() => {
         const idsToCheck = [
             ...new Set(
@@ -96,14 +77,11 @@ function CheckoutPage() {
                     .map((i) => i.productId)
             ),
         ];
-
         if (!idsToCheck.length) {
             setVariantRequiredIds({});
             return undefined;
         }
-
         let cancelled = false;
-
         Promise.all(
             idsToCheck.map((productId) =>
                 getProductById(productId)
@@ -121,32 +99,26 @@ function CheckoutPage() {
             });
             setVariantRequiredIds(next);
         });
-
         return () => {
             cancelled = true;
         };
     }, [items]);
-
     const itemNeedsVariant = (item) =>
         (item.hasVariants || variantRequiredIds[item.productId]) && !item.variantId;
-
     useEffect(() => {
         if (!form.district?.id || !form.ward?.code) {
             setShippingFee(0);
             setShippingError('');
             return;
         }
-
         if (isFreeShipping) {
             setShippingFee(0);
             setShippingError('');
             return;
         }
-
         let cancelled = false;
         setShippingLoading(true);
         setShippingError('');
-
         calculateShippingFee({
             to_district_id: form.district.id,
             to_ward_code: form.ward.code,
@@ -167,7 +139,6 @@ function CheckoutPage() {
             .finally(() => {
                 if (!cancelled) setShippingLoading(false);
             });
-
         return () => {
             cancelled = true;
         };
@@ -178,7 +149,6 @@ function CheckoutPage() {
         items,
         isFreeShipping,
     ]);
-
     const handleApplyVoucher = async () => {
         if (!selectedVoucherId) {
             setVoucherMessage('Vui lòng chọn voucher.');
@@ -200,18 +170,13 @@ function CheckoutPage() {
             setVoucherLoading(false);
         }
     };
-
     const onChange = (e) => {
         setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
     };
-
-    //xử lý đặt hàng
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setSubmitting(true);
-
-        //gọi API đặt hàng
         try {
             const missingVariantItem = items.find(itemNeedsVariant);
             if (missingVariantItem) {
@@ -221,7 +186,6 @@ function CheckoutPage() {
                 setSubmitting(false);
                 return;
             }
-
             if (!form.street?.trim() || form.street.trim().length < 5) {
                 setError('Vui lòng nhập địa chỉ giao hàng (ít nhất 5 ký tự).');
                 setSubmitting(false);
@@ -242,9 +206,7 @@ function CheckoutPage() {
                 setSubmitting(false);
                 return;
             }
-
             const fullAddress = buildFullAddress(form);
-
             const { data } = await createOrder({
                 full_name: form.fullName,
                 phone: form.phone,
@@ -263,19 +225,15 @@ function CheckoutPage() {
                     quantity: i.quantity,
                 })),
             });
-            
-            // đặt hàng thành công
             if (data.payment_method === 'cod') {
-                orderCompletedRef.current = true; // đã đặt hàng thành công
-                clearCart(); // xóa giỏ hàng
-                // lưu mã đơn hàng vào sessionStorage
+                orderCompletedRef.current = true;
+                clearCart();
                 sessionStorage.setItem(
                     'order_success',
                     JSON.stringify({ orderCode: data.order_code })
                 );
                 navigate('/don-hang-cua-toi');
             } else {
-                // Stripe: chưa xóa giỏ — thanh toán xong mới xóa
                 navigate(`/thanh-toan/${data.order_id}`, {
                     state: {
                         orderCode: data.order_code,
@@ -283,15 +241,12 @@ function CheckoutPage() {
                     },
                 });
             }
-            
         } catch (err) {
             setError(err.response?.data?.message || 'Không thể đặt hàng. Vui lòng thử lại.');
         } finally {
             setSubmitting(false);
         }
     };
-
-    //loading hoặc chưa login → không hiển thị
     if (loading) {
         return (
             <>
@@ -302,8 +257,6 @@ function CheckoutPage() {
             </>
         );
     }
-    
-    //chưa login → về login
     if (!isAuthenticated) {
         return (
             <>
@@ -314,8 +267,6 @@ function CheckoutPage() {
             </>
         );
     }
-    
-    //giỏ hàng trống → về cửa hàng
     if (items.length === 0) {
         return (
             <>
@@ -326,7 +277,6 @@ function CheckoutPage() {
             </>
         );
     }
-
     return (
         <>
             <MyHeader />
@@ -335,7 +285,6 @@ function CheckoutPage() {
                 <div className={styles.grid}>
                     <form className={styles.form} onSubmit={handleSubmit}>
                         <h2>Thông tin giao hàng</h2>
-
                         <input
                             name="fullName"
                             placeholder="Họ và tên *"
@@ -343,7 +292,6 @@ function CheckoutPage() {
                             onChange={onChange}
                             required
                         />
-
                         <input
                             name="phone"
                             placeholder="Số điện thoại *"
@@ -355,8 +303,6 @@ function CheckoutPage() {
                             pattern="0[0-9]{9}"
                             title="Nhập 10 số, bắt đầu bằng 0"
                         />
-
-                        {/* ===== Địa chỉ ===== */}
                         <label className={styles.fieldLabel}>Quốc gia</label>
                         <input value="Vietnam" disabled readOnly />
                         <label className={styles.fieldLabel}>Địa chỉ, tên đường *</label>
@@ -392,8 +338,6 @@ function CheckoutPage() {
                             onChange={onChange}
                             spellCheck={false}
                         />
-
-                        {/* phương thức thanh toán */}
                         <h2>Phương thức thanh toán</h2>
                         <div className={styles.paymentOptions}>
                             <label className={styles.paymentOption}>
@@ -428,8 +372,6 @@ function CheckoutPage() {
                                 </span>
                             </label>
                         </div>
-
-                        {/* Mã giảm giá — voucher đã lưu */}
                         <h2>Mã giảm giá</h2>
                         {savedVouchers.length === 0 ? (
                             <p className={styles.voucherHint}>
@@ -463,14 +405,11 @@ function CheckoutPage() {
                                 {voucherMessage}
                             </p>
                         )}
-
                         {error && <p className={styles.checkoutError}>{error}</p>}
-
                         <button type="submit" className={styles.submitBtn} disabled={submitting}>
                             {submitting ? 'Đang xử lý...' : 'Xác nhận đặt hàng'}
                         </button>
                     </form>
-
                     <aside className={styles.summary}>
                         <h2>Đơn hàng</h2>
                         {items.map((item) => (
@@ -521,7 +460,6 @@ function CheckoutPage() {
                                             : 0;
                                         const lineSavings =
                                             unitSavings * item.quantity;
-
                                         if (!hasDiscount) {
                                             return (
                                                 <span
@@ -533,7 +471,6 @@ function CheckoutPage() {
                                                 </span>
                                             );
                                         }
-
                                         return (
                                             <>
                                                 <span
@@ -598,5 +535,4 @@ function CheckoutPage() {
         </>
     );
 }
-
 export default CheckoutPage;

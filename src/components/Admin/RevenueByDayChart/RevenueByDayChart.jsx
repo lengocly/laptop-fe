@@ -9,17 +9,14 @@ import {
 } from 'recharts';
 import { formatVnd } from '@/utils/price';
 import styles from './styles.module.scss';
-
 function RevenueByDayChart({ data }) {
     if (!data?.length) {
         return <p className={styles.empty}>Chưa có dữ liệu doanh thu.</p>;
     }
-
     return (
         <div className={styles.chartCard}>
             <h3>Doanh thu theo tuần</h3>
             <p className={styles.sub}>7 ngày gần nhất — chỉ đơn đã thanh toán</p>
-
             <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -43,5 +40,4 @@ function RevenueByDayChart({ data }) {
         </div>
     );
 }
-
 export default RevenueByDayChart;

@@ -181,6 +181,21 @@
     font-weight: 700;
 }
 
+@media (max-width: 900px) {
+    .section {
+        padding: 48px 0 16px;
+        margin-left: 0;
+    }
+
+    .header h2 {
+        font-size: 18px;
+    }
+
+    .revealItem {
+        flex: 0 0 min(280px, 85vw);
+    }
+}
+
 .toast {
     position: fixed;
     bottom: 24px;

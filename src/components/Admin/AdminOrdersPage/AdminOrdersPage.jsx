@@ -12,20 +12,14 @@ import {
     ORDER_STATUS_FILTER_OPTIONS
 } from '@/constants/orderStatus';
 import OrderStatusModal from '../OrderStatusModal/OrderStatusModal';
-
-
 function AdminOrdersPage() {
     const [orders, setOrders] = useState([]);
     const [error, setError] = useState('');
     const [updatingId, setUpdatingId] = useState(null);
-
-    //tìm kiếm, lọc trạng thái, modal cập nhật trạng thái, toast thành công
     const [keyword, setKeyword] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
     const [modalOrder, setModalOrder] = useState(null);
     const [toast, setToast] = useState('');
-
-    //lọc danh sách đơn hàng theo từ khóa và trạng thái
     const filteredOrders = orders.filter((order) => {
         const matchStatus = !statusFilter || order.status === statusFilter;
         const kw = keyword.trim().toLowerCase();
@@ -36,8 +30,6 @@ function AdminOrdersPage() {
             );
         return matchStatus && matchKw;
     });
-
-    //tải danh sách đơn hàng
     const loadOrders = async () => {
         try {
             const { data } = await getAdminOrders();
@@ -47,11 +39,9 @@ function AdminOrdersPage() {
             setError('Không tải được danh sách đơn hàng.');
         }
     };
-
     useEffect(() => {
         loadOrders();
     }, []);
-
     const handleChangeStatus = async (orderId, status) => {
         try {
             setUpdatingId(orderId);
@@ -63,17 +53,12 @@ function AdminOrdersPage() {
             setUpdatingId(null);
         }
     };
-
-    //lọc danh sách đơn hàng theo trạng thái
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-
     useEffect(() => {
         const s = searchParams.get('status');
         if (s) setStatusFilter(s);
     }, [searchParams]);
-    
-    //cập nhật trạng thái đơn hàng
     const handleModalSubmit = async (orderId, status, note) => {
         try {
             setUpdatingId(orderId);
@@ -87,13 +72,10 @@ function AdminOrdersPage() {
             setUpdatingId(null);
         }
     };
-
     return (
         <AdminRoute>
             <AdminLayout title="Quản lý đơn hàng">
                 {error && <p className={styles.err}>{error}</p>}
-
-                {/* toolbar tìm kiếm, lọc trạng thái */}
                 <div className={styles.toolbar}>
                     <input
                         placeholder="Tìm mã đơn, tên, email..."
@@ -110,7 +92,6 @@ function AdminOrdersPage() {
                         ))}
                     </select>
                 </div>
-
                 <div className={styles.tableWrap}>
                     <table className={styles.table}>
                         <thead>
@@ -147,9 +128,6 @@ function AdminOrdersPage() {
                                             {new Date(order.created_at).toLocaleString('vi-VN')}
                                         </td>
                                         <td>{formatVnd(order.subtotal)}</td>
-                                        
-
-                                        {/* trạng thái giao hàng */}
                                         <td>
                                             <StatusBadge
                                                 type="order"
@@ -157,8 +135,6 @@ function AdminOrdersPage() {
                                                 label={ORDER_STATUS_LABEL[order.status]}
                                             />
                                         </td>
-                                        
-                                        {/* thanh toán */}
                                         <td>
                                             <StatusBadge
                                                 type="payment"
@@ -166,8 +142,6 @@ function AdminOrdersPage() {
                                                 label={PAYMENT_STATUS_LABEL[order.payment_status]}
                                             />
                                         </td>
-
-                                        {/* hành động: xem chi tiết, sửa trạng thái */}   
                                         <td className={styles.actions}>
                                             <button
                                                 type="button"
@@ -192,8 +166,6 @@ function AdminOrdersPage() {
                         </tbody>
                     </table>
                 </div>
-
-                {/* modal cập nhật trạng thái */}
                 <OrderStatusModal
                     open={!!modalOrder}
                     order={modalOrder}
@@ -201,12 +173,9 @@ function AdminOrdersPage() {
                     onSubmit={handleModalSubmit}
                     loading={updatingId === modalOrder?.id}
                 />
-
-                {/* toast thành công */}
                 {toast && <p className={styles.toast}>{toast}</p>}
             </AdminLayout>
         </AdminRoute>
     );
 }
-
 export default AdminOrdersPage;

@@ -1,13 +1,7 @@
-/**
- * constants.js — Nội dung trang Giới thiệu & bài viết blog
- * Sửa text giới thiệu / thẻ tin tức / nội dung bài viết ở đây.
- */
-
 export const aboutPageMeta = {
     pageTitle: 'Giới thiệu về BetaTech',
     pageSubtitle: 'Câu chuyện thương hiệu và tin tức công nghệ từ BetaTech',
 };
-
 export const aboutSections = [
     {
         id: 've-betatech',
@@ -45,13 +39,9 @@ export const aboutSections = [
             'trên hành trình công nghệ.',
     },
 ];
-
-/** Chuẩn hóa blocks — mọi bài viết dùng `blocks` */
 function normalizeArticleBlocks(article) {
     return article.blocks ?? [];
 }
-
-// Thẻ tin tức — ảnh dùng path DB (products/...) → /storage/..., cùng nguồn với Cửa hàng
 export const aboutNewsCards = [
     {
         id: 1,
@@ -354,10 +344,9 @@ export const aboutNewsCards = [
         ],
     },
 ];
-
-/** Tìm bài viết theo slug — dùng cho trang chi tiết */
 export function getBlogArticleBySlug(slug) {
     const card = aboutNewsCards.find((item) => item.slug === slug);
     if (!card) return null;
     return { ...card, blocks: normalizeArticleBlocks(card) };
 }
+

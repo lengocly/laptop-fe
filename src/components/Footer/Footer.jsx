@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom';
 import styles from './styles.module.scss';
 import BetaTechLogo from '@components/BetaTechLogo/BetaTechLogo';
 import { footerColumns, footerContact, paymentMethods } from './constant';
-
 function MyFooter() {
     return (
         <footer className={styles.footer}>
@@ -35,7 +34,6 @@ function MyFooter() {
                             </li>
                         </ul>
                     </div>
-
                     {footerColumns.map((col) => (
                         <div key={col.title} className={styles.linkCol}>
                             <h3 className={styles.colTitle}>{col.title}</h3>
@@ -51,7 +49,6 @@ function MyFooter() {
                         </div>
                     ))}
                 </div>
-
                 <div className={styles.trustRow}>
                     <div className={styles.trustItem}>
                         <strong>Giao hàng nhanh</strong>
@@ -71,7 +68,6 @@ function MyFooter() {
                     </div>
                 </div>
             </div>
-
             <div className={styles.bottomBar}>
                 <div className={styles.bottomInner}>
                     <div className={styles.paymentBlock}>
@@ -93,5 +89,5 @@ function MyFooter() {
         </footer>
     );
 }
-
 export default MyFooter;
+

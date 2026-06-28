@@ -6,30 +6,25 @@ import ItemProduct from '@components/ContentSideBar/components/ItemProduct/ItemP
 import { CompareContext } from '@/contexts/CompareProvider';
 import { SideBarContext } from '@/contexts/SideBarProvider';
 import styles from './styles.module.scss';
-
 function Compare() {
     const navigate = useNavigate();
     const { setIsOpen } = useContext(SideBarContext);
     const { items, removeFromCompare, clearCompare, count, maxItems } =
         useContext(CompareContext);
     const { container, empty, footer, clearBtn, hint, compareNowBtn } = styles;
-
     const title = count > 0 ? `SO SÁNH (${count})` : 'SO SÁNH';
     const canCompareNow = count >= 2;
-
     const handleCompareNow = () => {
         if (!canCompareNow) return;
         setIsOpen(false);
         navigate('/so-sanh');
     };
-
     return (
         <div className={container}>
             <HeaderSideBar
                 icon={<TfiReload style={{ fontSize: '30px' }} />}
                 title={title}
             />
-
             {items.length === 0 ? (
                 <p className={empty}>Chưa có laptop để so sánh</p>
             ) : (
@@ -42,7 +37,6 @@ function Compare() {
                             showSpecs
                         />
                     ))}
-
                     <div className={footer}>
                         <p className={hint}>
                             Chỉ so sánh laptop (tối đa {maxItems}). ({count}/{maxItems})
@@ -68,5 +62,5 @@ function Compare() {
         </div>
     );
 }
-
 export default Compare;
+

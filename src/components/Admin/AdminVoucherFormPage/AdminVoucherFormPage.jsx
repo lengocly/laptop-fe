@@ -1,7 +1,3 @@
-/**
- * AdminVoucherFormPage — Thêm / Sửa voucher
- * URL: /admin/voucher/tao | /admin/voucher/:id
- */
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import AdminRoute from '@components/AdminRoute/AdminRoute';
@@ -12,7 +8,6 @@ import {
     updateVoucher,
 } from '@/apis/adminOrderService';
 import styles from './styles.module.scss';
-
 const emptyForm = {
     code: '',
     title: '',
@@ -26,34 +21,26 @@ const emptyForm = {
     usage_limit: '',
     is_active: true,
 };
-
-// Chuyển datetime-local → ISO cho BE
 function toIso(localValue) {
     if (!localValue) return null;
     return new Date(localValue).toISOString();
 }
-
-// Chuyển ISO → datetime-local cho input
 function toLocalInput(iso) {
     if (!iso) return '';
     const d = new Date(iso);
     const pad = (n) => String(n).padStart(2, '0');
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
-
 function AdminVoucherFormPage() {
     const { id } = useParams();
     const navigate = useNavigate();
     const isEdit = Boolean(id);
-
     const [form, setForm] = useState(emptyForm);
     const [loading, setLoading] = useState(isEdit);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
-
     useEffect(() => {
         if (!isEdit) return;
-
         getAdminVoucher(id)
             .then(({ data }) => {
                 setForm({
@@ -73,16 +60,13 @@ function AdminVoucherFormPage() {
             .catch(() => setError('Không tải được voucher.'))
             .finally(() => setLoading(false));
     }, [id, isEdit]);
-
     const setField = (name, value) => {
         setForm((f) => ({ ...f, [name]: value }));
     };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaving(true);
         setError('');
-
         const body = {
             code: form.code.trim().toUpperCase(),
             title: form.title.trim(),
@@ -96,7 +80,6 @@ function AdminVoucherFormPage() {
             usage_limit: form.usage_limit ? Number(form.usage_limit) : null,
             is_active: form.is_active,
         };
-
         try {
             if (isEdit) {
                 await updateVoucher(id, body);
@@ -113,7 +96,6 @@ function AdminVoucherFormPage() {
             setSaving(false);
         }
     };
-
     if (loading) {
         return (
             <AdminRoute>
@@ -123,12 +105,10 @@ function AdminVoucherFormPage() {
             </AdminRoute>
         );
     }
-
     return (
         <AdminRoute>
             <AdminLayout title={isEdit ? 'Sửa voucher' : 'Thêm voucher'}>
                 {error && <p className={styles.err}>{error}</p>}
-
                 <form className={styles.form} onSubmit={handleSubmit}>
                     <div className={styles.row}>
                         <label>
@@ -150,7 +130,6 @@ function AdminVoucherFormPage() {
                             />
                         </label>
                     </div>
-
                     <label>
                         Mô tả
                         <textarea
@@ -160,7 +139,6 @@ function AdminVoucherFormPage() {
                             placeholder="Điều kiện áp dụng..."
                         />
                     </label>
-
                     <div className={styles.row}>
                         <label>
                             Loại giảm *
@@ -184,7 +162,6 @@ function AdminVoucherFormPage() {
                             />
                         </label>
                     </div>
-
                     <div className={styles.row}>
                         <label>
                             Đơn tối thiểu (VNĐ) *
@@ -210,7 +187,6 @@ function AdminVoucherFormPage() {
                             </label>
                         )}
                     </div>
-
                     <div className={styles.row}>
                         <label>
                             Bắt đầu (tuỳ chọn)
@@ -230,7 +206,6 @@ function AdminVoucherFormPage() {
                             />
                         </label>
                     </div>
-
                     <div className={styles.row}>
                         <label>
                             Giới hạn lượt dùng (để trống = không giới hạn)
@@ -250,7 +225,6 @@ function AdminVoucherFormPage() {
                             Hiển thị / hoạt động
                         </label>
                     </div>
-
                     <div className={styles.actions}>
                         <button type="button" onClick={() => navigate('/admin/voucher')}>
                             Huỷ
@@ -264,5 +238,5 @@ function AdminVoucherFormPage() {
         </AdminRoute>
     );
 }
-
 export default AdminVoucherFormPage;
+

@@ -1,11 +1,8 @@
 import { Link } from 'react-router-dom';
 import BlogImage from './BlogImage';
 import styles from './blogDetail.module.scss';
-
-/** Thẻ gợi ý sản phẩm trong bài viết — link sang trang chi tiết SP */
 function BlogProductEmbed({ productId, name, price, image }) {
     if (!productId) return null;
-
     return (
         <Link to={`/product/${productId}`} className={styles.productEmbed}>
             <div className={styles.productEmbedImage}>
@@ -20,5 +17,5 @@ function BlogProductEmbed({ productId, name, price, image }) {
         </Link>
     );
 }
-
 export default BlogProductEmbed;
+

@@ -7,7 +7,6 @@ import {
     ResponsiveContainer,
 } from 'recharts';
 import styles from './styles.module.scss';
-
 function OrderStatusPieChart({ data }) {
     if (!data?.length) {
         return (
@@ -17,14 +16,11 @@ function OrderStatusPieChart({ data }) {
             </div>
         );
     }
-
     const total = data.reduce((sum, item) => sum + item.value, 0);
-
     return (
         <div className={styles.chartCard}>
             <h3>Phân bổ trạng thái đơn hàng</h3>
             <p className={styles.sub}>Tổng {total} đơn trong hệ thống</p>
-
             <ResponsiveContainer width="100%" height={280}>
                 <PieChart>
                     <Pie
@@ -56,5 +52,5 @@ function OrderStatusPieChart({ data }) {
         </div>
     );
 }
-
 export default OrderStatusPieChart;
+

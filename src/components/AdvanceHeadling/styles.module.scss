@@ -40,3 +40,29 @@
     font-size: 24px;
     color: $primary_color;
 }
+
+@media (max-width: 900px) {
+    .container,
+    .containerCompact {
+        margin: 40px 0 12px;
+    }
+
+    .containerMiddleBox {
+        width: 100%;
+        padding: 0 16px;
+        line-height: 1.3;
+    }
+
+    .headline {
+        margin-top: 16px;
+    }
+
+    .title {
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .des {
+        text-align: center;
+    }
+}

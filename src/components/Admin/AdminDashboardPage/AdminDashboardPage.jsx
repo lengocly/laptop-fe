@@ -22,27 +22,21 @@ import { buildRevenueByDay } from '@/utils/revenueByDay';
 import { buildOrderStatusChart } from '@/utils/orderStatusChart';
 import RevenueByDayChart from '../RevenueByDayChart/RevenueByDayChart';
 import OrderStatusPieChart from '../OrderStatusPieChart/OrderStatusPieChart';
-
 const LOW_STOCK_THRESHOLD = 5;
-
 function AdminDashboardPage() {
     const [orders, setOrders] = useState([]);
     const [lowStockProducts, setLowStockProducts] = useState([]);
     const [loading, setLoading] = useState(true);
-
     useEffect(() => {
         let cancelled = false;
-
         Promise.all([
             getAdminOrders(),
             getAdminProducts({ per_page: 50, is_active: 1 }),
         ])
             .then(([ordersRes, productsRes]) => {
                 if (cancelled) return;
-
                 const orderList = ordersRes.data ?? [];
                 setOrders(orderList);
-
                 const products = productsRes.data?.data ?? productsRes.data ?? [];
                 const lowStock = products
                     .filter((p) => Number(p.stock) <= LOW_STOCK_THRESHOLD)
@@ -58,23 +52,18 @@ function AdminDashboardPage() {
             .finally(() => {
                 if (!cancelled) setLoading(false);
             });
-
         return () => {
             cancelled = true;
         };
     }, []);
-
     const pendingCount = orders.filter((o) => o.status === 'pending').length;
     const completedCount = orders.filter((o) => o.status === 'delivered').length;
-
     const totalRevenue = orders
         .filter((o) => o.payment_status === 'paid')
         .reduce((sum, o) => sum + Number(o.subtotal), 0);
-
     const recentOrders = orders.slice(0, 5);
     const revenueByDay = buildRevenueByDay(orders, 7);
     const orderStatusChart = buildOrderStatusChart(orders);
-
     return (
         <AdminRoute>
             <AdminLayout
@@ -95,7 +84,6 @@ function AdminDashboardPage() {
                                     <strong>{formatVnd(totalRevenue)}</strong>
                                 </div>
                             </div>
-
                             <div className={styles.statCard}>
                                 <span className={styles.statIcon} aria-hidden>
                                     <FiPackage size={22} />
@@ -105,7 +93,6 @@ function AdminDashboardPage() {
                                     <strong>{orders.length}</strong>
                                 </div>
                             </div>
-
                             <div className={`${styles.statCard} ${styles.statSuccess}`}>
                                 <span className={styles.statIcon} aria-hidden>
                                     <FiCheckCircle size={22} />
@@ -115,7 +102,6 @@ function AdminDashboardPage() {
                                     <strong>{completedCount}</strong>
                                 </div>
                             </div>
-
                             <div className={`${styles.statCard} ${styles.statWarning}`}>
                                 <span className={styles.statIcon} aria-hidden>
                                     <FiClock size={22} />
@@ -126,7 +112,6 @@ function AdminDashboardPage() {
                                 </div>
                             </div>
                         </div>
-
                         <section className={styles.chartsRow}>
                             <div className={styles.chartCol}>
                                 <OrderStatusPieChart data={orderStatusChart} />
@@ -135,7 +120,6 @@ function AdminDashboardPage() {
                                 <RevenueByDayChart data={revenueByDay} />
                             </div>
                         </section>
-
                         {pendingCount > 0 && (
                             <div className={styles.alert}>
                                 <div className={styles.alertBody}>
@@ -156,7 +140,6 @@ function AdminDashboardPage() {
                                 </Link>
                             </div>
                         )}
-
                         {lowStockProducts.length > 0 && (
                             <section className={styles.section}>
                                 <h2>Sản phẩm sắp hết hàng (≤ {LOW_STOCK_THRESHOLD})</h2>
@@ -184,10 +167,8 @@ function AdminDashboardPage() {
                                 </div>
                             </section>
                         )}
-
                         <section className={styles.section}>
                             <h2>Đơn hàng gần đây</h2>
-
                             <div className={styles.tableWrap}>
                                 <table className={styles.table}>
                                     <thead>
@@ -200,7 +181,6 @@ function AdminDashboardPage() {
                                             <th>Chi tiết</th>
                                         </tr>
                                     </thead>
-
                                     <tbody>
                                         {recentOrders.length === 0 ? (
                                             <tr>
@@ -258,5 +238,5 @@ function AdminDashboardPage() {
         </AdminRoute>
     );
 }
-
 export default AdminDashboardPage;
+

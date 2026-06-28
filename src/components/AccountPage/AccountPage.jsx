@@ -7,52 +7,43 @@ import Button from '@components/Button/Button';
 import { AuthContext } from '@/contexts/AuthProvider';
 import { updatePassword } from '@/apis/authService';
 import styles from './styles.module.scss';
-
 function AccountPage() {
     const { user, loading, isAuthenticated, updateProfile } = useContext(AuthContext);
     const navigate = useNavigate();
-
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [profileError, setProfileError] = useState('');
     const [profileSuccess, setProfileSuccess] = useState('');
     const [profileLoading, setProfileLoading] = useState(false);
-
     const [currentPassword, setCurrentPassword] = useState('');
     const [password, setPassword] = useState('');
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [passwordSuccess, setPasswordSuccess] = useState('');
     const [passwordLoading, setPasswordLoading] = useState(false);
-
     useEffect(() => {
         if (!loading && !isAuthenticated) {
             navigate('/dang-nhap?next=/tai-khoan', { replace: true });
         }
     }, [loading, isAuthenticated, navigate]);
-
     useEffect(() => {
         if (!user) return;
         setName(user.name || '');
         setEmail(user.email || '');
     }, [user]);
-
     const handleUpdateProfile = async () => {
         setProfileLoading(true);
         setProfileError('');
         setProfileSuccess('');
-
         const payload = {
             name: name.trim(),
             email: email.trim().toLowerCase(),
         };
-
         if (payload.name.length < 2) {
             setProfileError('Họ tên phải có ít nhất 2 ký tự.');
             setProfileLoading(false);
             return;
         }
-
         try {
             const data = await updateProfile(payload);
             setProfileSuccess(data?.message || 'Cập nhật thông tin thành công.');
@@ -72,30 +63,25 @@ function AccountPage() {
             setProfileLoading(false);
         }
     };
-
     const handleChangePassword = async () => {
         setPasswordLoading(true);
         setPasswordError('');
         setPasswordSuccess('');
-
         if (!currentPassword) {
             setPasswordError('Vui lòng nhập mật khẩu hiện tại.');
             setPasswordLoading(false);
             return;
         }
-
         if (password.length < 8) {
             setPasswordError('Mật khẩu mới phải có ít nhất 8 ký tự.');
             setPasswordLoading(false);
             return;
         }
-
         if (password !== passwordConfirmation) {
             setPasswordError('Mật khẩu xác nhận không khớp.');
             setPasswordLoading(false);
             return;
         }
-
         try {
             const data = await updatePassword({
                 current_password: currentPassword,
@@ -122,25 +108,20 @@ function AccountPage() {
             setPasswordLoading(false);
         }
     };
-
     if (loading || !isAuthenticated) return null;
-
     return (
         <>
             <MyHeader />
-
             <main className={styles.wrap}>
                 <div className={styles.pageHead}>
                     <h1>Tài khoản của tôi</h1>
                     <span>Quản lý thông tin cá nhân và bảo mật</span>
                 </div>
-
                 <section className={styles.card}>
                     <h2 className={styles.cardTitle}>Thông tin cá nhân</h2>
                     <p className={styles.cardHint}>
                         Cập nhật họ tên và email đăng nhập của bạn.
                     </p>
-
                     <div className={styles.formGrid}>
                         <InputCommon
                             label="Họ tên"
@@ -159,10 +140,8 @@ function AccountPage() {
                             isRequired
                         />
                     </div>
-
                     {profileError && <p className={styles.err}>{profileError}</p>}
                     {profileSuccess && <p className={styles.success}>{profileSuccess}</p>}
-
                     <div className={styles.actions}>
                         <Button
                             content={profileLoading ? 'Đang lưu...' : 'Lưu thay đổi'}
@@ -171,13 +150,11 @@ function AccountPage() {
                         />
                     </div>
                 </section>
-
                 <section className={styles.card}>
                     <h2 className={styles.cardTitle}>Đổi mật khẩu</h2>
                     <p className={styles.cardHint}>
                         Mật khẩu tối thiểu 8 ký tự, có chữ và số.
                     </p>
-
                     <div className={styles.formGrid}>
                         <InputCommon
                             label="Mật khẩu hiện tại"
@@ -204,10 +181,8 @@ function AccountPage() {
                             isRequired
                         />
                     </div>
-
                     {passwordError && <p className={styles.err}>{passwordError}</p>}
                     {passwordSuccess && <p className={styles.success}>{passwordSuccess}</p>}
-
                     <div className={styles.actions}>
                         <Button
                             content={passwordLoading ? 'Đang cập nhật...' : 'Đổi mật khẩu'}
@@ -216,7 +191,6 @@ function AccountPage() {
                         />
                     </div>
                 </section>
-
                 <div className={styles.links}>
                     <Link to="/don-hang-cua-toi" className={styles.link}>
                         Xem đơn hàng của tôi
@@ -226,10 +200,9 @@ function AccountPage() {
                     </Link>
                 </div>
             </main>
-
             <MyFooter />
         </>
     );
 }
-
 export default AccountPage;
+

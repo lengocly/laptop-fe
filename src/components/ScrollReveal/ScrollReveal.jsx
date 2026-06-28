@@ -1,10 +1,6 @@
 import classNames from 'classnames';
 import useScrollReveal from '@/hooks/useScrollReveal';
 import styles from './styles.module.scss';
-
-/**
- * Bọc section/card — khi cuộn tới sẽ nổi lên mượt (fade + translate).
- */
 function ScrollReveal({
     children,
     variant = 'up',
@@ -17,7 +13,6 @@ function ScrollReveal({
     rootMargin,
 }) {
     const { ref, isVisible } = useScrollReveal({ once, threshold, rootMargin });
-
     const variantClass = {
         up: styles.up,
         left: styles.left,
@@ -25,7 +20,6 @@ function ScrollReveal({
         scale: styles.scale,
         fade: styles.fade,
     }[variant];
-
     return (
         <Tag
             ref={ref}
@@ -44,5 +38,5 @@ function ScrollReveal({
         </Tag>
     );
 }
-
 export default ScrollReveal;
+

@@ -1,6 +1,5 @@
 import MainLayout from '@components/Layout/Layout';
 import styles from './styles.module.scss';
-
 function AdvanceHeadling({
     subtitle = 'ĐỪNG BỎ LỠ ƯU ĐÃI',
     title = 'Sản phẩm nổi bật',
@@ -8,7 +7,6 @@ function AdvanceHeadling({
 }) {
     const { container, containerCompact, headline, containerMiddleBox, title: titleClass, des } =
         styles;
-
     return (
         <MainLayout>
             <div className={compact ? containerCompact : container}>
@@ -22,5 +20,5 @@ function AdvanceHeadling({
         </MainLayout>
     );
 }
-
 export default AdvanceHeadling;
+
